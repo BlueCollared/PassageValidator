@@ -5,6 +5,8 @@ namespace Domain.Peripherals.Passage
     public record Intrusion;
     public record Fraud;
     public record PassageInProgress;
+    public record AuthroizedPassengerSteppedBack;
+    public record PassageTimeout;
     public record PassageDone;
 
     // It is possible that around the time authroization is submitted, intrusion gets detected.
@@ -16,7 +18,7 @@ namespace Domain.Peripherals.Passage
         // TODO: not yet sure that whether I should be responsible for tracking the individual passages (by also bouncing back the {`ticketId`, authorizationId})
         // or should simply leave it to the client.
         // can change in later versions
-        IObservable<OneOf<Intrusion, Fraud, PassageInProgress, PassageDone>> PassageStatusObservable { get; }
+        IObservable<OneOf<Intrusion, Fraud, PassageInProgress, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone>> PassageStatusObservable { get; }
         
         // returns true if the request is accepted
 

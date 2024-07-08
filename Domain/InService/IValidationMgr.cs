@@ -2,5 +2,6 @@
 {
     public interface IValidationMgr
     {
+        bool bWorking { get; }
     }
 }

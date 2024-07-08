@@ -18,7 +18,8 @@ namespace Domain.Peripherals.Qr
         {
             this.rdr = rdr;
             qrRdrStatusSubscription =
-            ((IObservable<QrReaderStatus>)qrRdr)
+            //((IObservable<QrReaderStatus>)qrRdr)
+            qrRdr.qrReaderStatusObservable
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => {
                     // TODO: raise event (pump into message bus)
@@ -31,12 +32,12 @@ namespace Domain.Peripherals.Qr
 
         readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
         
-        public IObservable<(QrReaderStatus status, string rdrMnemonic)> StatusStream 
-            => ((IObservable<QrReaderStatus>)qrRdr).Select(x=>(x, qrRdr.id))
+        public IObservable<(QrReaderStatus status, string rdrMnemonic)> StatusStream
+            => qrRdr.qrReaderStatusObservable.Select(x=>(x, qrRdr.id))
             .ObserveOn(syncContextClient);
 
         public IObservable<QrCodeInfo> QrCodeStream
-            => ((IObservable<QrCodeInfo>)qrRdr)
+            => qrRdr.qrCodeInfoObservable
             .ObserveOn(syncContextClient);
     }
 }
