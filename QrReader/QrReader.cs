@@ -10,7 +10,7 @@ namespace QrReader
 
         public IObservable<QrReaderStatus> qrReaderStatusObservable => throw new NotImplementedException();
 
-        public bool Init()
+        public bool Start()
         {
             throw new NotImplementedException();
         }

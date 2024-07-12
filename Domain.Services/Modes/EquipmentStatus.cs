@@ -17,14 +17,5 @@
         ModuleStatus ValidationAPI = ModuleStatus.Unknown,
         ModuleStatus OfflineDataFresh = ModuleStatus.Unknown,
         bool Emergency = false
-        )
-    {
-        public Mode InService
-        {
-            get
-            {
-                return Mode.InService;
-            }
-        }
-    }    
+        );
 }

@@ -2,7 +2,7 @@
 {
     public interface IPeripheral
     {
-        bool Init();
+        bool Start();
         bool Stop();
     }
 }

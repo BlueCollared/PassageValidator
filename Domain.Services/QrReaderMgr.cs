@@ -32,12 +32,26 @@ namespace Domain.Peripherals.Qr
 
         readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
         
-        public IObservable<(QrReaderStatus status, string rdrMnemonic)> StatusStream
-            => qrRdr.qrReaderStatusObservable.Select(x=>(x, qrRdr.id))
+        public IObservable<QrReaderStatus> StatusStream
+            => qrRdr.qrReaderStatusObservable
             .ObserveOn(syncContextClient);
 
         public IObservable<QrCodeInfo> QrCodeStream
             => qrRdr.qrCodeInfoObservable
             .ObserveOn(syncContextClient);
+
+        public void Start() {
+            qrRdr.Start();
+        }
+
+        public void StartDetecting()
+        {
+            rdr.Start();
+        }
+
+        public void StopDetecting()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
