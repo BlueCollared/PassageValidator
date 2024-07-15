@@ -13,17 +13,40 @@ namespace Domain.Services.Modes
         EquipmentStatus equipmentStatus;
         private readonly QrReaderMgr qrReaderMgr;
         BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
+        OpMode opModeDemanded;
         public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
         public Mode CurMode => EquipmentModeSubject.Value;
 
-        public ModeManager(QrReaderMgr qrReaderMgr)
+        public ModeManager(QrReaderMgr qrReaderMgr, OpMode opModeDemanded = OpMode.InService)
         {
-            //eqptStatusSubject = new BehaviorSubject<EquipmentStatus>(new EquipmentStatus());
             equipmentStatus = new();
             this.qrReaderMgr = qrReaderMgr;
             qrReaderMgr.StatusStream.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); }
                 );
+            this.opModeDemanded = opModeDemanded;
+        }
+
+        public OpMode ModeDemanded
+        {
+            get { return opModeDemanded; }
+            set {
+                // TODO
+                this.opModeDemanded = value;
+                if (value == OpMode.OOS)
+                {                    
+                    if (curModeMgr == null)
+                        return;
+                    if (curModeMgr is InServiceMgr x)
+                    {                        
+                        // we don't want to corrupt the public API with async. So, we use Wait()
+                        x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitly.
+                        curModeMgr.Dispose();
+                        curModeMgr = null;
+
+                    }
+                }
+            }
         }
 
         private void QrRdrStatusChanged(QrReaderStatus status)

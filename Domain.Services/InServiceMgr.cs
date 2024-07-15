@@ -18,6 +18,18 @@ namespace Domain.Services.InService
         State state = State.Unknown;
         private bool disposedValue;
 
+        IDisposable qrCodeSubscription;
+        IDisposable passageStatusSubscription;
+
+        // at the moment, we use this feature for 
+        //public enum PassengerStateX
+        //{
+        //    ValidationsNotYetServedInPipeline,
+        //    NoValidationsQueued
+        //}
+        //BehaviorSubject<PassengerStateX> PassengerStateSubject = new BehaviorSubject<PassengerStateX>(PassengerStateX.NoValidationsQueued);
+        //public PassengerStateX PassengerCurState => PassengerStateSubject.Value;
+
         enum State
         {
             Unknown, // only when InServiceMgr is created
@@ -50,14 +62,20 @@ namespace Domain.Services.InService
             this.mmi = mmi;
             this.qrReader = qrReader;
 
-            qrReader.QrCodeStream
+            qrCodeSubscription = qrReader.QrCodeStream
                 .Subscribe(qr => { QrAppeared(qr); });
 
-            passage.PassageStatusObservable
+            passageStatusSubscription = passage.PassageStatusObservable
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => PassageEvt(x));
 
             qrReader.StartDetecting();
+        }        
+
+        public Task HaltFurtherValidations()
+        {
+            // TODO: correct me
+            return Task.CompletedTask;
         }
 
         private void PassageEvt(Intrusion x)
@@ -162,6 +180,11 @@ namespace Domain.Services.InService
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
+                    if (qrCodeSubscription != null)
+                        qrCodeSubscription.Dispose();
+
+                    if (passageStatusSubscription != null)
+                        passageStatusSubscription.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

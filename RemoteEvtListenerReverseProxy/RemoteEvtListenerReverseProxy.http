@@ -1,0 +1,6 @@
+@RemoteEvtListenerReverseProxy_HostAddress = http://localhost:5261
+
+GET {{RemoteEvtListenerReverseProxy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

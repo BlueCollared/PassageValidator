@@ -9,6 +9,13 @@
         Emergency
     };
 
+    public enum OpMode
+    {
+        InService,
+        OOS,
+        Emergency
+    }
+
     public enum ModuleStatus { Good, Bad, Unknown};
     public record EquipmentStatus(
         ModuleStatus GateHardware = ModuleStatus.Unknown,
