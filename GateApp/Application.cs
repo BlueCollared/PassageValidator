@@ -18,7 +18,7 @@ namespace GateApp
             //domainEvtMgr = new DomainEvtMgr(new DomainEvtDbPersister(), qrRdrMgr);
 
             // 2. Start the system. Two steps because we don't want to loose any event
-            qrRdrMgr.Start();
+            //qrRdrMgr.Start();
         }
     }
 }

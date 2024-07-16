@@ -40,18 +40,14 @@ namespace Domain.Peripherals.Qr
             => qrRdr.qrCodeInfoObservable
             .ObserveOn(syncContextClient);
 
-        public void Start() {
-            qrRdr.Start();
-        }
-
         public void StartDetecting()
         {
-            rdr.Start();
+            rdr.StartDetecting();
         }
 
         public void StopDetecting()
         {
-            throw new NotImplementedException();
+            rdr.StopDetecting();
         }
     }
 }

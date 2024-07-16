@@ -1,4 +1,4 @@
-﻿namespace Domain.Peripherals
+﻿namespace Peripherals
 {
     public interface IPeripheral
     {

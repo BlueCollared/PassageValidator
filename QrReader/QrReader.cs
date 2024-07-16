@@ -1,8 +1,11 @@
 ﻿using Domain.Peripherals.Qr;
+using Peripherals;
 
 namespace QrReader
 {
-    public class QrReader : IQrReader
+    interface IQrReader : IPeripheral { }
+
+    public class QrReader : IQrReader, Domain.Peripherals.Qr.IQrReader
     {
         public string id => throw new NotImplementedException();
 
@@ -15,27 +18,17 @@ namespace QrReader
             throw new NotImplementedException();
         }
 
-        public bool StartDetecting()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartListeningStatus(IObserver<QrReaderStatus> qrRdrStatus)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Stop()
         {
             throw new NotImplementedException();
         }
 
-        public void StopDetecting()
+        public bool StartDetecting()
         {
             throw new NotImplementedException();
         }
 
-        public IDisposable Subscribe(IObserver<QrReaderStatus> observer)
+        public void StopDetecting()
         {
             throw new NotImplementedException();
         }

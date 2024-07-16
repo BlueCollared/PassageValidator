@@ -11,7 +11,7 @@ namespace Domain.Peripherals.Passage
 
     // It is possible that around the time authroization is submitted, intrusion gets detected.
     // It is its job to suppress raising the Intrusion (by first making sure that Intrusion has really removed)
-    public interface IPassageController : IPeripheral
+    public interface IPassageController
     {
         IObservable<GateStatus> GateStatusObservable { get; }
 
@@ -23,6 +23,8 @@ namespace Domain.Peripherals.Passage
         // returns true if the request is accepted
 
         // {`ticketId`, authorizationId} would be bounced back in the reply when the passage is done/not done/intrusion on other side
-        bool Authorize(string ticketId, int nAuthorizations); 
+        bool Authorize(int nAuthorizations);
+
+        IObservable<ZoneEvent> ZoneEvents { get; }
     }
 }

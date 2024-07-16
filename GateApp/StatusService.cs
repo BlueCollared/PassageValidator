@@ -1,0 +1,34 @@
+﻿using Domain.Services.Modes;
+using System.Reactive.Linq;
+
+namespace GateApp
+{
+    public record ModuleAStatus;
+    public record ModuleBStatus;
+    // Application Layer
+    public interface IStatusService
+    {
+        IObservable<EquipmentStatus> GetStatusUpdates();
+    }
+
+    public class StatusService : IStatusService
+    {
+        private readonly IObservable<ModuleAStatus> _moduleAStatusStream;
+        private readonly IObservable<ModuleBStatus> _moduleBStatusStream;
+        public StatusService(
+        IObservable<ModuleAStatus> moduleAStatusStream,
+            IObservable<ModuleBStatus> moduleBStatusStream)
+        {
+            _moduleAStatusStream = moduleAStatusStream;
+            _moduleBStatusStream = moduleBStatusStream;
+        }
+
+        public IObservable<EquipmentStatus> GetStatusUpdates()
+        {
+            throw new NotImplementedException();
+//            return _moduleAStatusStream
+//                .Merge<EquipmentStatus>(_moduleBStatusStream);
+        }
+    }
+
+}
