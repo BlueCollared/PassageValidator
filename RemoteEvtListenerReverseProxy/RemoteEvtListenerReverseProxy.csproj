@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RecordsRemoteListener\RecordsRemoteListener.csproj" />
+    <ProjectReference Include="..\RemoteServerDTOs\RemoteServerDTOs.csproj" />
   </ItemGroup>
 
 </Project>

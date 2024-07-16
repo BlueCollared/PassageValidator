@@ -9,7 +9,12 @@
         public string version;
     }
 
-    public class SoftwareVersionsAtServer
+    public class SoftwareVersionsAtServer : BaseRequest
+    {
+        public List<SoftwareVersion> versions = new();
+    }
+
+    public class SoftwareVersionsAtServerResponse : BaseResponse
     {
         public List<SoftwareVersion> versions = new();
     }

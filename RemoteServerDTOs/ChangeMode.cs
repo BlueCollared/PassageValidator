@@ -1,8 +1,10 @@
-﻿namespace RecordsRemoteListener
+﻿using Domain;
+
+namespace RecordsRemoteListener
 {
     public class ChangeMode : BaseRequest
     {
-        public int mode;
+        public OpMode mode;
     }
 
     public class ChangeModeResponse : BaseResponse

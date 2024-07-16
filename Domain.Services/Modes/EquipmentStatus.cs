@@ -1,22 +1,6 @@
 ﻿namespace Domain.Services.Modes
 {
-    public enum Mode {
-        AppBooting,
-        InService,
-        OOS,
-        OOO,
-        Maintenance,
-        Emergency
-    };
-
-    public enum OpMode
-    {
-        InService,
-        OOS,
-        Emergency
-    }
-
-    public enum ModuleStatus { Good, Bad, Unknown};
+    public enum ModuleStatus { Good, Bad, Unknown };
     public record EquipmentStatus(
         ModuleStatus GateHardware = ModuleStatus.Unknown,
         ModuleStatus QrEntry = ModuleStatus.Unknown,

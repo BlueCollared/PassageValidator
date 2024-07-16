@@ -23,13 +23,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{268EC1FE-22F6-411C-9663-698171BCDD4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteEvtListenerReverseProxy", "RemoteEvtListenerReverseProxy\RemoteEvtListenerReverseProxy.csproj", "{0BA94EA8-F55F-4946-86F4-F1D63A052401}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteEvtListenerReverseProxy", "RemoteEvtListenerReverseProxy\RemoteEvtListenerReverseProxy.csproj", "{0BA94EA8-F55F-4946-86F4-F1D63A052401}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RemoteListener", "RemoteListener", "{7454EC2D-CB9F-468D-B0D0-8A8553238F5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordsRemoteListener", "RecordsRemoteListener\RecordsRemoteListener.csproj", "{D4E33F18-3C27-43E4-8F5C-D1843B21709C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecordsRemoteListener", "RecordsRemoteListener\RecordsRemoteListener.csproj", "{D4E33F18-3C27-43E4-8F5C-D1843B21709C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializationHelper", "SerializationHelper\SerializationHelper.csproj", "{39CFF4F2-9840-4FA8-81BF-1FFE8D86DA17}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{579A98DB-89F3-4CEC-ACBE-6F0910CF6EDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteServerDTOs", "RemoteServerDTOs\RemoteServerDTOs.csproj", "{DAC5DFFA-1F63-431D-971C-8145A0B044FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,15 +75,16 @@ Global
 		{D4E33F18-3C27-43E4-8F5C-D1843B21709C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4E33F18-3C27-43E4-8F5C-D1843B21709C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4E33F18-3C27-43E4-8F5C-D1843B21709C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39CFF4F2-9840-4FA8-81BF-1FFE8D86DA17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39CFF4F2-9840-4FA8-81BF-1FFE8D86DA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39CFF4F2-9840-4FA8-81BF-1FFE8D86DA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39CFF4F2-9840-4FA8-81BF-1FFE8D86DA17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAC5DFFA-1F63-431D-971C-8145A0B044FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC5DFFA-1F63-431D-971C-8145A0B044FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC5DFFA-1F63-431D-971C-8145A0B044FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC5DFFA-1F63-431D-971C-8145A0B044FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{6FF97971-5969-40C4-B53E-016FA60B9324} = {579A98DB-89F3-4CEC-ACBE-6F0910CF6EDF}
 		{7CCBB037-8FF1-455C-8EAA-7DAE836A95C5} = {4D78BE0D-E5C7-437B-BEB4-D28726C5D2E5}
 		{43912E30-A826-4C85-9F72-9F0C9F41E23E} = {4D78BE0D-E5C7-437B-BEB4-D28726C5D2E5}
 		{B725A6C6-3B9C-4E83-8C7E-F36A442ECD74} = {37855AD1-F327-4952-A3D1-68E62F4D883C}
@@ -89,6 +92,7 @@ Global
 		{39A054A3-F51F-4281-99A7-AE3AD44C5020} = {A9CC10FE-C9DB-471C-B472-3864FDA27CB0}
 		{0BA94EA8-F55F-4946-86F4-F1D63A052401} = {7454EC2D-CB9F-468D-B0D0-8A8553238F5D}
 		{D4E33F18-3C27-43E4-8F5C-D1843B21709C} = {7454EC2D-CB9F-468D-B0D0-8A8553238F5D}
+		{DAC5DFFA-1F63-431D-971C-8145A0B044FD} = {579A98DB-89F3-4CEC-ACBE-6F0910CF6EDF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}
