@@ -2,28 +2,30 @@
 
 namespace Domain.Peripherals.Qr
 {
-    public class QrReaderMgr
+    // it is getting little difficult to decide whether to make it implement IQrReaderStatus, IQrInfoStatus. Ideally we keep it so simple that there is not need of it
+    // the 
+    public class QrReaderMgr //: IQrReaderStatus, IQrInfoStatus
     {
-        private readonly IQrReader rdr;
-        IQrReader qrRdr; // if we would have multiple readers, we would use a List<IQrReader>. Not unnecessarily complicating.
+        private readonly IQrInfoStatus qrRdrInfo;
+        IQrReaderStatus rdr;
+
         IDisposable qrRdrStatusSubscription;
         //List<IQrReader> qrRdrs = new List<IQrReader>();
         public QrReaderMgr(
-            //IQrReaderFactory qrFactory, // I don't see any benefit in using IQrReaderFactory because we are creating IQrReader in the constructor itself
             //QrMgrConfig config,
-            IQrReader rdr
-            //Action<QrCodeInfo> qrAppeared,
-//            IScheduler scheduler// TODO: see if we need it here OR at its client level OR not at all
+            IQrInfoStatus qrRdrInfo,
+        IQrReaderStatus rdr
             )
         {
             this.rdr = rdr;
-            qrRdrStatusSubscription =
+            this.qrRdrInfo = qrRdrInfo;
+            //qrRdrStatusSubscription =
             //((IObservable<QrReaderStatus>)qrRdr)
-            qrRdr.qrReaderStatusObservable
-                .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(x => {
-                    // TODO: raise event (pump into message bus)
-                });
+            //rdr.qrReaderStatusObservable
+            //    .ObserveOn(SynchronizationContext.Current)
+            //    .Subscribe(x => {
+            //        // TODO: raise event (pump into message bus)
+            //    });
             //rdr.StartListeningStatus(this);
             // TODO: create IQrReader's using {qrFactory, config} and push them to qrRdrs.
             // `config` would also contain the `id` of that reader. This `id` would be bounced back in the 
@@ -33,21 +35,27 @@ namespace Domain.Peripherals.Qr
         readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
         
         public IObservable<QrReaderStatus> StatusStream
-            => qrRdr.qrReaderStatusObservable
+            => rdr.qrReaderStatusObservable
             .ObserveOn(syncContextClient);
 
         public IObservable<QrCodeInfo> QrCodeStream
-            => qrRdr.qrCodeInfoObservable
+            => qrRdrInfo.qrCodeInfoObservable
             .ObserveOn(syncContextClient);
 
-        public void StartDetecting()
-        {
-            rdr.StartDetecting();
-        }
+//        public IObservable<QrReaderStatus> qrReaderStatusObservable => throw new NotImplementedException();
+
+//        public IObservable<QrCodeInfo> qrCodeInfoObservable => throw new NotImplementedException();
+
 
         public void StopDetecting()
         {
-            rdr.StopDetecting();
+            qrRdrInfo.StopDetecting();
+        }
+
+        public bool StartDetecting()
+        {
+            qrRdrInfo.StartDetecting();
+            return true;
         }
     }
 }

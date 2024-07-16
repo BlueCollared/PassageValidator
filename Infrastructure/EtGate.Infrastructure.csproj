@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\GateApp\GateApp.csproj" />
-    <ProjectReference Include="..\RemoteServerDTOs\RemoteServerDTOs.csproj" />
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
+    <ProjectReference Include="..\GateApp\EtGate.GateApp.csproj" />
+    <ProjectReference Include="..\RemoteServerDTOs\EtGate.RemoteServerDTOs.csproj" />
   </ItemGroup>
 
 </Project>

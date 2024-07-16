@@ -3,5 +3,6 @@
     public interface IValidationMgr
     {
         bool bWorking { get; }
+        bool Validate();
     }
 }

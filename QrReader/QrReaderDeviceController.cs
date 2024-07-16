@@ -5,7 +5,7 @@ namespace QrReader
 {
     interface IQrReader : IPeripheral { }
 
-    public class QrReader : IQrReader, Domain.Peripherals.Qr.IQrReader
+    public class QrReaderDeviceController : IQrReader, IQrReaderStatus, IQrInfoStatus
     {
         public string id => throw new NotImplementedException();
 

@@ -6,8 +6,8 @@ namespace Domain.Services
     {
         bool ValidateQrCode(Ticket ticket);
         void UpdatePassengerStatus(bool hasCrossedZoneB);
-        void UpdateGateStatus(bool isQrReaderWorking, bool isFlapControllerWorking);
-        GateStatus GetGateStatus();
+        //void UpdateGateStatus(bool isQrReaderWorking, bool isFlapControllerWorking);
+        //GateStatus GetGateStatus();
         IPassageController PassageController { get; }
 
     }

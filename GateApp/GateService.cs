@@ -39,12 +39,13 @@ namespace GateApp
 
         public void UpdateGateStatus(bool isQrReaderWorking, bool isFlapControllerWorking)
         {
-            _ticketValidationService.UpdateGateStatus(isQrReaderWorking, isFlapControllerWorking);
+            //_ticketValidationService.UpdateGateStatus(isQrReaderWorking, isFlapControllerWorking);
         }
 
         public GateStatus GetGateStatus()
         {
-            return _ticketValidationService.GetGateStatus();
+            throw new NotImplementedException();
+            //return _ticketValidationService.GetGateStatus();
         }
     }
 }

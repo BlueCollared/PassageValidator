@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Domain.Services.InService
 {
-    public record Authorization(string qrId, int nAuthorizations);
+    public record Authorization(int nAuthorizations);
     public class InServiceMgr : ISubModeMgr
     {
         private readonly IValidationMgr validationMgr;        

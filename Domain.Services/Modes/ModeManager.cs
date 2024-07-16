@@ -16,11 +16,19 @@ namespace Domain.Services.Modes
         OpMode opModeDemanded;
         public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
         public Mode CurMode => EquipmentModeSubject.Value;
-
-        public ModeManager(QrReaderMgr qrReaderMgr, OpMode opModeDemanded = OpMode.InService)
+        //public Mode GetMode() { return EquipmentModeSubject.Value; }
+        static int instanceId = 0;
+        public readonly int myInstanceId = ++instanceId;
+        public ModeManager(QrReaderMgr qrReaderMgr, 
+            IValidationMgr validationMgr, 
+            IPassageManager passageMgr,
+            OpMode opModeDemanded = OpMode.InService)
         {
             equipmentStatus = new();
             this.qrReaderMgr = qrReaderMgr;
+            this.validationMgr = validationMgr;
+            this.passageMgr = passageMgr;
+
             qrReaderMgr.StatusStream.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); }
                 );
@@ -57,7 +65,7 @@ namespace Domain.Services.Modes
 
         private void DoModeRelated()
         {
-            Mode modeBefore = CurMode;
+            Mode modeBefore = CurMode;//GetMode();//CurMode;
             Mode modeAfter;
             if (equipmentStatus.QrEntry == ModuleStatus.Good)
                 modeAfter = Mode.InService;
@@ -81,6 +89,7 @@ namespace Domain.Services.Modes
             }
 
             EquipmentModeSubject.OnNext(modeAfter);
+            //var z = EquipmentModeSubject.Value;
         }
 
         ISubModeMgr curModeMgr;

@@ -7,11 +7,11 @@ using System.Reactive.Subjects;
 namespace IER2
 {
     // Infrastructure Layer
-    public class PasageController : IPassageController
+    public class PasageDeviceController : IPassageController
     {
         private readonly Subject<ZoneEvent> _zoneEventsSubject = new Subject<ZoneEvent>();
 
-        public PasageController()
+        public PasageDeviceController()
         {
             // Simulate SDK interaction
             //Task.Run(async () =>

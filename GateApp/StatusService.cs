@@ -1,4 +1,5 @@
-﻿using Domain.Services.Modes;
+﻿using Domain.Peripherals.Qr;
+using Domain.Services.Modes;
 using System.Reactive.Linq;
 
 namespace GateApp
@@ -13,10 +14,10 @@ namespace GateApp
 
     public class StatusService : IStatusService
     {
-        private readonly IObservable<ModuleAStatus> _moduleAStatusStream;
+        private readonly IObservable<QrReaderStatus> _moduleAStatusStream;
         private readonly IObservable<ModuleBStatus> _moduleBStatusStream;
         public StatusService(
-        IObservable<ModuleAStatus> moduleAStatusStream,
+        IObservable<QrReaderStatus> moduleAStatusStream,
             IObservable<ModuleBStatus> moduleBStatusStream)
         {
             _moduleAStatusStream = moduleAStatusStream;

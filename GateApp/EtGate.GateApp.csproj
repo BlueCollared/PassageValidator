@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="GateService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="GateService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
+    <ProjectReference Include="..\QrReader\EtGate.QrReader.csproj" />
+  </ItemGroup>
+
+</Project>

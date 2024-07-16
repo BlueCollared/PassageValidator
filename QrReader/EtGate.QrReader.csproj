@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="6.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
+    <ProjectReference Include="..\PeripheralGen\EtGate.PeripheralGen.csproj" />
   </ItemGroup>
 
 </Project>
