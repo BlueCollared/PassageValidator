@@ -32,15 +32,18 @@ namespace Domain.Peripherals.Qr
             // event that is raised when the qr is detected
         }
 
-        readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
+        //readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
         
         public IObservable<QrReaderStatus> StatusStream
             => rdr.qrReaderStatusObservable
-            .ObserveOn(syncContextClient);
+            //.ObserveOn(syncContextClient) // I remove it from here, otherwise the unit tests fail (but as per https://chatgpt.com/c/4df3ed5d-cada-4f6f-8355-e6a060c87aad would not fail in normal environment; only in the unit test environment)
+            // also, it indicates leaky abstraction. I now move this to `IQrReaderStatus`
+            ;
 
         public IObservable<QrCodeInfo> QrCodeStream
             => qrRdrInfo.qrCodeInfoObservable
-            .ObserveOn(syncContextClient);
+            //.ObserveOn(syncContextClient)
+            ;
 
 //        public IObservable<QrReaderStatus> qrReaderStatusObservable => throw new NotImplementedException();
 

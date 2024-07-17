@@ -15,10 +15,8 @@ namespace Domain.Services.Modes
         BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
         OpMode opModeDemanded;
         public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
-        public Mode CurMode => EquipmentModeSubject.Value;
-        //public Mode GetMode() { return EquipmentModeSubject.Value; }
-        static int instanceId = 0;
-        public readonly int myInstanceId = ++instanceId;
+        public Mode CurMode => EquipmentModeSubject.Value;        
+        
         public ModeManager(QrReaderMgr qrReaderMgr, 
             IValidationMgr validationMgr, 
             IPassageManager passageMgr,
@@ -89,7 +87,6 @@ namespace Domain.Services.Modes
             }
 
             EquipmentModeSubject.OnNext(modeAfter);
-            //var z = EquipmentModeSubject.Value;
         }
 
         ISubModeMgr curModeMgr;
