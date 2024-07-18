@@ -43,7 +43,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{04AF3EF2-656
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{22E49B18-DBF7-4090-A18B-3F4DBF32A484}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.Domain.Tests", "EtGate.Domain.Tests\EtGate.Domain.Tests.csproj", "{A2344901-1D3B-4710-BBDF-A6DC1B42DA05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtGate.Domain.Tests", "EtGate.Domain.Tests\EtGate.Domain.Tests.csproj", "{A2344901-1D3B-4710-BBDF-A6DC1B42DA05}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dummy", "Dummy", "{7DA039EE-3729-48B1-B052-5DFBA4709381}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyQrReaderDeviceController", "DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj", "{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_DummyQrReaderDeviceController", "Test_DummyQrReaderDeviceController\Test_DummyQrReaderDeviceController.csproj", "{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +109,14 @@ Global
 		{A2344901-1D3B-4710-BBDF-A6DC1B42DA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2344901-1D3B-4710-BBDF-A6DC1B42DA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2344901-1D3B-4710-BBDF-A6DC1B42DA05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +140,8 @@ Global
 		{95946C44-1C18-42F6-9188-16C3D17CC52F} = {801DFD9F-8ACC-48E4-8077-982E29B54271}
 		{DB4A5878-53CD-4233-ABF4-C8764976DB83} = {801DFD9F-8ACC-48E4-8077-982E29B54271}
 		{A2344901-1D3B-4710-BBDF-A6DC1B42DA05} = {22E49B18-DBF7-4090-A18B-3F4DBF32A484}
+		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED} = {7DA039EE-3729-48B1-B052-5DFBA4709381}
+		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC} = {7DA039EE-3729-48B1-B052-5DFBA4709381}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}

@@ -1,34 +1,29 @@
 ﻿using Domain.Peripherals.Qr;
+using EtGate.QrReader;
 using Peripherals;
 
 namespace QrReader
 {
     interface IQrReader : IPeripheral { }
 
-    public class QrReaderDeviceController : IQrReader, IQrReaderStatus, IQrInfoStatus
+    public class QrReaderDeviceController : QrReaderDeviceControllerBase
     {
-        public string id => throw new NotImplementedException();
-
-        public IObservable<QrCodeInfo> qrCodeInfoObservable => throw new NotImplementedException();
-
-        public IObservable<QrReaderStatus> qrReaderStatusObservable => throw new NotImplementedException();
-
-        public bool Start()
+        public override bool Start()
         {
             throw new NotImplementedException();
         }
 
-        public bool Stop()
+        public override bool StartDetecting()
         {
             throw new NotImplementedException();
         }
 
-        public bool StartDetecting()
+        public override bool Stop()
         {
             throw new NotImplementedException();
         }
 
-        public void StopDetecting()
+        public override void StopDetecting()
         {
             throw new NotImplementedException();
         }
