@@ -8,19 +8,19 @@ namespace Test_DummyQrReaderDeviceController
             InitializeComponent();
         }
         DummyQrReaderDeviceController.DummyQrReaderDeviceController qrController = new();
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-
-        }
 
         private void btnStartDetection_Click(object sender, EventArgs e)
         {
             qrController.StartDetecting();
-            qrController.qrReaderStatusObservable.Subscribe(x => {
+            qrController.qrReaderStatusObservable.Subscribe(x =>
+            {
                 txtLog.Text += x.bConnected.ToString();
             });
+        }
+
+        private void btnStopDetect_Click(object sender, EventArgs e)
+        {
+            qrController.StopDetecting();
         }
     }
 }

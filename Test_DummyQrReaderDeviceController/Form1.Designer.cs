@@ -30,6 +30,7 @@
         {
             btnStartDetection = new Button();
             txtLog = new TextBox();
+            btnStopDetect = new Button();
             SuspendLayout();
             // 
             // btnStartDetection
@@ -50,11 +51,22 @@
             txtLog.Size = new Size(216, 202);
             txtLog.TabIndex = 1;
             // 
+            // btnStopDetect
+            // 
+            btnStopDetect.Location = new Point(114, 170);
+            btnStopDetect.Name = "btnStopDetect";
+            btnStopDetect.Size = new Size(104, 23);
+            btnStopDetect.TabIndex = 2;
+            btnStopDetect.Text = "Stop Detect";
+            btnStopDetect.UseVisualStyleBackColor = true;
+            btnStopDetect.Click += btnStopDetect_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnStopDetect);
             Controls.Add(txtLog);
             Controls.Add(btnStartDetection);
             Name = "Form1";
@@ -67,5 +79,6 @@
 
         private Button btnStartDetection;
         private TextBox txtLog;
+        private Button btnStopDetect;
     }
 }

@@ -20,11 +20,11 @@ namespace DummyQrReaderDeviceController
                 {
                     qrReaderStatusSubject.OnNext(new Domain.Peripherals.Qr.QrReaderStatus(false, "", false));
 
-                    Thread.Sleep(10000);
+                    Thread.Sleep(5000);
 
                     qrReaderStatusSubject.OnNext(new Domain.Peripherals.Qr.QrReaderStatus(true, "", false));
 
-                        Thread.Sleep(10000);
+                        Thread.Sleep(5000);
                     }
             });
             return true;
@@ -32,6 +32,7 @@ namespace DummyQrReaderDeviceController
 
         public override bool Stop()
         {
+            bStop = true;
             return true ;
         }
 

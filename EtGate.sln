@@ -47,9 +47,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtGate.Domain.Tests", "EtGa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dummy", "Dummy", "{7DA039EE-3729-48B1-B052-5DFBA4709381}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyQrReaderDeviceController", "DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj", "{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyQrReaderDeviceController", "DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj", "{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_DummyQrReaderDeviceController", "Test_DummyQrReaderDeviceController\Test_DummyQrReaderDeviceController.csproj", "{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_DummyQrReaderDeviceController", "Test_DummyQrReaderDeviceController\Test_DummyQrReaderDeviceController.csproj", "{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{191A6E67-BBCA-4B96-8F93-5F65E95D1C69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -142,6 +144,7 @@ Global
 		{A2344901-1D3B-4710-BBDF-A6DC1B42DA05} = {22E49B18-DBF7-4090-A18B-3F4DBF32A484}
 		{BB3D5D48-DF9E-484E-BDF7-D201F803D7ED} = {7DA039EE-3729-48B1-B052-5DFBA4709381}
 		{1CB31927-A6E6-4A98-8D1B-21EC4D3451CC} = {7DA039EE-3729-48B1-B052-5DFBA4709381}
+		{191A6E67-BBCA-4B96-8F93-5F65E95D1C69} = {04AF3EF2-656A-4474-9416-3EB70A2163F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}
