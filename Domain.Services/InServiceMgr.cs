@@ -30,7 +30,7 @@ namespace Domain.Services.InService
         //BehaviorSubject<PassengerStateX> PassengerStateSubject = new BehaviorSubject<PassengerStateX>(PassengerStateX.NoValidationsQueued);
         //public PassengerStateX PassengerCurState => PassengerStateSubject.Value;
 
-        enum State
+        public enum State
         {
             Unknown, // only when InServiceMgr is created
             Idle,
@@ -49,6 +49,8 @@ namespace Domain.Services.InService
             PassengerInTransit_NoMorePendingAuthorizations,
             SomeAuthorization_s_Queued_ThatHaventBeginTransit
         }
+
+        public IObservable<State> StateObservable;
 
         public InServiceMgr(
             IValidationMgr validationMgr,
