@@ -1,10 +1,11 @@
 ﻿using Domain.Peripherals.Qr;
-using QrReader;
+using Peripherals;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace EtGate.QrReader
 {
+    interface IQrReader : IPeripheral { }
     public abstract class QrReaderDeviceControllerBase : IQrReader, IQrReaderStatus, IQrInfoStatus
     {
         protected Subject<QrCodeInfo> qrCodeInfoSubject = new();

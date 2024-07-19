@@ -1,11 +1,7 @@
-﻿using Domain.Peripherals.Qr;
-using EtGate.QrReader;
-using Peripherals;
+﻿using EtGate.QrReader;
 
 namespace QrReader
 {
-    interface IQrReader : IPeripheral { }
-
     public class QrReaderDeviceController : QrReaderDeviceControllerBase
     {
         public override bool Start()

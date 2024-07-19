@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
-    <ProjectReference Include="..\EtGate.Devices.Interfaces\EtGate.Devices.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>
