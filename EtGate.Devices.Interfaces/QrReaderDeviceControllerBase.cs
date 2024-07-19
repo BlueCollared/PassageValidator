@@ -17,8 +17,9 @@ namespace EtGate.QrReader
         public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
 
         public abstract bool Start();
-        public abstract bool StartDetecting();
-        public abstract bool Stop();
+        public abstract void Stop();
+
+        public abstract bool StartDetecting();        
         public abstract void StopDetecting();
     }
 }

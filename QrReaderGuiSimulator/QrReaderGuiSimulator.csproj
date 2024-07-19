@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
+    <ProjectReference Include="..\EtGate.QrReader.Proxy\EtGate.QrReader.Proxy.csproj" />
+    <ProjectReference Include="..\NamedPipeHandler\NamedPipeHandler.csproj" />
+  </ItemGroup>
+
+</Project>

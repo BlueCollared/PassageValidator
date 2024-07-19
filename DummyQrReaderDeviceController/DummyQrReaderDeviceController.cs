@@ -30,10 +30,9 @@ namespace DummyQrReaderDeviceController
             return true;
         }
 
-        public override bool Stop()
+        public override void Stop()
         {
-            bStop = true;
-            return true ;
+            bStop = true;            
         }
 
         public override void StopDetecting()

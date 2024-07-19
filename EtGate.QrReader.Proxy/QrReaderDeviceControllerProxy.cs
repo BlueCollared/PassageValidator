@@ -1,12 +1,16 @@
-﻿using EtGate.QrReader;
+﻿using EtGate.Proxy;
 
-namespace QrReader
+namespace EtGate.QrReader.Proxy
 {
-    public class QrReaderDeviceController : QrReaderDeviceControllerBase
+    public class QrReaderDeviceControllerProxy : QrReaderDeviceControllerBase
     {
+        public QrReaderDeviceControllerProxy()
+        {
+            AsyncCaller svr = new AsyncCaller("QrReader");
+        }
         public override bool Start()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override bool StartDetecting()
