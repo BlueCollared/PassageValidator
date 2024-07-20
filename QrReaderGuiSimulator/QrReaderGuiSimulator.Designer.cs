@@ -28,31 +28,111 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            btnStatusChanged = new Button();
+            chkConnected = new CheckBox();
+            label1 = new Label();
+            txtFirmware = new TextBox();
+            chkScanning = new CheckBox();
+            groupBox1 = new GroupBox();
+            chkStartAnswer = new CheckBox();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
+            // btnStatusChanged
             // 
-            button1.Location = new Point(455, 89);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 0;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            btnStatusChanged.Location = new Point(60, 31);
+            btnStatusChanged.Name = "btnStatusChanged";
+            btnStatusChanged.Size = new Size(120, 66);
+            btnStatusChanged.TabIndex = 0;
+            btnStatusChanged.Text = "Status Changed";
+            btnStatusChanged.UseVisualStyleBackColor = true;
+            btnStatusChanged.Click += btnStatusChanged_Click;
+            // 
+            // chkConnected
+            // 
+            chkConnected.AutoSize = true;
+            chkConnected.Location = new Point(30, 33);
+            chkConnected.Name = "chkConnected";
+            chkConnected.Size = new Size(89, 19);
+            chkConnected.TabIndex = 1;
+            chkConnected.Text = "Connected?";
+            chkConnected.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(33, 95);
+            label1.Name = "label1";
+            label1.Size = new Size(97, 15);
+            label1.TabIndex = 2;
+            label1.Text = "Firmware Version";
+            // 
+            // txtFirmware
+            // 
+            txtFirmware.Location = new Point(30, 69);
+            txtFirmware.Name = "txtFirmware";
+            txtFirmware.Size = new Size(100, 23);
+            txtFirmware.TabIndex = 3;
+            txtFirmware.Text = "3.2";
+            // 
+            // chkScanning
+            // 
+            chkScanning.AutoSize = true;
+            chkScanning.Location = new Point(30, 134);
+            chkScanning.Name = "chkScanning";
+            chkScanning.Size = new Size(80, 19);
+            chkScanning.TabIndex = 4;
+            chkScanning.Text = "Scanning?";
+            chkScanning.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(chkConnected);
+            groupBox1.Controls.Add(chkScanning);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(txtFirmware);
+            groupBox1.Location = new Point(50, 103);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(144, 179);
+            groupBox1.TabIndex = 5;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Status";
+            // 
+            // chkStartAnswer
+            // 
+            chkStartAnswer.AutoSize = true;
+            chkStartAnswer.Location = new Point(265, 56);
+            chkStartAnswer.Name = "chkStartAnswer";
+            chkStartAnswer.Size = new Size(92, 19);
+            chkStartAnswer.TabIndex = 6;
+            chkStartAnswer.Text = "Start Answer";
+            chkStartAnswer.UseVisualStyleBackColor = true;
+            chkStartAnswer.CheckedChanged += chkStartAnswer_CheckedChanged;
             // 
             // QrReaderGuiSimulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button1);
+            Controls.Add(chkStartAnswer);
+            Controls.Add(groupBox1);
+            Controls.Add(btnStatusChanged);
             Name = "QrReaderGuiSimulator";
             Text = "Form1";
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Button button1;
+        private Button btnStatusChanged;
+        private CheckBox chkConnected;
+        private Label label1;
+        private TextBox txtFirmware;
+        private CheckBox chkScanning;
+        private GroupBox groupBox1;
+        private CheckBox chkStartAnswer;
     }
 }

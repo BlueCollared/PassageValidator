@@ -1,28 +1,32 @@
-﻿namespace EtGate.QrReader.Proxy
+﻿using NamedPipeHandler;
+
+namespace EtGate.QrReader.Proxy
 {
-    public class StartDetectingReq
+    
+
+    public class StartDetectingReq : IRequest
     { }
 
     public class StartDetectingResp
     {
         public bool x;
     }
-
-    public class StartReq
+    
+    public class StartReq : IRequest
     { }
 
-    public class StartResp
+    public class StartResp : IResponse
     {
         public bool x;
     }
 
-    public class StopReq
+    public class StopReq : IRequest
     { }
 
     public class StopResp
     { }
 
-    public class StopDetectingReq
+    public class StopDetectingReq : IRequest
     { }
 
     public class StopDetectingResp

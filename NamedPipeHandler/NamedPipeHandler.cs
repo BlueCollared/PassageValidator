@@ -1,57 +1,61 @@
 ﻿using System.IO.Pipes;
 using System.Text;
 
-public abstract class NamedPipeHandler
+namespace PipeLib
 {
-    protected NamedPipeServerStream pipeServer;
-    protected string pipeName;
-
-    public NamedPipeHandler(string pipeName)
+    public abstract class NamedPipeHandler
     {
-        this.pipeName = pipeName;
-        pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-        StartNamedPipeServer();
-    }
+        protected NamedPipeServerStream pipeServer;
+        protected string pipeName;
 
-    private void StartNamedPipeServer()
-    {
-        Task.Factory.StartNew(() => ListenForClients(), TaskCreationOptions.LongRunning);
-    }
-
-    private void ListenForClients()
-    {
-        pipeServer.BeginWaitForConnection(ar =>
+        public NamedPipeHandler(string pipeName)
         {
-            try
+            this.pipeName = pipeName;
+            pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            StartNamedPipeServer();
+        }
+
+        private void StartNamedPipeServer()
+        {
+            Task.Factory.StartNew(() => ListenForClients(), TaskCreationOptions.LongRunning);
+        }
+
+        private void ListenForClients()
+        {
+            pipeServer.BeginWaitForConnection(ar =>
             {
-                pipeServer.EndWaitForConnection(ar);
-                ReadFromPipe();
-            }
-            catch (Exception ex)
-            {
-                OnError(ex);
-            }
-        }, null);
-    }
+                try
+                {
+                    pipeServer.EndWaitForConnection(ar);
+                    string message = ReadFromPipe();
+                    ProcessMessage(message);
+                }
+                catch (Exception ex)
+                {
+                    OnError(ex);
+                }
+            }, null);
+        }
 
-    private void ReadFromPipe()
-    {
-        byte[] buffer = new byte[1024];
-        int bytesRead = pipeServer.Read(buffer, 0, buffer.Length);
-        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-        ProcessMessage(message);
-    }
+        private string ReadFromPipe()
+        {
+            byte[] buffer = new byte[1024];
+            int bytesRead = pipeServer.Read(buffer, 0, buffer.Length);
+            string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            return message;
+        }
 
-    protected void WriteToPipe(string message)
-    {
-        byte[] buffer = Encoding.UTF8.GetBytes(message);
-        pipeServer.Write(buffer, 0, buffer.Length);
-        pipeServer.WaitForPipeDrain();
-        pipeServer.Disconnect();
-        ListenForClients();
-    }
+        protected void WriteToPipe(string message)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(message);
+            pipeServer.Write(buffer, 0, buffer.Length);
+            pipeServer.WaitForPipeDrain();
+            pipeServer.Disconnect();
+            ListenForClients();
+        }
 
-    protected abstract void ProcessMessage(string message);
-    protected abstract void OnError(Exception ex);
-    public abstract void SendNotification(string notification);
+        protected abstract void ProcessMessage(string message);
+        protected abstract void OnError(Exception ex);
+        public abstract void SendNotification<T>(T notification);
+    }
 }

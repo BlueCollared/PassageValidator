@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EtGate.QrReader.Proxy\EtGate.QrReader.Proxy.csproj" />
     <ProjectReference Include="..\GateApp\EtGate.GateApp.csproj" />
   </ItemGroup>
 

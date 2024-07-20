@@ -1,9 +1,9 @@
 ﻿using Domain;
-using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services;
 using Domain.Services.Modes;
-using GateApp;
+using EtGate.QrReader;
+using EtGate.QrReader.Proxy;
 using QrReader;
 
 namespace App
@@ -14,12 +14,12 @@ namespace App
         {
             //GateApp.Application app = new();
 
-            QrReaderDeviceController qrRdr = new QrReaderDeviceController();
+            QrReaderDeviceControllerBase qrRdr = new QrReaderDeviceControllerProxy();
             QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, qrRdr);
-            ValidationMgr validationMgr = new ValidationMgr();
+            //ValidationMgr validationMgr = new ValidationMgr();
 
-            ModeManager modeManager = new ModeManager(qrRdrMgr, validationMgr, new PassageMgr());
-            PassageMgr passageMgr = new PassageMgr();
+            //ModeManager modeManager = new ModeManager(qrRdrMgr, validationMgr, new PassageMgr());
+            //PassageMgr passageMgr = new PassageMgr();
             
             qrRdr.Start();
 

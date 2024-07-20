@@ -3,7 +3,7 @@ using EtGate.QrReader.Proxy;
 
 namespace QrReaderGuiSimulator
 {
-    internal class ViewModel
+    public class ViewModel
     {
         internal StartDetectingResp StartDetectingResp;
         internal StartResp StartResp;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace QrReaderGuiSimulator
 {
-    internal class ReqHandler : NamedPipeHandler
+    internal class ReqHandler : PipeLib.NamedPipeHandler
     {
         private readonly ViewModel viewModel;
 
@@ -38,12 +38,12 @@ namespace QrReaderGuiSimulator
             // Handle error (e.g., log or show a message box)
         }
 
-        public override void SendNotification(string notification)
+        public override void SendNotification<T>(T notification)
         {
             using (var client = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 client.Connect();
-                byte[] buffer = Encoding.UTF8.GetBytes(notification);
+                byte[] buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(notification));
                 client.Write(buffer, 0, buffer.Length);
             }
         }

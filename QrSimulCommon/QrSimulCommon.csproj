@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EtGate.Devices.Interfaces\EtGate.Devices.Interfaces.csproj" />
-    <ProjectReference Include="..\NamedPipeHandler\NamedPipeHandler.csproj" />
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
   </ItemGroup>
 
 </Project>
