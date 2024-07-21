@@ -1,7 +1,4 @@
-﻿using Domain.Peripherals.Qr;
-using NamedPipeLibrary;
-
-namespace EtGate.QrReader.Proxy
+﻿namespace EtGate.QrReader.Proxy
 {
     //public class QrRdrStatusChanged : INotification
     //{

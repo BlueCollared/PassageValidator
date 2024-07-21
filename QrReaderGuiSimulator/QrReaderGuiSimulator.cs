@@ -13,6 +13,8 @@ namespace QrReaderGuiSimulator
         {
             InitializeComponent();
             pusher = new Pusher(QrReaderDeviceControllerProxy.pipeName);
+            vm.StartDetectingResp = new StartDetectingResp() { x = chkStartDetectAnswer.Checked };
+            vm.StartResp = new StartResp() { x = chkStartAnswer.Checked };
             //pipeHandler = new ReqHandler(QrReaderDeviceControllerProxy.pipeName, vm);
         }
 
@@ -27,6 +29,23 @@ namespace QrReaderGuiSimulator
         {
             vm.StartResp = new StartResp();
             vm.StartResp.x = chkStartAnswer.Checked;
+            PushNewVM();
+        }
+
+        private void PushNewVM()
+        {
+            pusher.Push(vm);
+        }
+
+        private void chkStartDetectAnswer_CheckedChanged(object sender, EventArgs e)
+        {
+            vm.StartDetectingResp = new StartDetectingResp() { x = chkStartDetectAnswer.Checked };
+            PushNewVM();
+        }
+
+        private void btnSynchronize_Click(object sender, EventArgs e)
+        {
+            PushNewVM();
         }
     }
 }

@@ -20,16 +20,16 @@ namespace EtGate.QrReader.Proxy
 
         static void HandleNotification(object notification)
         {
-            if (notification is QrReaderStatus x)
-            {
+            if (notification is QrReaderStatus x)            
                 parent.Notify(x);
-            }
+            else if (notification is QrCodeInfo y)
+                parent.Notify(y);
         }
 
         static void HandleViewModelChange(ViewModel message)
         {
-            //Console.WriteLine($"Received custom message: {message.Content}");
+            parent.StartAnswer = message.StartResp.x;
+            parent.StartDetectingAnswer = message.StartDetectingResp.x;
         }
-
     }
 }

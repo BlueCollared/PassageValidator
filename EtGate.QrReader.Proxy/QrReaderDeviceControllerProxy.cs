@@ -12,17 +12,17 @@ namespace EtGate.QrReader.Proxy
             //AsyncCaller svr = new AsyncCaller("QrReader");
             listener = new SimulatorListener(pipeName, this);
         }
+
+        internal bool StartAnswer;
         public override bool Start()
         {
-            //StartReq req = new();
-            //var x = JsonConvert.SerializeObject(req);
-            //var resp = client.RequestReplyAsync<StartReq, StartResp>(req, TimeSpan.FromSeconds(120));
-            return true;
+            return StartAnswer;
         }
 
+        internal bool StartDetectingAnswer;
         public override bool StartDetecting()
         {
-            return true;
+            return StartDetectingAnswer;
         }
 
         public override void Stop()
@@ -38,6 +38,11 @@ namespace EtGate.QrReader.Proxy
         internal void Notify(QrReaderStatus x)
         {
             qrReaderStatusSubject.OnNext(x);
+        }
+
+        internal void Notify(QrCodeInfo x)
+        {
+            qrCodeInfoSubject.OnNext(x);
         }
     }
 }
