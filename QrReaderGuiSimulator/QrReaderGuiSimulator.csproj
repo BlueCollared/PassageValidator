@@ -9,13 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ReqHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ReqHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
     <ProjectReference Include="..\EtGate.QrReader.Proxy\EtGate.QrReader.Proxy.csproj" />
-    <ProjectReference Include="..\NamedPipeHandler\NamedPipeHandler.csproj" />
+    <ProjectReference Include="..\NamedPipeHandler\NamedPipeLibrary.csproj" />
   </ItemGroup>
 
 </Project>

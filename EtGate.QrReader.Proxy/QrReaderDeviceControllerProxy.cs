@@ -1,15 +1,16 @@
 ﻿using Domain.Peripherals.Qr;
-using Newtonsoft.Json;
 
 namespace EtGate.QrReader.Proxy
 {
     public class QrReaderDeviceControllerProxy : QrReaderDeviceControllerBase
     {
         public const string pipeName = "QrSimul";
-        ReqClient client = new ReqClient(pipeName, new List<Type> { typeof(QrReaderStatus), typeof(QrCodeInfo) }, new List<Type> { typeof(StartReq), typeof(StartDetectingReq) });
+        SimulatorListener listener;//= new SimulatorListener(pipeName);
+        //ReqClient client = new ReqClient(pipeName, new List<Type> { typeof(QrReaderStatus), typeof(QrCodeInfo) }, new List<Type> { typeof(StartReq), typeof(StartDetectingReq) });
         public QrReaderDeviceControllerProxy()
         {
             //AsyncCaller svr = new AsyncCaller("QrReader");
+            listener = new SimulatorListener(pipeName, this);
         }
         public override bool Start()
         {
@@ -32,6 +33,11 @@ namespace EtGate.QrReader.Proxy
         public override void StopDetecting()
         {
             return;
+        }
+
+        internal void Notify(QrReaderStatus x)
+        {
+            qrReaderStatusSubject.OnNext(x);
         }
     }
 }
