@@ -9,12 +9,15 @@ namespace EtGate.QrReader.Proxy
         {
             SimulatorListener.parent = parent;
             var puller = new NamedPipeLibrary.Puller(
-                pipeName,                
+                pipeName,
                 HandleNotification,
-                new List<Type> { typeof(QrReaderStatus), typeof(QrCodeInfo), typeof(ViewModel)}
-                //(NamedPipeLibrary.Puller.HandleUserSuppliedType<ViewModel>)HandleViewModelChange,
-                //typeof(ViewModel)
-                );            
+                new List<Type> {
+                    typeof(ViewModel),
+
+                    typeof(QrReaderStatus),
+                    typeof(QrCodeInfo)
+                    }
+                );
         }
 
         static void HandleNotification(object notification)

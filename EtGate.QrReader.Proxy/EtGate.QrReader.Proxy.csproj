@@ -7,16 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ReqClient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EtGate.Devices.Interfaces\EtGate.Devices.Interfaces.csproj" />
     <ProjectReference Include="..\NamedPipeHandler\NamedPipeLibrary.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ReqClient.cs" />
   </ItemGroup>
 
 </Project>

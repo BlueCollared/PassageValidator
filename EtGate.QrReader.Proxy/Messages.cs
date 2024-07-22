@@ -2,11 +2,7 @@
 
 namespace EtGate.QrReader.Proxy
 {
-    //public class QrRdrStatusChanged : INotification
-    //{
-    //    public QrReaderStatus status = new(true, "1.1", false);
-    //}
-    public class ViewModel //: TypeHolding
+    public class ViewModel
     {
         public StartDetectingResp StartDetectingResp { get; set; }
         public StartResp StartResp { get; set; }
@@ -22,21 +18,21 @@ namespace EtGate.QrReader.Proxy
         public bool x { get; set; }
     }
     
-    public class StartReq //: IRequest
+    public class StartReq
     { }
 
-    public class StartResp //: IResponse
+    public class StartResp
     {
         public bool x { get; set; }
     }
 
-    public class StopReq //: IRequest
+    public class StopReq
     { }
 
     public class StopResp
     { }
 
-    public class StopDetectingReq //: IRequest
+    public class StopDetectingReq
     { }
 
     public class StopDetectingResp
