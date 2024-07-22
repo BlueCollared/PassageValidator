@@ -37,7 +37,7 @@ namespace EtGate.QrReader.Proxy
 
         internal void Notify(QrReaderStatus x)
         {
-            qrReaderStatusSubject.OnNext(x);
+            statusSubject.OnNext(x);
         }
 
         internal void Notify(QrCodeInfo x)

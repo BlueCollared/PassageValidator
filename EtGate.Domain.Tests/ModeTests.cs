@@ -19,7 +19,7 @@ namespace EtGate.Domain.Tests
             // Arrange
             var qrReaderStatusSubject = new Subject<QrReaderStatus>();
             var mockQrReaderStatus = new Mock<IQrReaderStatus>();
-            mockQrReaderStatus.Setup(m => m.qrReaderStatusObservable).Returns(qrReaderStatusSubject);
+            mockQrReaderStatus.Setup(m => m.statusObservable).Returns(qrReaderStatusSubject);
 
             var qrReaderMgr = new QrReaderMgr(null, mockQrReaderStatus.Object);
             var modeManager = new ModeManager(qrReaderMgr, null, null);

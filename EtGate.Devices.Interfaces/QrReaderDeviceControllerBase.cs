@@ -9,9 +9,9 @@ namespace EtGate.QrReader
     public abstract class QrReaderDeviceControllerBase : IQrReader, IQrReaderStatus, IQrInfoStatus
     {
         protected Subject<QrCodeInfo> qrCodeInfoSubject = new();
-        protected ReplaySubject<QrReaderStatus> qrReaderStatusSubject = new();
+        protected ReplaySubject<QrReaderStatus> statusSubject = new();
 
-        public IObservable<QrReaderStatus> qrReaderStatusObservable => qrReaderStatusSubject.AsObservable()
+        public IObservable<QrReaderStatus> statusObservable => statusSubject.AsObservable()
             .ObserveOn(SynchronizationContext.Current);
 
         public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
@@ -21,5 +21,16 @@ namespace EtGate.QrReader
 
         public abstract bool StartDetecting();        
         public abstract void StopDetecting();
+
+        QrReaderStatus CurStatus { get; set; } = null;
+
+        public bool IsWorking => CurStatus == null ? false : CurStatus.bConnected;
+
+        IDisposable qrRdrStatusSubscription;
+
+        protected QrReaderDeviceControllerBase()
+        {
+            qrRdrStatusSubscription = statusObservable.Subscribe(status => CurStatus = status);
+        }
     }
 }
