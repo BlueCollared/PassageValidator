@@ -4,6 +4,7 @@ namespace EtGate.Domain.Services.Validation
 {
     public interface IValidationSubSystem : IValidate
     {
-        IObservable<ValidataionSubSystemStatus> statusObservable { get; }        
+        IObservable<OfflineValidationSystemStatus> statusObservable { get; }
+        bool IsWorking { get; }
     }
 }

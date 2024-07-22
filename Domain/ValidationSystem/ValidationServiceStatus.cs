@@ -1,14 +1,14 @@
 ﻿namespace EtGate.Domain.ValidationSystem
 {
-    abstract public class ValidataionSubSystemStatus
+    abstract public class ModuleStatus
     {        
         public virtual bool IsAvailable { get; protected set; }
     }
 
-    public class ValidationServiceStatus : ValidataionSubSystemStatus
+    public class ValidationServiceStatus : ModuleStatus
     { }
 
-    public class OfflineValidationSystemStatus : ValidataionSubSystemStatus
+    public class OfflineValidationSystemStatus : ModuleStatus
     {
         public DateTimeOffset validTill = DateTimeOffset.MinValue;
 

@@ -7,7 +7,7 @@ namespace EtGate.Domain.Services.Validation
     {
         public bool IsWorking => throw new NotImplementedException();
 
-        public IObservable<ValidataionSubSystemStatus> statusObservable => throw new NotImplementedException();
+        public IObservable<ModuleStatus> statusObservable => throw new NotImplementedException();
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {

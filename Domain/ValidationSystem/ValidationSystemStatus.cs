@@ -1,6 +1,6 @@
 ﻿namespace EtGate.Domain.ValidationSystem
 {
-    public class ValidationSystemStatus
+    public class ValidationSystemStatus : ModuleStatus
     {
         public bool bAvailable;
     }

@@ -1,6 +1,4 @@
-﻿using System.Reactive.Linq;
-
-namespace Domain.Peripherals.Qr
+﻿namespace Domain.Peripherals.Qr
 {
     // it is getting little difficult to decide whether to make it implement IQrReaderStatus, IQrInfoStatus. Ideally we keep it so simple that there is not need of it
     // the 
