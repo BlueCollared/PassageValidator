@@ -1,5 +1,4 @@
 ﻿using Domain.Peripherals.Qr;
-using QrReaderGuiSimulator;
 
 namespace EtGate.QrReader.Proxy
 {
@@ -12,18 +11,20 @@ namespace EtGate.QrReader.Proxy
             var puller = new NamedPipeLibrary.Puller(
                 pipeName,                
                 HandleNotification,
-                new List<Type> { typeof(QrReaderStatus)},
-                (NamedPipeLibrary.Puller.HandleUserSuppliedType<ViewModel>)HandleViewModelChange,
-                typeof(ViewModel)
+                new List<Type> { typeof(QrReaderStatus), typeof(QrCodeInfo), typeof(ViewModel)}
+                //(NamedPipeLibrary.Puller.HandleUserSuppliedType<ViewModel>)HandleViewModelChange,
+                //typeof(ViewModel)
                 );            
         }
 
         static void HandleNotification(object notification)
         {
-            if (notification is QrReaderStatus x)            
+            if (notification is QrReaderStatus x)
                 parent.Notify(x);
             else if (notification is QrCodeInfo y)
                 parent.Notify(y);
+            else if (notification is ViewModel vm)
+                HandleViewModelChange(vm);
         }
 
         static void HandleViewModelChange(ViewModel message)

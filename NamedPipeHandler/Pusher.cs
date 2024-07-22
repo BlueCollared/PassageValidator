@@ -1,5 +1,4 @@
 ﻿using System.IO.Pipes;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 
 namespace NamedPipeLibrary
@@ -17,10 +16,12 @@ namespace NamedPipeLibrary
             using (var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out))
             {
                 pipeClient.Connect();
-                var json = JsonSerializer.Serialize(message);
+                string serialized = JsonSerializer.Serialize(message);
+                
                 using (var writer = new StreamWriter(pipeClient))
                 {
-                    writer.Write(json);
+                    MessageWrapper wrapper = new MessageWrapper { TypeName = message.GetType().AssemblyQualifiedName, JsonPayload = serialized };
+                    writer.Write(JsonSerializer.Serialize(wrapper));
                 }
             }
         }
