@@ -1,7 +1,7 @@
 ﻿using Domain.Peripherals.Qr;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using ModuleStatus = EtGate.Domain.ValidationSystem.ModuleStatus;
+using ModuleStatus = EtGate.Domain.ModuleStatus;
 
 namespace EtGate.Devices.Interfaces
 {

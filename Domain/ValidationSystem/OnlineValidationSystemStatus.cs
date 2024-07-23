@@ -1,6 +1,8 @@
 ﻿namespace EtGate.Domain.ValidationSystem
 {
-    public class OnlineValidationSystemStatus
+    public record OnlineValidationSystemStatus (bool bConnected) : ModuleStatus
     {
+        //public bool bConnected;
+        public bool IsAvailable => bConnected;
     }
 }

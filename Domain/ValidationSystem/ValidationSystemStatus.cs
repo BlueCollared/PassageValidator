@@ -2,6 +2,9 @@
 {
     public class ValidationSystemStatus : ModuleStatus
     {
-        public bool bAvailable;
+        public OnlineValidationSystemStatus onlineStatus;
+        public OfflineValidationSystemStatus offlineStatus;
+
+        public bool IsAvailable => onlineStatus.IsAvailable || offlineStatus.IsAvailable;
     }
 }
