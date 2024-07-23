@@ -12,7 +12,8 @@ namespace EtGate.QrReader
         protected ReplaySubject<QrReaderStatus> statusSubject = new();
 
         public IObservable<QrReaderStatus> statusObservable => statusSubject.AsObservable()
-            .ObserveOn(SynchronizationContext.Current);
+            //.ObserveOn(SynchronizationContext.Current)
+            ;
 
         public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
 
