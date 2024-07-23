@@ -14,7 +14,7 @@ namespace App
         {
             //GateApp.Application app = new();
 
-            QrReaderDeviceControllerBase qrRdr = new QrReaderDeviceControllerProxy();
+            QrReaderDeviceControllerProxy qrRdr = new QrReaderDeviceControllerProxy();
             QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, qrRdr);
             //ValidationMgr validationMgr = new ValidationMgr();
 

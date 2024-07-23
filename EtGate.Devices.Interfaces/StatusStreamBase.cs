@@ -1,10 +1,11 @@
-﻿using System.Reactive.Linq;
+﻿using Domain.Peripherals.Qr;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using ModuleStatus = EtGate.Domain.ValidationSystem.ModuleStatus;
 
 namespace EtGate.Devices.Interfaces
 {
-    abstract public class StatusStreamBase<Status> where Status: ModuleStatus
+    abstract public class StatusStreamBase<Status> : IDeviceStatus<Status> where Status: ModuleStatus 
     {
         protected Status CurStatus { get; set; } = default;
         public bool IsWorking => CurStatus == null ? false : CurStatus.IsAvailable;

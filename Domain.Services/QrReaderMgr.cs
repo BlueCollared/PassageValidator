@@ -11,7 +11,7 @@
         public QrReaderMgr(
             //QrMgrConfig config,
             IQrInfoStatus qrRdrInfo,
-        IQrReaderStatus rdr
+            IQrReaderStatus rdr
             )
         {
             this.rdr = rdr;

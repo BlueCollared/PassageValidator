@@ -1,9 +1,9 @@
 ﻿namespace Domain.Peripherals.Qr
 {
     // TODO: better to club these two interfaces to form a single interface: IQrDomain, because we know that all of it would be implemented by a single object
-    public interface IQrReaderStatus
+    public interface IDeviceStatus<T>
     {
-        IObservable<QrReaderStatus> statusObservable { get; }
+        IObservable<T> statusObservable { get; }
         //QrReaderStatus CurStatus { get; }
         bool IsWorking { get; }
     }

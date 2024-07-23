@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
+using EtGate.Devices.Interfaces;
 using Peripherals;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -6,14 +7,13 @@ using System.Reactive.Subjects;
 namespace EtGate.QrReader
 {
     interface IQrReader : IPeripheral { }
-    public abstract class QrReaderDeviceControllerBase : IQrReader, IQrReaderStatus, IQrInfoStatus
+    public abstract class QrReaderDeviceControllerBase : StatusStreamBase<QrReaderStatus>, IPeripheral, IQrInfoStatus, IQrReaderStatus
     {
         protected Subject<QrCodeInfo> qrCodeInfoSubject = new();
-        protected ReplaySubject<QrReaderStatus> statusSubject = new();
 
-        public IObservable<QrReaderStatus> statusObservable => statusSubject.AsObservable()
-            //.ObserveOn(SynchronizationContext.Current)
-            ;
+        //protected QrReaderDeviceControllerBase()
+        //{
+        //}
 
         public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
 
@@ -22,16 +22,5 @@ namespace EtGate.QrReader
 
         public abstract bool StartDetecting();        
         public abstract void StopDetecting();
-
-        QrReaderStatus CurStatus { get; set; } = null;
-
-        public bool IsWorking => CurStatus == null ? false : CurStatus.bConnected;
-
-        IDisposable qrRdrStatusSubscription;
-
-        protected QrReaderDeviceControllerBase()
-        {
-            qrRdrStatusSubscription = statusObservable.Subscribe(status => CurStatus = status);
-        }
     }
 }
