@@ -1,6 +1,8 @@
 using Domain;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
+using EtGate.Domain.Services;
+using EtGate.Domain.Services.Qr;
 using Moq;
 using System.Reactive.Subjects;
 using Xunit;
@@ -12,10 +14,6 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void QrCodeNotWorking_ModeOOO()
         {
-            //BehaviorSubject<int> x = new(5);
-            //int r = x.Value;
-            //x.OnNext(10);
-            //int s = x.Value;
             // Arrange
             var qrReaderStatusSubject = new Subject<QrReaderStatus>();
             var mockQrReaderStatus = new Mock<IQrReaderStatus>();

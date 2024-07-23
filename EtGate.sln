@@ -69,7 +69,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QrReaderGuiSimulator", "QrR
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ValidationService", "ValidationService", "{C59CFA41-0CD8-4E65-9A7B-AA20D12B271B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.OfflineValidator", "EtGate.OfflineValidator\EtGate.OfflineValidator.csproj", "{E9226589-08F0-4472-98D7-BF441013587B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtGate.OfflineValidator", "EtGate.OfflineValidator\EtGate.OfflineValidator.csproj", "{E9226589-08F0-4472-98D7-BF441013587B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.OnlineValidator", "EtGate.OnlineValidator\EtGate.OnlineValidator.csproj", "{BA2858A4-69A0-42CA-8901-69C83F54F016}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +159,10 @@ Global
 		{E9226589-08F0-4472-98D7-BF441013587B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9226589-08F0-4472-98D7-BF441013587B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9226589-08F0-4472-98D7-BF441013587B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2858A4-69A0-42CA-8901-69C83F54F016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA2858A4-69A0-42CA-8901-69C83F54F016}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA2858A4-69A0-42CA-8901-69C83F54F016}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA2858A4-69A0-42CA-8901-69C83F54F016}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,6 +197,7 @@ Global
 		{0282B4F9-8F6B-436F-9561-AC7E26CE3F83} = {F0688A3C-7AB3-432F-931A-907888F08F4E}
 		{C59CFA41-0CD8-4E65-9A7B-AA20D12B271B} = {63DA6A75-0553-49CF-9314-CB987F8CDA57}
 		{E9226589-08F0-4472-98D7-BF441013587B} = {A9CC10FE-C9DB-471C-B472-3864FDA27CB0}
+		{BA2858A4-69A0-42CA-8901-69C83F54F016} = {801DFD9F-8ACC-48E4-8077-982E29B54271}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}

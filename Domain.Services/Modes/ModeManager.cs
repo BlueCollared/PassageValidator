@@ -1,6 +1,7 @@
 ﻿using Domain.InService;
 using Domain.Peripherals.Qr;
 using Domain.Services.InService;
+using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;

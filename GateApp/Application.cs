@@ -1,6 +1,6 @@
 ﻿using Domain;
-using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
+using EtGate.Domain.Services.Qr;
 
 namespace GateApp
 {

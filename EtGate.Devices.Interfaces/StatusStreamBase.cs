@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Qr;
+﻿using EtGate.Domain;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using ModuleStatus = EtGate.Domain.ModuleStatus;

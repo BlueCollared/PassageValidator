@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Qr;
+﻿using EtGate.Domain.Services.Qr;
 
 namespace Domain
 {

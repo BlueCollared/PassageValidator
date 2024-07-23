@@ -1,7 +1,7 @@
 ﻿using Domain;
-using Domain.Peripherals.Qr;
 using Domain.Services;
 using Domain.Services.Modes;
+using EtGate.Domain.Services.Qr;
 using EtGate.QrReader;
 using EtGate.QrReader.Proxy;
 using QrReader;
