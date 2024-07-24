@@ -9,8 +9,8 @@ namespace EtGate.Domain.Services
     public abstract class IOnlineValidationStatus : IDeviceStatus<OnlineValidationSystemStatus>
     { }
 
-    public abstract class IOfflineValidationStatus : IDeviceStatus<OfflineValidationSystemStatus>
-    { }
+    //public abstract class IOfflineValidationStatus : IDeviceStatus<OfflineValidationSystemStatus>
+    //{ }
 
     public abstract class IValidationStatus : IDeviceStatus<ValidationSystemStatus>
     { }

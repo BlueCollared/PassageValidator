@@ -32,6 +32,8 @@ namespace Domain.Services.Modes
             qrReaderMgr.StatusStream.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); }
                 );
+
+            //validationMgr.
             
             this.opModeDemanded = opModeDemanded;
         }

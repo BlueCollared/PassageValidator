@@ -9,27 +9,33 @@ namespace EtGate.Domain.Tests
 {
     public class ModeTests
     {
+        ModeManager CreateModeManager(System s)
+        {
+            return new ModeManager(s.qr, s.validation, null);
+        }
+
         [Fact]
         public void QrCodeNotWorking_ModeOOO()
         {
             // Arrange
-            var qrReaderStatusSubject = new Subject<QrReaderStatus>();
-            var mockQrReaderStatus = new Mock<IQrReaderStatus>();
-            mockQrReaderStatus.Setup(m => m.statusObservable).Returns(qrReaderStatusSubject);
+            System s = new MockSytemBuilder().Build();            
+            ModeManager modeManager = CreateModeManager(s);
 
-            var qrReaderMgr = new QrReaderMgr(null, mockQrReaderStatus.Object);
-            var modeManager = new ModeManager(qrReaderMgr, null, null);
-
-            // Act
-            qrReaderStatusSubject.OnNext(new QrReaderStatus(bConnected:false, "", false)); // Simulate the QR reader status turning bad
-
-            var z = modeManager.CurMode;
+            // Act            
+            s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
+            
             // Assert
-            Assert.Equal(Mode.OOO,
-                //modeManager.GetMode()
+            Assert.Equal(Mode.OOO,                
                 modeManager.CurMode
                 );
-                //modeManager.CurMode);
+
+            // Act            
+            s.subjQrStatus.OnNext(QrReaderStatus.AllGood);
+
+            // Assert
+            Assert.Equal(Mode.InService,
+                modeManager.CurMode
+                );
         }
 
         [Fact]

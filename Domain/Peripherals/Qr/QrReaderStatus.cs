@@ -6,6 +6,7 @@ namespace Domain.Peripherals.Qr
     {
         public bool IsAvailable => bConnected;
 
-        public static QrReaderStatus GoodStatus => new QrReaderStatus(bConnected: true, "", bScanning: false);
+        public static QrReaderStatus AllGood => new QrReaderStatus(bConnected: true, "", bScanning: false);
+        public static QrReaderStatus Disconnected => new QrReaderStatus(bConnected: false, "", bScanning: false);
     };
 }

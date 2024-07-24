@@ -13,6 +13,6 @@ namespace EtGate.Devices.Interfaces
 
         IObservable<Status> statusObservable_ => statusSubject.AsObservable()
             .ObserveOn(SynchronizationContext.Current);
-        public IObservable<Status> statusObservable => statusObservable_;
+        override public IObservable<Status> statusObservable => statusObservable_;
     }    
 }

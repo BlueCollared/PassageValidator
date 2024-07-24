@@ -7,31 +7,21 @@ namespace EtGate.Domain.Services.Validation
     // while we should be providing the dummy implementaion of the injected field?
     public class OnlineValidationSystem : IValidate
     {
-        private readonly IOnlineValidationStatus statusMgr;
-        private readonly IValidate worker;
+        public OnlineValidationSystem(IDeviceStatus<OnlineValidationSystemStatus> statusMgr)
+        {
+            this.statusMgr = statusMgr;
+        }
 
         public IObservable<OnlineValidationSystemStatus> StatusStream
             => statusMgr.statusObservable;
 
         public bool IsWorking => statusMgr.IsWorking;
 
-        public OnlineValidationSystem(IOnlineValidationStatus statusMgr, IValidate worker)
-        {
-            this.statusMgr = statusMgr;
-            this.worker = worker;
-        }
+        private readonly IDeviceStatus<OnlineValidationSystemStatus> statusMgr;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {
-            try
-            {
-                // TODO: make pre-checks on the qr, like it might have to be issued from the same station
-                return worker.Validate(qrCode);
-            }
-            catch (Exception)
-            {
-                return QrCodeValidationResult.CallNotMade;
-            }
+            throw new NotImplementedException();
         }
     }
 }

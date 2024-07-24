@@ -19,14 +19,6 @@ namespace EtGate.Domain.Services.Qr
             this.statusMgr = statusMgr;
             this.qrRdrInfo = qrRdrInfo;
 
-            //qrRdrStatusSubscription =
-            //((IObservable<QrReaderStatus>)qrRdr)
-            //rdr.qrReaderStatusObservable
-            //    .ObserveOn(SynchronizationContext.Current)
-            //    .Subscribe(x => {
-            //        // TODO: raise event (pump into message bus)
-            //    });
-            //rdr.StartListeningStatus(this);
             // TODO: create IQrReader's using {qrFactory, config} and push them to qrRdrs.
             // `config` would also contain the `id` of that reader. This `id` would be bounced back in the 
             // event that is raised when the qr is detected
@@ -46,11 +38,6 @@ namespace EtGate.Domain.Services.Qr
             => qrRdrInfo.qrCodeInfoObservable
             //.ObserveOn(syncContextClient)
             ;
-
-        //        public IObservable<QrReaderStatus> qrReaderStatusObservable => throw new NotImplementedException();
-
-        //        public IObservable<QrCodeInfo> qrCodeInfoObservable => throw new NotImplementedException();
-
 
         public void StopDetecting()
         {

@@ -69,9 +69,9 @@ namespace Domain.Services.InService
             qrCodeSubscription = qrReader.QrCodeStream
                 .Subscribe(qr => { QrAppeared(qr); });
 
-            passageStatusSubscription = passage.PassageStatusObservable
-                .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(x => PassageEvt(x));
+            //passageStatusSubscription = passage.PassageStatusObservable
+            //    .ObserveOn(SynchronizationContext.Current)
+            //    .Subscribe(x => PassageEvt(x));
 
             qrReader.StartDetecting();
         }        
