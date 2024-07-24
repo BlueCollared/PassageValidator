@@ -1,15 +1,28 @@
 ﻿using Domain.Peripherals.Qr;
+using EtGate.Domain.ValidationSystem;
+using System.Diagnostics.Metrics;
 
 namespace EtGate.Domain.Services.Validation
 {
     // TODO: Listen to the current site / and other such configuration so as to make pre-checks on the ticket
-    public class ValidationMgr : IValidationMgr
+    public class ValidationMgr //: IValidationMgr
     {
-        //public List<IValidate> validationSubSystems = new(); better to be direct i.e. OfflineValidationSystem, OnlineValidationSystem
+        public ValidationMgr(OfflineValidationSystem offline, OnlineValidationSystem online)
+        {
+            this.offline = offline;
+            this.online = online;
+        }
+
+        // better to be direct i.e.OfflineValidationSystem, OnlineValidationSystem
+        //public List<IValidate> validationSubSystems = new(); 
+
+
         OfflineValidationSystem offline;
         OnlineValidationSystem online;
 
-        public bool bWorking => throw new NotImplementedException();
+        public IObservable<ValidationSystemStatus> statusObservable;
+
+        public bool bWorking => online.IsWorking || offline.IsWorking;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {

@@ -3,12 +3,15 @@ using EtGate.Domain.ValidationSystem;
 
 namespace EtGate.Domain.Services
 {
-    public interface IQrReaderStatus : IDeviceStatus<QrReaderStatus>
+    //public abstract class IQrReaderStatus : IDeviceStatus<QrReaderStatus>
+    //{ }
+
+    public abstract class IOnlineValidationStatus : IDeviceStatus<OnlineValidationSystemStatus>
     { }
 
-    public interface IOnlineValidationStatus : IDeviceStatus<OnlineValidationSystemStatus>
+    public abstract class IOfflineValidationStatus : IDeviceStatus<OfflineValidationSystemStatus>
     { }
 
-    public interface IOfflineValidationStatus : IDeviceStatus<OfflineValidationSystemStatus>
+    public abstract class IValidationStatus : IDeviceStatus<ValidationSystemStatus>
     { }
 }

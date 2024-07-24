@@ -23,8 +23,15 @@ namespace EtGate.Domain.Services.Validation
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {
-            // TODO: make pre-checks on the qr, like it might have to be issued from the same station
-            return worker.Validate(qrCode);
+            try
+            {
+                // TODO: make pre-checks on the qr, like it might have to be issued from the same station
+                return worker.Validate(qrCode);
+            }
+            catch (Exception)
+            {
+                return QrCodeValidationResult.CallNotMade;
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using Domain.Peripherals.Qr;
+using EtGate.Domain.Services;
 
 namespace EtGate.QrReader.Proxy
 {
-    public class QrReaderDeviceControllerProxy : QrReaderDeviceControllerBase
+    public class QrReaderDeviceControllerProxy : QrReaderDeviceControllerBase//, IQrReaderStatus
     {
         public const string pipeName = "QrSimul";
         SimulatorListener listener;//= new SimulatorListener(pipeName);

@@ -11,7 +11,7 @@ namespace Domain.Services.InService
     public record Authorization(int nAuthorizations);
     public class InServiceMgr : ISubModeMgr
     {
-        private readonly IValidationMgr validationMgr;        
+        private readonly ValidationMgr validationMgr;        
         private readonly IPassageManager passage;
         private readonly IMMI mmi;
         private readonly QrReaderMgr qrReader;
@@ -55,7 +55,7 @@ namespace Domain.Services.InService
         public IObservable<State> StateObservable;
 
         public InServiceMgr(
-            IValidationMgr validationMgr,
+            ValidationMgr validationMgr,
             IPassageManager passage,            
             IMMI mmi,
             QrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr

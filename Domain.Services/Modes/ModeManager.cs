@@ -20,7 +20,7 @@ namespace Domain.Services.Modes
         public Mode CurMode => EquipmentModeSubject.Value;        
         
         public ModeManager(QrReaderMgr qrReaderMgr, 
-            IValidationMgr validationMgr, 
+            ValidationMgr validationMgr, 
             IPassageManager passageMgr,
             OpMode opModeDemanded = OpMode.InService)
         {
@@ -32,6 +32,7 @@ namespace Domain.Services.Modes
             qrReaderMgr.StatusStream.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); }
                 );
+            
             this.opModeDemanded = opModeDemanded;
         }
 
@@ -92,7 +93,7 @@ namespace Domain.Services.Modes
         }
 
         ISubModeMgr curModeMgr;
-        IValidationMgr validationMgr;
+        ValidationMgr validationMgr;
         IPassageManager passageMgr;
         IMMI mmi;
     }

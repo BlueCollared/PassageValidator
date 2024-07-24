@@ -1,11 +1,9 @@
 using Domain;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
-using EtGate.Domain.Services;
 using EtGate.Domain.Services.Qr;
 using Moq;
 using System.Reactive.Subjects;
-using Xunit;
 
 namespace EtGate.Domain.Tests
 {
@@ -32,6 +30,24 @@ namespace EtGate.Domain.Tests
                 modeManager.CurMode
                 );
                 //modeManager.CurMode);
+        }
+
+        [Fact]
+        public void ValidationMgrNotWorking_ModeOOO()
+        {
+
+        }
+
+        [Fact]
+        public void GateHWNotWorking_ModeOOO()
+        {
+
+        }
+
+        [Fact]
+        public void AllWorking_ModeInservice()
+        {
+
         }
     }
 }

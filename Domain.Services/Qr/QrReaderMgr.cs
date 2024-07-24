@@ -7,13 +7,13 @@ namespace EtGate.Domain.Services.Qr
     public class QrReaderMgr //: IQrReaderStatus, IQrInfoStatus
     {
         private readonly IQrReader qrRdrInfo;
-        private readonly IQrReaderStatus statusMgr;
+        private readonly IDeviceStatus<QrReaderStatus> statusMgr;
 
         //List<IQrReader> qrRdrs = new List<IQrReader>();
         public QrReaderMgr(
             //QrMgrConfig config,
             IQrReader qrRdrInfo,
-            IQrReaderStatus statusMgr
+            IDeviceStatus<QrReaderStatus> statusMgr
             )
         {
             this.statusMgr = statusMgr;
