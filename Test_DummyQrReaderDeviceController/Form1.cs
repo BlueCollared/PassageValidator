@@ -1,4 +1,6 @@
 
+using System.Reactive.Linq;
+
 namespace Test_DummyQrReaderDeviceController
 {
     public partial class Form1 : Form
@@ -12,7 +14,7 @@ namespace Test_DummyQrReaderDeviceController
         private void btnStartDetection_Click(object sender, EventArgs e)
         {
             qrController.StartDetecting();
-            qrController.qrReaderStatusObservable.Subscribe(x =>
+            qrController.statusObservable.ObserveOn(SynchronizationContext.Current).Subscribe(x =>
             {
                 txtLog.Text += x.bConnected.ToString();
             });

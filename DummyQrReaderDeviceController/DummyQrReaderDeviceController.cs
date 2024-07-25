@@ -1,4 +1,5 @@
-﻿using EtGate.QrReader;
+﻿using Domain.Peripherals.Qr;
+using EtGate.QrReader;
 
 namespace DummyQrReaderDeviceController
 {
@@ -18,11 +19,11 @@ namespace DummyQrReaderDeviceController
                 { 
                 while(!bStop)
                 {
-                    qrReaderStatusSubject.OnNext(new Domain.Peripherals.Qr.QrReaderStatus(false, "", false));
+                    statusSubject.OnNext(new QrReaderStatus(false, "", false));
 
                     Thread.Sleep(5000);
 
-                    qrReaderStatusSubject.OnNext(new Domain.Peripherals.Qr.QrReaderStatus(true, "", false));
+                    statusSubject.OnNext(new QrReaderStatus(true, "", false));
 
                         Thread.Sleep(5000);
                     }

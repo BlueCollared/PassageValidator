@@ -6,8 +6,7 @@ namespace NamedPipeLibrary
     public class Puller
     {
         private readonly string _pipeName;
-        public delegate void HandleNotification(object notification);
-        public delegate void HandleUserSuppliedType<T>(T obj);
+        public delegate void HandleNotification(object notification);        
 
         private readonly HandleNotification _notificationHandler;
         private readonly List<Type> notificationTypes;

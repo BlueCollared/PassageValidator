@@ -12,7 +12,8 @@ namespace EtGate.Devices.Interfaces
         protected ReplaySubject<Status> statusSubject = new();
 
         IObservable<Status> statusObservable_ => statusSubject.AsObservable()
-            .ObserveOn(SynchronizationContext.Current);
+            //.ObserveOn(SynchronizationContext.Current)
+            ;
         override public IObservable<Status> statusObservable => statusObservable_;
     }    
 }
