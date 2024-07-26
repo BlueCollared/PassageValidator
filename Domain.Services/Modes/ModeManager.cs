@@ -4,6 +4,7 @@ using Domain.Services.InService;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -11,6 +12,8 @@ namespace Domain.Services.Modes
 {
     public class ModeManager
     {
+        public const int DEFAULT_TimeToCompleteBoot_InSeconds = 20;        
+
         // don't see any value for the mode manager to be the aggregator of the status. Open for review
         //private readonly BehaviorSubject<EquipmentStatus> eqptStatusSubject;
         private EquipmentStatus equipmentStatus = new EquipmentStatus(
@@ -18,21 +21,27 @@ namespace Domain.Services.Modes
         new ValidationSystemStatus_()
     );
 
-        private readonly QrReaderMgr qrReaderMgr;
+        private readonly QrReaderMgr qrReaderMgr;        
         BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
         OpMode opModeDemanded;
         public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
-        public Mode CurMode => EquipmentModeSubject.Value;       
+        public Mode CurMode => EquipmentModeSubject.Value;
         
         public ModeManager(QrReaderMgr qrReaderMgr, 
             ValidationMgr validationMgr, 
             IPassageManager passageMgr,
-            OpMode opModeDemanded = OpMode.InService)
+            IScheduler scheduler,
+            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds
+            //OpMode opModeDemanded = OpMode.InService
+            )
         {
             //equipmentStatus = new();
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
             this.passageMgr = passageMgr;
+
+            _timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
+                .Subscribe(_ => DoModeRelatedX());
 
             qrReaderMgr.StatusStream.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); }
@@ -41,10 +50,8 @@ namespace Domain.Services.Modes
             validationMgr.StatusStream.Subscribe(onNext: x => {
                 ValidationSystemStatusChanged(x);
             });
-
-            //validationMgr.
             
-            this.opModeDemanded = opModeDemanded;
+            //this.opModeDemanded = opModeDemanded;
         }
 
         public void InterruptForEnteringMaintenace()
@@ -93,8 +100,13 @@ namespace Domain.Services.Modes
                 if (!AreAllStatusesReceived())
                     return;
 
-            Mode modeBefore = CurMode;//GetMode();//CurMode;
-            Mode modeAfter = CalculateMode();
+            DoModeRelatedX();
+        }
+
+        private void DoModeRelatedX()
+        {
+            Mode modeBefore = CurMode;
+            Mode modeAfter = CalculateMode(equipmentStatus);
 
             EquipmentModeSubject.OnNext(modeAfter);
             if (modeAfter != modeBefore)
@@ -107,14 +119,17 @@ namespace Domain.Services.Modes
             EquipmentModeSubject.OnNext(modeAfter);
         }
 
-        private Mode CalculateMode()
+        private static Mode CalculateMode(EquipmentStatus e)
         {
             Mode modeAfter;
-            var e = equipmentStatus;
-            if (e.QrEntry.Status.IsAvailable && e.ValidationAPI.Status.IsAvailable)
+            bool bQrAvailaibe = e.QrEntry?.Status?.IsAvailable ?? false;
+            bool bValidationAPIAvailable = e.ValidationAPI?.Status?.IsAvailable ?? false;
+
+            if (bQrAvailaibe && bValidationAPIAvailable)
                 modeAfter = Mode.InService;
             else
                 modeAfter = Mode.OOO;
+
             return modeAfter;
         }
 
@@ -143,6 +158,7 @@ namespace Domain.Services.Modes
         ISubModeMgr curModeMgr;
         ValidationMgr validationMgr;
         IPassageManager passageMgr;
+        private readonly IDisposable _timerSubscription;
         IMMI mmi;
     }
 }

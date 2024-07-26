@@ -2,14 +2,17 @@ using Domain;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using EtGate.Domain.ValidationSystem;
+using Microsoft.Reactive.Testing;
 
 namespace EtGate.Domain.Tests
 {
     public class ModeTests
     {
+        readonly TimeSpan timeToCompleteAppBoot = TimeSpan.FromSeconds(30);
+        TestScheduler testScheduler = new TestScheduler();
         ModeManager CreateModeManager(System s)
         {
-            return new ModeManager(s.qr, s.validation, null);
+            return new ModeManager(s.qr, s.validation, null, testScheduler);
         }
 
         [Fact]
@@ -29,6 +32,19 @@ namespace EtGate.Domain.Tests
             Assert.Equal(Mode.AppBooting, modeManager.CurMode);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
+        }
+
+        [Fact]
+        public void AppBootingPhase_Timeout()
+        {
+            // Arrange
+            System s = new MockSytemBuilder().Build();
+            ModeManager modeManager = CreateModeManager(s);
+
+            // Act
+            testScheduler.AdvanceBy(TimeSpan.FromSeconds(ModeManager.DEFAULT_TimeToCompleteBoot_InSeconds).Ticks);
+
             Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
         }
 
