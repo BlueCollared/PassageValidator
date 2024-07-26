@@ -1,10 +1,9 @@
 ﻿namespace EtGate.Domain.ValidationSystem
 {
-    public class ValidationSystemStatus : ModuleStatus
+    public record ValidationSystemStatus (OnlineValidationSystemStatus onlineStatus, OfflineValidationSystemStatus offlineStatus) : ModuleStatus
     {
-        public OnlineValidationSystemStatus onlineStatus;
-        public OfflineValidationSystemStatus offlineStatus;
+        public override bool IsAvailable => (onlineStatus?.IsAvailable ?? false) || (offlineStatus?.IsAvailable ?? false);
 
-        public bool IsAvailable => onlineStatus.IsAvailable || offlineStatus.IsAvailable;
+        public static ValidationSystemStatus Default => new ValidationSystemStatus(OnlineValidationSystemStatus.Disconnected, OfflineValidationSystemStatus.Obsolete);
     }
 }

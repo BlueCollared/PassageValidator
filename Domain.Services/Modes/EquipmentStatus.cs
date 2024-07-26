@@ -1,12 +1,27 @@
-﻿namespace Domain.Services.Modes
+﻿using Domain.Peripherals.Qr;
+using EtGate.Domain.ValidationSystem;
+
+namespace Domain.Services.Modes
 {
-    public enum ModuleStatus { Good, Bad, Unknown };
-    public record EquipmentStatus(
-        ModuleStatus GateHardware = ModuleStatus.Unknown,
-        ModuleStatus QrEntry = ModuleStatus.Unknown,
-        ModuleStatus QrExit = ModuleStatus.Unknown,
-        ModuleStatus ValidationAPI = ModuleStatus.Unknown,
-        ModuleStatus OfflineDataFresh = ModuleStatus.Unknown,
-        bool Emergency = false
+    public record QrReaderStatus_
+    {        
+        public QrReaderStatus_ UpdateStatus(QrReaderStatus newStatus) => this with { IsKnown = true, Status = newStatus };
+
+        public bool IsKnown { get; init; } = false;
+        public QrReaderStatus Status { get; init; } //= QrReaderStatus.Disconnected;
+    }
+
+    public record ValidationSystemStatus_
+    {        
+        public ValidationSystemStatus_ UpdateStatus(ValidationSystemStatus newStatus) => this with { IsKnown = true, Status = newStatus };
+
+        public bool IsKnown { get; init; } = false;
+        public ValidationSystemStatus Status { get; init; }//= ValidationSystemStatus.Default;
+    }
+    
+    public record EquipmentStatus(        
+        QrReaderStatus_ QrEntry// = ModuleStatus.Unknown,        
+        , ValidationSystemStatus_ ValidationAPI//; = ModuleStatus.Unknown,        
+        , bool Emergency = false
         );
 }

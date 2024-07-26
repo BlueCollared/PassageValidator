@@ -22,11 +22,8 @@ namespace EtGate.Domain.Services.Validation
             => Observable.CombineLatest(
             online.StatusStream,
             offline.StatusStream,
-            (onlineStatus, offlineStatus) => new ValidationSystemStatus
-            {
-                onlineStatus = onlineStatus,
-                offlineStatus = offlineStatus
-            });
+            (on, off) => new ValidationSystemStatus(on, off)
+            );
 
         public bool IsWorking => online.IsWorking || offline.IsWorking;        
 

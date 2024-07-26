@@ -1,9 +1,7 @@
 using Domain;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
-using EtGate.Domain.Services.Qr;
-using Moq;
-using System.Reactive.Subjects;
+using EtGate.Domain.ValidationSystem;
 
 namespace EtGate.Domain.Tests
 {
@@ -12,6 +10,26 @@ namespace EtGate.Domain.Tests
         ModeManager CreateModeManager(System s)
         {
             return new ModeManager(s.qr, s.validation, null);
+        }
+
+        [Fact]
+        public void AppBootingPhase()
+        {
+            // Arrange
+            System s = new MockSytemBuilder().Build();
+            ModeManager modeManager = CreateModeManager(s);
+
+            // Assert
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
         }
 
         [Fact]

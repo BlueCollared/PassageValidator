@@ -1,6 +1,6 @@
 ﻿namespace Domain.Peripherals.Passage
 {
-    public class GateStatus
+    public record GateStatus(bool bConnected, string firmwareVersion, bool bWorking)
     {
     }
 }

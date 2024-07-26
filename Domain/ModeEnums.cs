@@ -7,6 +7,7 @@
         OOS,
         OOO,
         Maintenance,
+        WaitForAgentLogin,
         Emergency
     };
 
