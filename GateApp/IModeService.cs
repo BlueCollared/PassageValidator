@@ -4,7 +4,7 @@ namespace GateApp
 {
     public interface IModeService
     {
-        Mode CurMode { get; }
+        //Mode CurMode { get; }
         IObservable<Mode> EquipmentModeObservable { get; }
 
         bool ChangeMode(OpMode mode, TimeSpan timeout);
