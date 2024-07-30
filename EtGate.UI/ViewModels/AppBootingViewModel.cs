@@ -1,6 +1,6 @@
 ﻿namespace EtGate.UI.ViewModels
 {
-    internal class AppBootingViewModel
+    internal class AppBootingViewModel : ViewModelBase
     {
     }
 }

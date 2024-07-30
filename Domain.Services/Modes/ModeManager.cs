@@ -54,11 +54,6 @@ namespace Domain.Services.Modes
             //this.opModeDemanded = opModeDemanded;
         }
 
-        public void InterruptForEnteringMaintenace()
-        { }
-
-        public void InterruptForExitingMaintenace()
-        { }
 
         public OpMode ModeDemanded
         {

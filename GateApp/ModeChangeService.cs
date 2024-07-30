@@ -14,6 +14,12 @@ namespace GateApp
             this.contextRepo = contextRepo;
         }
 
+        public void InterruptForEnteringMaintenace()
+        { }
+
+        public void InterruptForExitingMaintenace()
+        { }
+
         public bool ChangeMode (OpMode mode, TimeSpan timeout)
         {
             if (modeMgr.ModeDemanded == mode)
