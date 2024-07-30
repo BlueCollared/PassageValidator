@@ -1,8 +1,9 @@
 ﻿using Domain.Services.InService;
+using EtGate.UI.ViewModels;
 using ReactiveUI;
 using System.Reactive.Linq;
 
-namespace EtGate.UI.ViewModels
+namespace EtGate.ViewModel
 {
     public class InServiceViewModel : ViewModelBase
     {
@@ -32,6 +33,6 @@ namespace EtGate.UI.ViewModels
         private readonly ObservableAsPropertyHelper<InServiceMgr.State> _currentState;
         public string NotificationMessage => _notificationMessage.Value;
 
-        public InServiceMgr.State CurrentState => _currentState.Value;        
+        public InServiceMgr.State CurrentState => _currentState.Value;
     }
 }

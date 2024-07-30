@@ -150,6 +150,16 @@ namespace Domain.Services.Modes
             return allStatusesReceived;
         }
 
+        public void SwitchToMaintenance()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SwitchOutMaintenance()
+        {
+            throw new NotImplementedException();
+        }
+
         ISubModeMgr curModeMgr;
         ValidationMgr validationMgr;
         IPassageManager passageMgr;

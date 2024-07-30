@@ -1,6 +1,6 @@
 ﻿namespace EtGate.UI.ViewModels
 {
-    internal class MaintenanceViewModel
+    internal class QrRdrMaintenanceViewModel
     {
     }
 }

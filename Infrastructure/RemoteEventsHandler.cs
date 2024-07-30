@@ -65,7 +65,7 @@ namespace Infrastructure
 
         private ChangeModeResponse ProcessChangeMode(ChangeMode reqA)
         {
-            ModeChangeService srv = new ModeChangeService(modeMgr, contextRepository);
+            ModeService srv = new ModeService(modeMgr, contextRepository);
             srv.ChangeMode(reqA.mode, TimeSpan.FromSeconds(20));
 
             throw new NotImplementedException();

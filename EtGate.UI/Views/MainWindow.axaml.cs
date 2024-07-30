@@ -6,7 +6,7 @@ namespace EtGate.UI.Views
     {
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
     }
 }
