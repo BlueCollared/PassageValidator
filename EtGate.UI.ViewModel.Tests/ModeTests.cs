@@ -1,7 +1,6 @@
 ﻿using Domain;
 using Domain.Services.InService;
 using EtGate.UI.ViewModels;
-using EtGate.ViewModel;
 using GateApp;
 using Moq;
 using System.Reactive.Subjects;

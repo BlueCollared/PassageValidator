@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:EtGate.UI.ViewModels"
+		xmlns:vu="using:EtGate.UI.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EtGate.UI.MaintenaceView">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<DataTemplate x:Key="AgentLogin"  DataType="vm:AgentLoginViewModel">
+				<vu:AgentLoginView></vu:AgentLoginView>
+			</DataTemplate>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<!--<ContentControl Content="{Binding CurrentModeViewModel}"/>-->
+	</Grid>
+</UserControl>

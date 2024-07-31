@@ -18,6 +18,12 @@
 		<DataTemplate x:Key="OOO"  DataType="vm:OOOViewModel">
 			<vu:OOOView/>
 		</DataTemplate>
+			<DataTemplate x:Key="OOS"  DataType="vm:OOSViewModel">
+				<vu:OOSView></vu:OOSView>
+			</DataTemplate>
+			<DataTemplate x:Key="InService"  DataType="vm:InServiceViewModel">
+				<vu:AppBootingView></vu:AppBootingView>
+			</DataTemplate>			
 
 		</ResourceDictionary>
 	</Window.Resources>

@@ -3,7 +3,7 @@ using EtGate.UI.ViewModels;
 using ReactiveUI;
 using System.Reactive.Linq;
 
-namespace EtGate.ViewModel
+namespace EtGate.UI.ViewModels
 {
     public class InServiceViewModel : ViewModelBase
     {

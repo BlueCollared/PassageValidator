@@ -1,6 +1,8 @@
-﻿namespace EtGate.ViewModel
+﻿using EtGate.UI.ViewModels;
+
+namespace EtGate.ViewModel;
+
+public class FlapMaintenanceViewModel : ViewModelBase
 {
-    internal class FlapMaintenanceViewModel
-    {
-    }
 }
+

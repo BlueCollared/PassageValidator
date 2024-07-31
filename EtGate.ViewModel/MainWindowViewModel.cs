@@ -1,6 +1,5 @@
 ﻿using Domain;
 using Domain.Services.InService;
-using EtGate.ViewModel;
 using GateApp;
 using ReactiveUI;
 
