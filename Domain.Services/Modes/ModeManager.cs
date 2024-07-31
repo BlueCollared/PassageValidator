@@ -12,7 +12,7 @@ namespace Domain.Services.Modes
 {
     public class ModeManager
     {
-        public const int DEFAULT_TimeToCompleteBoot_InSeconds = 20;        
+        public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;        
 
         // don't see any value for the mode manager to be the aggregator of the status. Open for review
         //private readonly BehaviorSubject<EquipmentStatus> eqptStatusSubject;

@@ -6,8 +6,7 @@
         InService,
         OOS,
         OOO,
-        Maintenance,
-        WaitForAgentLogin,
+        Maintenance, // going to Maintenance means showing the Login page
         Emergency
     };
 

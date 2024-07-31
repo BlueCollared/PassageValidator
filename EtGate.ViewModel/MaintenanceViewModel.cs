@@ -1,6 +1,6 @@
 ﻿namespace EtGate.UI.ViewModels;
 
-internal class MaintenanceViewModel
+public class MaintenanceViewModel : ViewModelBase
 {
 }
 

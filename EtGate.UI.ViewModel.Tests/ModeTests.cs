@@ -1,5 +1,6 @@
 ﻿using Domain;
 using EtGate.UI.ViewModels;
+using EtGate.ViewModel;
 using GateApp;
 using Moq;
 using System.Reactive.Subjects;
@@ -20,6 +21,7 @@ namespace EtGate.UI.ViewModel.Tests
             mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subj);
 
             MainWindowViewModel vm = new MainWindowViewModel(mockModeService.Object);
+            Assert.Null(vm.CurrentModeViewModel);
             
             subj.OnNext(Mode.AppBooting);
             Assert.IsType<AppBootingViewModel>(vm.CurrentModeViewModel);
@@ -29,6 +31,15 @@ namespace EtGate.UI.ViewModel.Tests
 
             subj.OnNext(Mode.Emergency);
             Assert.IsType<EmergencyViewModel>(vm.CurrentModeViewModel);
+
+            //subj.OnNext(Mode.InService);
+            //Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
+
+            subj.OnNext(Mode.OOS);
+            Assert.IsType<OOSViewModel>(vm.CurrentModeViewModel);
+
+            subj.OnNext(Mode.Maintenance);
+            Assert.IsType<MaintenanceViewModel>(vm.CurrentModeViewModel);
         }
     }    
 }

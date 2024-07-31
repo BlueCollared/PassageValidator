@@ -1,5 +1,6 @@
 ﻿using Domain;
 using GateApp;
+using ReactiveUI;
 
 namespace EtGate.UI.ViewModels
 {
@@ -15,6 +16,9 @@ namespace EtGate.UI.ViewModels
 
         private void ModeChanged(Mode x)
         {
+            if (curMode == x)
+                return;
+
             switch(x)
             {
                 case Mode.AppBooting:
@@ -26,10 +30,23 @@ namespace EtGate.UI.ViewModels
                 case Mode.Emergency:
                     CurrentModeViewModel = new EmergencyViewModel();
                     break;
+                //case Mode.InService:
+                //    CurrentModeViewModel = new InServiceViewModel();
+                //    break;
+                case Mode.OOS:
+                    CurrentModeViewModel = new OOSViewModel();
+                    break;
+                case Mode.Maintenance:
+                    CurrentModeViewModel = new MaintenanceViewModel();
+                    break;
             }
+            curMode = x;
+            this.RaisePropertyChanged(nameof(CurrentModeViewModel));
+            //PropertyChanged(nameof(CurrentModeViewModel));
         }
 
-        public ViewModelBase CurrentModeViewModel { get; set; }        
+        public ViewModelBase CurrentModeViewModel { get; set; }
+        private Mode? curMode = null;
         //= new AppBootingViewModel();
         //#pragma warning disable CA1822 // Mark members as static
         //        public string Greeting => "Welcome to Avalonia!";
