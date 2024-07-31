@@ -1,4 +1,6 @@
 ﻿using Domain;
+using Domain.Services.InService;
+using EtGate.ViewModel;
 using GateApp;
 using ReactiveUI;
 
@@ -7,10 +9,12 @@ namespace EtGate.UI.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IModeService modeService;
+        private readonly IInServiceMgrFactory inServiceMgrFactory;
 
-        public MainWindowViewModel(IModeService modeService)
+        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory)
         {
             this.modeService = modeService;
+            this.inServiceMgrFactory = inServiceMgrFactory;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
 
@@ -18,7 +22,7 @@ namespace EtGate.UI.ViewModels
         {
             if (curMode == x)
                 return;
-
+            
             switch(x)
             {
                 case Mode.AppBooting:
@@ -30,9 +34,9 @@ namespace EtGate.UI.ViewModels
                 case Mode.Emergency:
                     CurrentModeViewModel = new EmergencyViewModel();
                     break;
-                //case Mode.InService:
-                //    CurrentModeViewModel = new InServiceViewModel();
-                //    break;
+                case Mode.InService:
+                    CurrentModeViewModel = new InServiceViewModel(inServiceMgrFactory.Create(), true);
+                    break;
                 case Mode.OOS:
                     CurrentModeViewModel = new OOSViewModel();
                     break;

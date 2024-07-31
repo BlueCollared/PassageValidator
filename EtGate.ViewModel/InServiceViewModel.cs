@@ -7,7 +7,7 @@ namespace EtGate.ViewModel
 {
     public class InServiceViewModel : ViewModelBase
     {
-        private readonly InServiceMgr _inServiceMgr;
+        private readonly IInServiceMgr _inServiceMgr;
         private readonly ObservableAsPropertyHelper<string> _notificationMessage;
         private readonly bool _isEntry;
         private string _statusMessage;
@@ -18,7 +18,7 @@ namespace EtGate.ViewModel
             private set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
         }
 
-        public InServiceViewModel(InServiceMgr inServiceMgr, bool isEntry)
+        public InServiceViewModel(IInServiceMgr inServiceMgr, bool isEntry)
         {
             _inServiceMgr = inServiceMgr;
             _isEntry = isEntry;

@@ -9,9 +9,9 @@ using System.Reactive.Linq;
 namespace Domain.Services.InService
 {
     public record Authorization(int nAuthorizations);
-    public class InServiceMgr : ISubModeMgr
+    public class InServiceMgr : ISubModeMgr, IInServiceMgr
     {
-        private readonly ValidationMgr validationMgr;        
+        private readonly ValidationMgr validationMgr;
         private readonly IPassageManager passage;
         private readonly IMMI mmi;
         private readonly QrReaderMgr qrReader;
@@ -52,11 +52,11 @@ namespace Domain.Services.InService
             SomeAuthorization_s_Queued_ThatHaventBeginTransit
         }
 
-        public IObservable<State> StateObservable;
+        public IObservable<State> StateObservable { get; }
 
         public InServiceMgr(
             ValidationMgr validationMgr,
-            IPassageManager passage,            
+            IPassageManager passage,
             IMMI mmi,
             QrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
             )
@@ -74,7 +74,7 @@ namespace Domain.Services.InService
             //    .Subscribe(x => PassageEvt(x));
 
             qrReader.StartDetecting();
-        }        
+        }
 
         public Task HaltFurtherValidations()
         {
@@ -103,7 +103,7 @@ namespace Domain.Services.InService
                         state = State.IntrusionWhenIdle;
                         mmi.IntrusionWhenIdle(x);
                         break;
-                    }                    
+                    }
                 case State.IntrusionDuringAuthorizedPassage:
                     {
                         state = State.IntrusionDuringAuthorizedPassage;
@@ -131,7 +131,7 @@ namespace Domain.Services.InService
 
         private void PassageEvt(PassageInProgress x)
         {
-            switch(state)
+            switch (state)
             {
                 case State.IntrusionWhenIdle:
                 case State.Unknown:
@@ -210,5 +210,10 @@ namespace Domain.Services.InService
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+    public interface IInServiceMgrFactory
+    {
+        IInServiceMgr Create();
     }
 }
