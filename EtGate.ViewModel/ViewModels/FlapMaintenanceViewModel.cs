@@ -1,6 +1,4 @@
-﻿using EtGate.UI.ViewModels;
-
-namespace EtGate.ViewModel;
+﻿namespace EtGate.UI.ViewModels;
 
 public class FlapMaintenanceViewModel : ViewModelBase
 {

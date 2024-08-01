@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using EtGate.Domain.Services;
 using EtGate.UI.ViewModels;
-using System;
 //using Key = Avalonia.Remote.Protocol.Input.Key;
 using Key = Avalonia.Input.Key;
 

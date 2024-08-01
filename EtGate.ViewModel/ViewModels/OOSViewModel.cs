@@ -6,7 +6,7 @@ public class OOSViewModel : ModeViewModel
 {
     public OOSViewModel(IModeService modeService) : base(modeService)
     {
-        
+
     }
 }
 

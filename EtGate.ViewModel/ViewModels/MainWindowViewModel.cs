@@ -21,8 +21,8 @@ namespace EtGate.UI.ViewModels
         {
             if (curMode == x)
                 return;
-            
-            switch(x)
+
+            switch (x)
             {
                 case Mode.AppBooting:
                     CurrentModeViewModel = new AppBootingViewModel(modeService);
