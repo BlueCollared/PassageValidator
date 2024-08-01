@@ -1,6 +1,12 @@
-﻿namespace EtGate.UI.ViewModels
+﻿using GateApp;
+
+namespace EtGate.UI.ViewModels
 {
-    public class OOOViewModel : ViewModelBase
+    public class OOOViewModel : ModeViewModel
     {
+        public OOOViewModel(IModeService modeService) : base(modeService)
+        {
+
+        }
     }
 }

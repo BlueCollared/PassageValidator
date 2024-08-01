@@ -25,22 +25,22 @@ namespace EtGate.UI.ViewModels
             switch(x)
             {
                 case Mode.AppBooting:
-                    CurrentModeViewModel = new AppBootingViewModel();
+                    CurrentModeViewModel = new AppBootingViewModel(modeService);
                     break;
                 case Mode.OOO:
-                    CurrentModeViewModel = new OOOViewModel();
+                    CurrentModeViewModel = new OOOViewModel(modeService);
                     break;
                 case Mode.Emergency:
-                    CurrentModeViewModel = new EmergencyViewModel();
+                    CurrentModeViewModel = new EmergencyViewModel(modeService);
                     break;
                 case Mode.InService:
-                    CurrentModeViewModel = new InServiceViewModel(inServiceMgrFactory.Create(), true);
+                    CurrentModeViewModel = new InServiceViewModel(inServiceMgrFactory.Create(), true, modeService);
                     break;
                 case Mode.OOS:
-                    CurrentModeViewModel = new OOSViewModel();
+                    CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModel();
+                    CurrentModeViewModel = new MaintenanceViewModel(modeService);
                     break;
             }
             curMode = x;
@@ -48,7 +48,7 @@ namespace EtGate.UI.ViewModels
             //PropertyChanged(nameof(CurrentModeViewModel));
         }
 
-        public ViewModelBase CurrentModeViewModel { get; set; }
+        public ModeViewModel CurrentModeViewModel { get; set; }
         private Mode? curMode = null;
         //= new AppBootingViewModel();
         //#pragma warning disable CA1822 // Mark members as static

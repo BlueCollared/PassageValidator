@@ -71,7 +71,6 @@ namespace Domain.Services.Modes
                         x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitly.
                         curModeMgr.Dispose();
                         curModeMgr = null;
-
                     }
                 }
             }
@@ -97,20 +96,19 @@ namespace Domain.Services.Modes
 
             DoModeRelatedX();
         }
-
+        bool bMaintenacneRequested = false;
         private void DoModeRelatedX()
         {
             Mode modeBefore = CurMode;
-            Mode modeAfter = CalculateMode(equipmentStatus);
-
-            EquipmentModeSubject.OnNext(modeAfter);
+            Mode modeAfter = bMaintenacneRequested? Mode.Maintenance : CalculateMode(equipmentStatus);
+            
             if (modeAfter != modeBefore)
             {
                 if (curModeMgr != null)
                     curModeMgr.Dispose();
                 SwitchTo(modeAfter);
             }
-
+            // TODO: see if it should come earlier
             EquipmentModeSubject.OnNext(modeAfter);
         }
 
@@ -135,9 +133,9 @@ namespace Domain.Services.Modes
                 case Mode.InService:
                     curModeMgr = new InServiceMgr(validationMgr, passageMgr, mmi, qrReaderMgr);
                     break;
-                case Mode.OOO:
-                    curModeMgr = new OOOMgr(mmi);
-                    break;
+                //case Mode.OOO:
+                //    curModeMgr = new OOOMgr(mmi);
+                //    break;
             }
         }
 
@@ -152,12 +150,16 @@ namespace Domain.Services.Modes
 
         public void SwitchToMaintenance()
         {
-            throw new NotImplementedException();
+            bMaintenacneRequested = true;
+            DoModeRelatedX();
+            //curModeMgr
+            //throw new NotImplementedException();
         }
 
         public void SwitchOutMaintenance()
         {
-            throw new NotImplementedException();
+            bMaintenacneRequested = false;
+            DoModeRelatedX();
         }
 
         ISubModeMgr curModeMgr;

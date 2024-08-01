@@ -1,12 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
-namespace EtGate.UI;
+namespace EtGate.UI.Views;
 
-public partial class MaintenaceView : UserControl
+public partial class MaintenanceView : UserControl
 {
-    public MaintenaceView()
+    public MaintenanceView()
     {
         InitializeComponent();
     }

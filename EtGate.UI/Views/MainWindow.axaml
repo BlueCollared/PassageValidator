@@ -18,13 +18,15 @@
 		<DataTemplate x:Key="OOO"  DataType="vm:OOOViewModel">
 			<vu:OOOView/>
 		</DataTemplate>
-			<DataTemplate x:Key="OOS"  DataType="vm:OOSViewModel">
-				<vu:OOSView></vu:OOSView>
-			</DataTemplate>
-			<DataTemplate x:Key="InService"  DataType="vm:InServiceViewModel">
-				<vu:AppBootingView></vu:AppBootingView>
-			</DataTemplate>			
-
+		<DataTemplate x:Key="Maintenace"  DataType="vm:MaintenanceViewModel">
+			<vu:MaintenanceView/>
+		</DataTemplate>
+		<DataTemplate x:Key="OOS"  DataType="vm:OOSViewModel">
+			<vu:OOSView></vu:OOSView>
+		</DataTemplate>
+		<DataTemplate x:Key="InService"  DataType="vm:InServiceViewModel">
+			<vu:AppBootingView></vu:AppBootingView>
+		</DataTemplate>
 		</ResourceDictionary>
 	</Window.Resources>
 	<!--
@@ -39,8 +41,8 @@
 	<!--
     <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 	-->
-	<Grid>		
-		<ContentControl Content="{Binding CurrentModeViewModel}"/>
+	<Grid>
+		<ContentControl Name="host" Content="{Binding CurrentModeViewModel}"/>
 	</Grid>
 
 </Window>

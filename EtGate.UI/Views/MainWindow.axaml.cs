@@ -1,4 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using EtGate.Domain.Services;
+using EtGate.UI.ViewModels;
+using System;
+//using Key = Avalonia.Remote.Protocol.Input.Key;
+using Key = Avalonia.Input.Key;
 
 namespace EtGate.UI.Views
 {
@@ -6,7 +12,20 @@ namespace EtGate.UI.Views
     {
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            this.KeyDown += OnKeyDown;
+        }
+
+        public LoginService loginService { private get; set; }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.C && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+            {
+                // Ctrl+C
+                ((ModeViewModel)(host.Content)).MaintenaceRequested();
+                e.Handled = true; // Mark the event as handled if needed
+            }
         }
     }
 }
