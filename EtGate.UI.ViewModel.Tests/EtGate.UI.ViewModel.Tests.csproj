@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EtGate.ViewModel\EtGate.UI.ViewModels.csproj" />
+    <ProjectReference Include="..\EtGate.UI\EtGate.UI.csproj" />
   </ItemGroup>
 
 </Project>
