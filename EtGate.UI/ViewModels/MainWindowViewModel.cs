@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using System;
+using System.Reactive.Linq;
+using Domain;
 using Domain.Services.InService;
 using GateApp;
 using ReactiveUI;
