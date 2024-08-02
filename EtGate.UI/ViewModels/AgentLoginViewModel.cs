@@ -1,5 +1,5 @@
-﻿using EtGate.Domain;
-using EtGate.Domain.Services;
+﻿using EtGate.Domain.Services;
+using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels;
@@ -14,14 +14,15 @@ public class AgentLoginViewModel : ViewModelBase
     {
         this.loginService = loginService;
         this.navService = navService;
+        LoginCommand = new RelayCommand(Login);
     }
 
-    public ICommand LoginCommand { get; }
+    public ICommand LoginCommand { get; private set; }
 
-    private void Login(string userId, string passwd)
+    private void Login(/*string userId, string passwd*/)
     {
-        Agent? loginResult = loginService.Login(userId, passwd).Result;
-        if (loginResult != null)
+        //Agent? loginResult = loginService.Login(userId, passwd).Result;
+        //if (loginResult != null)
         {
             navService.NavigateTo<MaintenanceMenuViewModel>();
         }

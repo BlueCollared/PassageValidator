@@ -3,16 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="EtGate.UI.Views.MaintenanceView">
-	Maintenance page
-	<!--<UserControl.Resources>
-		<ResourceDictionary>
-			<DataTemplate x:Key="AgentLogin"  DataType="vm:AgentLoginViewModel">
-				<vu:AgentLoginView></vu:AgentLoginView>
-			</DataTemplate>
-		</ResourceDictionary>
-	</UserControl.Resources>
-	<Grid>
-		--><!--<ContentControl Content="{Binding CurrentModeViewModel}"/>--><!--
-	</Grid>-->
+             x:Class="EtGate.UI.Views.MaintenanceView"
+			 xmlns:local="clr-namespace:EtGate.UI.ViewModels"
+	>
+    <ContentControl x:Name="host"/>
+       
 </UserControl>

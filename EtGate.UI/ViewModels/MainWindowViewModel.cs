@@ -11,11 +11,13 @@ namespace EtGate.UI.ViewModels
     {
         private readonly IModeService modeService;
         private readonly IInServiceMgrFactory inServiceMgrFactory;
+        private readonly INavigationService navigationService;
 
-        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory)
+        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory, INavigationService navigationService)
         {
             this.modeService = modeService;
             this.inServiceMgrFactory = inServiceMgrFactory;
+            this.navigationService = navigationService;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
 
@@ -42,7 +44,7 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModel(modeService, new MaintenanceNavigationService(null));
+                    CurrentModeViewModel = new MaintenanceViewModel(modeService, navigationService);
                     break;
             }
             curMode = x;

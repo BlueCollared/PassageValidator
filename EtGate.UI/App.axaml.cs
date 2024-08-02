@@ -53,7 +53,13 @@ namespace EtGate.UI
             //builder.RegisterType<ModeManager>().AsSelf();
             builder.RegisterType<ValidationMgr>().AsSelf();
             builder.RegisterType<ModeService>().As<IModeService>();
-            builder.RegisterType<MockContextRepository>().As<IContextRepository>();            
+            builder.RegisterType<MockContextRepository>().As<IContextRepository>();
+
+            builder.RegisterType<MaintenanceViewModel>().InstancePerRequest();
+            builder.RegisterType<MaintenanceMenuViewModel>().InstancePerRequest();
+            builder.RegisterType<AgentLoginViewModel>().InstancePerRequest();
+
+            builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf();
 
             builder.RegisterType<QrReaderMgr>()
                .WithParameter(
@@ -86,6 +92,7 @@ namespace EtGate.UI
             Container = builder.Build();
 
             var serviceProvider = new AutofacServiceProvider(Container);
+            serviceProvider.GetService<NavigationService>()._serviceProvider = serviceProvider;
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

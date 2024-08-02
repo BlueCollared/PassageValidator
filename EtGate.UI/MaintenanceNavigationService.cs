@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace EtGate.UI;
@@ -6,24 +7,31 @@ namespace EtGate.UI;
 
 public interface INavigationService
 {
-    void NavigateTo<TViewModel>(ContentControl host) where TViewModel : class;
+    ContentControl host { get; set; }
+    void NavigateTo<TViewModel>() where TViewModel : class;
 }
 
-public class MaintenanceNavigationService : INavigationService
+public class NavigationService : INavigationService
 {
-    private readonly IServiceProvider _serviceProvider;
+    //private readonly
+    public
+     IServiceProvider _serviceProvider { get; set; }
 
-    public MaintenanceNavigationService(IServiceProvider serviceProvider)
+    public NavigationService(
+        IServiceProvider serviceProvider
+        )
     {
         _serviceProvider = serviceProvider;
     }
 
-    public void NavigateTo<TViewModel>(ContentControl host) where TViewModel : class
-    {        
-        //var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
-        //var viewType = typeof(TViewModel).Name.Replace("ViewModel", "View");
-        //var view = (Control)Activator.CreateInstance(Type.GetType($"YourNamespace.{viewType}"));
-        //view.DataContext = viewModel;
-        //host.Content = view;
+    public ContentControl host { get; set; }
+
+    public void NavigateTo<TViewModel>() where TViewModel : class
+    {
+        var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        var viewType = typeof(TViewModel).Name.Replace("ViewModel", "View");
+        var view = (Control)Activator.CreateInstance(Type.GetType($"YourNamespace.{viewType}"));
+        view.DataContext = viewModel;
+        host.Content = view;
     }
 }
