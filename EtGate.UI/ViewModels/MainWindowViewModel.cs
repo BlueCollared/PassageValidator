@@ -48,11 +48,24 @@ namespace EtGate.UI.ViewModels
                     break;
             }
             curMode = x;
-            this.RaisePropertyChanged(nameof(CurrentModeViewModel));
+            //this.RaisePropertyChanged(nameof(CurrentModeViewModel));
             //PropertyChanged(nameof(CurrentModeViewModel));
         }
 
-        public ModeViewModel CurrentModeViewModel { get; set; }
+        private ViewModelBase _currentModeViewModel;
+        public ViewModelBase CurrentModeViewModel
+        {
+            get => _currentModeViewModel;
+            set
+            {
+                if (_currentModeViewModel != value)
+                {
+                    _currentModeViewModel = value;
+                    this.RaisePropertyChanged(nameof(CurrentModeViewModel));
+                }
+            }
+        }
+        //public ModeViewModel CurrentModeViewModel { get; set; }
         private Mode? curMode = null;
         //= new AppBootingViewModel();
         //#pragma warning disable CA1822 // Mark members as static

@@ -10,27 +10,27 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="EtGate.UI">
 
-	<Window.Resources>
-		<ResourceDictionary>
-		<DataTemplate x:Key="AppBooting"  DataType="vm:AppBootingViewModel">
-			<vu:AppBootingView></vu:AppBootingView>
+	<Window.DataTemplates>
+		
+		<DataTemplate DataType="{x:Type vm:AppBootingViewModel}">
+			<vu:AppBootingView/>
 		</DataTemplate>
-		<DataTemplate x:Key="OOO"  DataType="vm:OOOViewModel">
+		<DataTemplate DataType="vm:OOOViewModel">
 			<vu:OOOView/>
 		</DataTemplate>
-		<DataTemplate x:Key="Maintenace"  DataType="vm:MaintenanceViewModel">
+		<DataTemplate  DataType="vm:MaintenanceViewModel">
 			<vu:MaintenanceView/>
 		</DataTemplate>
-		<DataTemplate x:Key="OOS"  DataType="vm:OOSViewModel">
-			<vu:OOSView></vu:OOSView>
+		<DataTemplate   DataType="vm:OOSViewModel">
+			<vu:OOSView/>
 		</DataTemplate>
-		<DataTemplate x:Key="InService"  DataType="vm:InServiceViewModel">
+		<DataTemplate  DataType="vm:InServiceViewModel">
 			<vu:AppBootingView></vu:AppBootingView>
 		</DataTemplate>
-		</ResourceDictionary>
-	</Window.Resources>
-	<!--
-	<Window.DataContext>
+		
+	</Window.DataTemplates>
+	
+	<!--<Window.DataContext>
 		<vm:MainWindowViewModel/>
 	</Window.DataContext>-->
 	
