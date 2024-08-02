@@ -9,6 +9,7 @@ using Domain.Peripherals.Qr;
 using Domain.Services.InService;
 using Domain.Services.Modes;
 using EtGate.Domain;
+using EtGate.Domain.Services;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -55,11 +56,12 @@ namespace EtGate.UI
             builder.RegisterType<ModeService>().As<IModeService>();
             builder.RegisterType<MockContextRepository>().As<IContextRepository>();
 
-            builder.RegisterType<MaintenanceViewModel>().InstancePerRequest();
-            builder.RegisterType<MaintenanceMenuViewModel>().InstancePerRequest();
-            builder.RegisterType<AgentLoginViewModel>().InstancePerRequest();
+            builder.RegisterType<MaintenanceViewModel>().InstancePerDependency();
+            builder.RegisterType<MaintenanceMenuViewModel>().InstancePerDependency();
+            builder.RegisterType<AgentLoginViewModel>().InstancePerDependency();
 
             builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf();
+            builder.RegisterType<LoginService>().AsSelf();
 
             builder.RegisterType<QrReaderMgr>()
                .WithParameter(
@@ -94,6 +96,7 @@ namespace EtGate.UI
             var serviceProvider = new AutofacServiceProvider(Container);
             serviceProvider.GetService<NavigationService>()._serviceProvider = serviceProvider;
 
+            //var removeMe = serviceProvider.GetService<AgentLoginViewModel>();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
