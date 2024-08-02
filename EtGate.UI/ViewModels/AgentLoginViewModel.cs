@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels;
 
-public class AgentLoginViewModel
+public class AgentLoginViewModel : ViewModelBase
 {
     private readonly LoginService loginService;
     private readonly INavigationService navService;

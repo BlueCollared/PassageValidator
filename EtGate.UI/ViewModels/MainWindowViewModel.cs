@@ -42,7 +42,7 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModel(modeService);
+                    CurrentModeViewModel = new MaintenanceViewModel(modeService, new MaintenanceNavigationService(null));
                     break;
             }
             curMode = x;
