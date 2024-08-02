@@ -15,14 +15,14 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-    <PackageReference Include="Avalonia" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
+    <PackageReference Include="Avalonia" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.1" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
-    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.1" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
@@ -31,5 +31,11 @@
     <ProjectReference Include="..\EtGate.QrReader.Proxy\EtGate.QrReader.Proxy.csproj" />
     <ProjectReference Include="..\EtGate.ViewModel\EtGate.UI.ViewModels.csproj" />
     <ProjectReference Include="..\GateApp\EtGate.GateApp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\MaintenanceMenuView.axaml.cs">
+      <DependentUpon>MaintenanceMenuView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 ﻿using EtGate.Domain.Services;
-using GalaSoft.MvvmLight.Command;
+using ReactiveUI;
+
+//using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels;
@@ -14,7 +16,7 @@ public class AgentLoginViewModel : ViewModelBase
     {
         this.loginService = loginService;
         this.navService = navService;
-        LoginCommand = new RelayCommand(Login);
+        LoginCommand = ReactiveCommand.Create(Login);
     }
 
     public ICommand LoginCommand { get; private set; }

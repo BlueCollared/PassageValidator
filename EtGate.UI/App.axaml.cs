@@ -52,16 +52,16 @@ namespace EtGate.UI
               .As<IDeviceStatus<QrReaderStatus>>()
               .SingleInstance();
             //builder.RegisterType<ModeManager>().AsSelf();
-            builder.RegisterType<ValidationMgr>().AsSelf();
-            builder.RegisterType<ModeService>().As<IModeService>();
-            builder.RegisterType<MockContextRepository>().As<IContextRepository>();
+            builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
+            builder.RegisterType<ModeService>().As<IModeService>().SingleInstance();
+            builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
 
             builder.RegisterType<MaintenanceViewModel>().InstancePerDependency();
             builder.RegisterType<MaintenanceMenuViewModel>().InstancePerDependency();
             builder.RegisterType<AgentLoginViewModel>().InstancePerDependency();
 
-            builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf();
-            builder.RegisterType<LoginService>().AsSelf();
+            builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf().SingleInstance();
+            builder.RegisterType<LoginService>().AsSelf().SingleInstance();
 
             builder.RegisterType<QrReaderMgr>()
                .WithParameter(
@@ -77,6 +77,7 @@ namespace EtGate.UI
             builder.RegisterType<MockOnline>()
                .As<IDeviceStatus<OnlineValidationSystemStatus>>();
 
+            
             builder.RegisterType<ModeManager>()
             .WithParameter((pi, ctx) =>
                 pi.ParameterType == typeof(IPassageManager),
