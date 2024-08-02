@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Avalonia.Controls;
+using Domain;
 using Domain.Services.InService;
 using EtGate.UI.ViewModels;
 using GateApp;
@@ -18,7 +19,7 @@ namespace EtGate.UI.ViewModel.Tests
             var mockModeService = new Mock<IModeService>();
             
             mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subj);
-            vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory());
+            vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new MockNavigationService());
         }
 
         MainWindowViewModel vm;
@@ -66,6 +67,16 @@ namespace EtGate.UI.ViewModel.Tests
         {
             subj.OnNext(Mode.InService);
             Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
+        }
+    }
+
+    internal class MockNavigationService : INavigationService
+    {
+        public ContentControl host { get ; set; }
+
+        public void NavigateTo<TViewModel>() where TViewModel : class
+        {
+            
         }
     }
 
