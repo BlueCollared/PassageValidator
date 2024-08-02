@@ -1,4 +1,4 @@
-﻿namespace EtGate.UI.ViewModels
+﻿namespace EtGate.UI.ViewModels.Maintenance
 {
     public class QrRdrMaintenanceViewModel : ViewModelBase
     {

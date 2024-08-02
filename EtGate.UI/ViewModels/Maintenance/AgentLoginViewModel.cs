@@ -4,7 +4,7 @@ using ReactiveUI;
 //using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 
-namespace EtGate.UI.ViewModels;
+namespace EtGate.UI.ViewModels.Maintenance;
 
 public class AgentLoginViewModel : ViewModelBase
 {

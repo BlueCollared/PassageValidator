@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\MaintenanceMenuView.axaml.cs">
+    <Compile Update="Views\Maintenance\MaintenanceMenuView.axaml.cs">
       <DependentUpon>MaintenanceMenuView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

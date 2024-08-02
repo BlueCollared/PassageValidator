@@ -15,6 +15,7 @@ using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using EtGate.QrReader.Proxy;
 using EtGate.UI.ViewModels;
+using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views;
 using GateApp;
 using Microsoft.Extensions.DependencyInjection;

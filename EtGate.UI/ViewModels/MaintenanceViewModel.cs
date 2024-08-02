@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using EtGate.UI.ViewModels.Maintenance;
 using GateApp;
 
 namespace EtGate.UI.ViewModels;
@@ -9,7 +10,7 @@ public class MaintenanceViewModel : ModeViewModel//, IContentControlHost
 
     public MaintenanceViewModel(IModeService modeService, INavigationService navigationService) : base(modeService)
     {
-        this._navigationService = navigationService;
+        _navigationService = navigationService;
     }
 
     //public ContentControl ContentControl { get; set; }

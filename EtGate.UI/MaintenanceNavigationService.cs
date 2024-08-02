@@ -30,7 +30,7 @@ public class NavigationService : INavigationService
     {
         var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
         var viewType = typeof(TViewModel).Name.Replace("ViewModel", "View");
-        var view = (Control)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.{viewType}"));
+        var view = (Control)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
         view.DataContext = viewModel;
         host.Content = view;
     }
