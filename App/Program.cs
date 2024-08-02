@@ -1,10 +1,5 @@
-﻿using Domain;
-using Domain.Services;
-using Domain.Services.Modes;
-using EtGate.Domain.Services.Qr;
-using EtGate.QrReader;
+﻿using EtGate.Domain.Services.Qr;
 using EtGate.QrReader.Proxy;
-using QrReader;
 
 namespace App
 {

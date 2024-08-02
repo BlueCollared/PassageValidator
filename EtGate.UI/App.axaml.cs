@@ -70,7 +70,8 @@ namespace EtGate.UI
                    (pi, ctx) => ctx.Resolve<IQrReader>())
                .WithParameter(
                    (pi, ctx) => pi.ParameterType == typeof(IDeviceStatus<QrReaderStatus>),
-                   (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>());
+                   (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>())
+               .SingleInstance();
 
             builder.RegisterType<MockOffline>()
                .As<IDeviceStatus<OfflineValidationSystemStatus>>();

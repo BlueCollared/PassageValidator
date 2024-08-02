@@ -3,6 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="using:EtGate.UI.ViewModels.Maintenance"
+			 x:DataType="vm:MaintenanceMenuViewModel"
              x:Class="EtGate.UI.Views.Maintenance.MaintenanceMenuView">
-	Maintenace Menu
+	<StackPanel>
+		<TextBlock Text="Qr status"/>
+		<TextBlock Text="{Binding bQrWorking}"/>
+		</StackPanel>
+	
 </UserControl>
