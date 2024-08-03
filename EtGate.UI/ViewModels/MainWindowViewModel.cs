@@ -25,7 +25,8 @@ namespace EtGate.UI.ViewModels
         {
             if (curMode == x)
                 return;
-
+            if (CurrentModeViewModel is IDisposable y)
+                y.Dispose();
             switch (x)
             {
                 case Mode.AppBooting:

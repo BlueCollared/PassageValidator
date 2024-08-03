@@ -56,10 +56,7 @@ namespace EtGate.UI
             builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
             builder.RegisterType<ModeService>().As<IModeService>().SingleInstance();
             builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
-
-            builder.RegisterType<MaintenanceViewModel>().InstancePerDependency();
-            builder.RegisterType<MaintenanceMenuViewModel>().InstancePerDependency();
-            builder.RegisterType<AgentLoginViewModel>().InstancePerDependency();
+            AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
             builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf().SingleInstance();
             builder.RegisterType<LoginService>().AsSelf().SingleInstance();
