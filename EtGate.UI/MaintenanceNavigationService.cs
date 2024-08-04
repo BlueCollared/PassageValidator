@@ -11,13 +11,13 @@ public interface INavigationService
     void NavigateTo<TViewModel>() where TViewModel : class;
 }
 
-public class NavigationService : INavigationService
+public class MaintenanceNavigationService : INavigationService
 {
     //private readonly
     public
      IServiceProvider _serviceProvider { get; set; }
 
-    public NavigationService(
+    public MaintenanceNavigationService(
         IServiceProvider serviceProvider
         )
     {

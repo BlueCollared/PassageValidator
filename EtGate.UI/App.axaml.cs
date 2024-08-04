@@ -58,7 +58,7 @@ namespace EtGate.UI
             builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
             AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
-            builder.RegisterType<NavigationService>().As<INavigationService>().AsSelf().SingleInstance();
+            builder.RegisterType<MaintenanceNavigationService>().As<INavigationService>().AsSelf().SingleInstance();
             builder.RegisterType<LoginService>().AsSelf().SingleInstance();
 
             builder.RegisterType<QrReaderMgr>()
@@ -94,7 +94,7 @@ namespace EtGate.UI
             Container = builder.Build();
 
             var serviceProvider = new AutofacServiceProvider(Container);
-            serviceProvider.GetService<NavigationService>()._serviceProvider = serviceProvider;
+            serviceProvider.GetService<MaintenanceNavigationService>()._serviceProvider = serviceProvider;
 
             //var removeMe = serviceProvider.GetService<AgentLoginViewModel>();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
