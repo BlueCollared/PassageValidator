@@ -11,13 +11,13 @@ namespace EtGate.UI.ViewModels
     {
         private readonly IModeService modeService;
         private readonly IInServiceMgrFactory inServiceMgrFactory;
-        private readonly INavigationService navigationService;
+        private readonly INavigationService maintenanceNavigationService; // TODO: we are using a singleton of it, while we should be creating a new instance for every session
 
-        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory, INavigationService navigationService)
+        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory, INavigationService maintenanceNavigationService)
         {
             this.modeService = modeService;
             this.inServiceMgrFactory = inServiceMgrFactory;
-            this.navigationService = navigationService;
+            this.maintenanceNavigationService = maintenanceNavigationService;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
 
@@ -45,7 +45,7 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModel(modeService, navigationService);
+                    CurrentModeViewModel = new MaintenanceViewModel(modeService, maintenanceNavigationService);
                     break;
             }
             curMode = x;

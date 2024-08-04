@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Autofac;
+using Avalonia.Controls;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using GateApp;
@@ -34,17 +35,36 @@ public class MaintenanceNavigationService : INavigationService
 
     public ContentControl host { get; set; }
 
+    public MaintainenaceViewModelBase CurrentViewModel => _viewModelStack.Any() ? _viewModelStack.Peek() : null;
+
     public void NavigateTo<TViewModel>() where TViewModel : MaintainenaceViewModelBase
     {
-        if (_viewModelStack.Any())
-        {
-            var currentViewModel = _viewModelStack.Peek();
-            currentViewModel.Dispose();
-        }
+        CurrentViewModel?.Dispose();        
 
         TViewModel viewModel = EstablishVM<TViewModel>();
 
         _viewModelStack.Push(viewModel);
+    }
+
+    public void GoBack()
+    {
+        if (!_viewModelStack.Any())
+        {
+            modeService.SwitchOutMaintenance();
+            return;
+        }
+
+        var vmTop = _viewModelStack.Peek();
+        if (vmTop.GetType() == typeof(AgentLoginViewModel)
+            || vmTop.GetType().IsSubclassOf(typeof(AgentLoginViewModel)))
+        {
+            _viewModelStack.Clear();
+            modeService.SwitchOutMaintenance();
+        }
+        else
+        {
+            CallEstablishVM(vmTop);
+        }
     }
 
     private TViewModel EstablishVM<TViewModel>() where TViewModel : MaintainenaceViewModelBase
@@ -76,27 +96,6 @@ public class MaintenanceNavigationService : INavigationService
         else
             return null;
     }
-    private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new Stack<MaintainenaceViewModelBase>();
-    private readonly IModeService modeService;
-
-    public void GoBack()
-    {
-        if (!_viewModelStack.Any())
-        {
-            modeService.SwitchOutMaintenance();
-            return;
-        }
-
-        var vmTop = _viewModelStack.Peek();
-        if (vmTop.GetType() == typeof(AgentLoginViewModel)
-            || vmTop.GetType().IsSubclassOf(typeof(AgentLoginViewModel)))
-        {
-            _viewModelStack.Clear();
-            modeService.SwitchOutMaintenance();
-        }
-        else
-        {
-            CallEstablishVM(vmTop);
-        }        
-    }
+    private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
+    private readonly IModeService modeService;    
 }

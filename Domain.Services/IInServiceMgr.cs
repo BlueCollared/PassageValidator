@@ -6,7 +6,7 @@ namespace Domain.Services.InService
     public interface IInServiceMgr
     {
         IObservable<State> StateObservable { get; }
-        void Dispose();
+        void Dispose(); // TODO: why this interface is not implementing IDisposable
         Task HaltFurtherValidations();
     }
 }

@@ -3,8 +3,10 @@ using Domain.Services.InService;
 using EtGate.UI.ViewModels;
 using GateApp;
 using Moq;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Xunit;
+using static Domain.Services.InService.InServiceMgr;
 
 namespace EtGate.UI.ViewModel.Tests
 {
@@ -17,79 +19,68 @@ namespace EtGate.UI.ViewModel.Tests
             // Arrange
             var mockModeService = new Mock<IModeService>();
             
-            mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subj);
-            vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
+            mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subjMode);
+
+            var InServiceMgrStub = new Mock<IInServiceMgr>();
+            InServiceMgrStub.Setup(x => x.StateObservable).Returns(
+                Observable.Empty<State>()
+                //new BehaviorSubject<InServiceMgr.State>(InServiceMgr.State.Unknown)
+                );
+            InServiceMgrStub.Setup(x => x.HaltFurtherValidations()).Returns(Task.CompletedTask);
+
+            // Create mock for IInServiceMgrFactory
+            var InServiceMgrFactoryStub = new Mock<IInServiceMgrFactory>();
+            InServiceMgrFactoryStub.Setup(x => x.Create()).Returns(InServiceMgrStub.Object);
+
+            //vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
+            vm = new MainWindowViewModel(mockModeService.Object, InServiceMgrFactoryStub.Object, new Mock<INavigationService>().Object);
         }
 
         MainWindowViewModel vm;
-        Subject<Mode> subj = new();
+        Subject<Mode> subjMode = new();
 
         [Fact]
         public void AppBootingPhase()
         {
             Assert.Null(vm.CurrentModeViewModel);
 
-            subj.OnNext(Mode.AppBooting);
+            subjMode.OnNext(Mode.AppBooting);
             Assert.IsType<AppBootingViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOO()
         {
-            subj.OnNext(Mode.OOO);
+            subjMode.OnNext(Mode.OOO);
             Assert.IsType<OOOViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Emergency()
         {
-            subj.OnNext(Mode.Emergency);
+            subjMode.OnNext(Mode.Emergency);
             Assert.IsType<EmergencyViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOS()
         {
-            subj.OnNext(Mode.OOS);
+            subjMode.OnNext(Mode.OOS);
             Assert.IsType<OOSViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Maintenance()
         {
-            subj.OnNext(Mode.Maintenance);
+            subjMode.OnNext(Mode.Maintenance);
             Assert.IsType<MaintenanceViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void InService()
         {
-            subj.OnNext(Mode.InService);
+            subjMode.OnNext(Mode.InService);
             Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
-        }
-    }
-
-
-    public class MockInServiceMgr : IInServiceMgr
-    {
-        public IObservable<InServiceMgr.State> StateObservable => new BehaviorSubject<InServiceMgr.State>(InServiceMgr.State.Unknown);
-
-        public void Dispose()
-        {
-            
-        }
-
-        public Task HaltFurtherValidations()
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    internal class MockInServiceMgrFactory : IInServiceMgrFactory
-    {
-        public IInServiceMgr Create()
-        {
-            return new MockInServiceMgr();
         }
     }
 }
