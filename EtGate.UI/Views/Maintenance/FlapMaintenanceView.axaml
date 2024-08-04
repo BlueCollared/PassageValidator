@@ -4,12 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="using:EtGate.UI.ViewModels.Maintenance"
-			 x:DataType="vm:MaintenanceMenuViewModel"
-             x:Class="EtGate.UI.Views.Maintenance.MaintenanceMenuView">
+			 x:DataType="vm:FlapMaintenanceViewModel"
+             x:Class="EtGate.UI.Views.Maintenance.FlapMaintenanceView">
 	<StackPanel>
-		<TextBlock Text="Qr status"/>
-		<TextBlock Text="{Binding bQrWorking}"/>
-		<Button Content="Flap Maintenance" Command="{Binding FlapMaintenanceSelectedCommand}"/>
-		</StackPanel>
-	
+		<TextBlock Text="Flap Maintenance"/>
+		<Button Content="Go Back" Command="{Binding GoBackCommand}"/>
+	</StackPanel>
 </UserControl>

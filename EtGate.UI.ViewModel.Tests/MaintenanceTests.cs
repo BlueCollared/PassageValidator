@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Avalonia.Controls;
+using Domain;
 using Domain.Services.InService;
 using EtGate.UI.ViewModels;
 using GateApp;
@@ -8,11 +9,11 @@ using Xunit;
 
 namespace EtGate.UI.ViewModel.Tests
 {
-    public class RightViewModelsCreated
+    public class MaintenanceTests
     {
         MainWindowViewModel mainVM;
 
-        public RightViewModelsCreated()
+        public MaintenanceTests()
         {
             // Arrange
             var mockModeService = new Mock<IModeService>();
@@ -70,26 +71,4 @@ namespace EtGate.UI.ViewModel.Tests
     }
 
 
-    public class MockInServiceMgr : IInServiceMgr
-    {
-        public IObservable<InServiceMgr.State> StateObservable => new BehaviorSubject<InServiceMgr.State>(InServiceMgr.State.Unknown);
-
-        public void Dispose()
-        {
-            
-        }
-
-        public Task HaltFurtherValidations()
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    internal class MockInServiceMgrFactory : IInServiceMgrFactory
-    {
-        public IInServiceMgr Create()
-        {
-            return new MockInServiceMgr();
-        }
-    }
 }

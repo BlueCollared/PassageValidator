@@ -6,13 +6,13 @@ using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels.Maintenance;
 
-public class AgentLoginViewModel : ViewModelBase
+public class AgentLoginViewModel : MaintainenaceViewModelBase
 {
     private readonly LoginService loginService;
     private readonly INavigationService navService;
 
     // TODO: provision for raising the event.
-    public AgentLoginViewModel(LoginService loginService, INavigationService navService)
+    public AgentLoginViewModel(LoginService loginService, INavigationService navService) : base(navService)
     {
         this.loginService = loginService;
         this.navService = navService;
@@ -20,6 +20,10 @@ public class AgentLoginViewModel : ViewModelBase
     }
 
     public ICommand LoginCommand { get; private set; }
+
+    public override void Dispose()
+    {        
+    }
 
     private void Login(/*string userId, string passwd*/)
     {

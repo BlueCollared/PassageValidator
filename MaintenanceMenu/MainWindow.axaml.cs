@@ -1,6 +1,8 @@
 using Avalonia.Controls;
+using EtGate.UI;
 using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views.Maintenance;
+using Moq;
 
 namespace MaintenanceMenu
 {
@@ -12,7 +14,8 @@ namespace MaintenanceMenu
             var view = new MaintenanceMenuView();
 
             var qrRdr = new DummyQrReaderDeviceController.DummyQrReaderDeviceController();//new QrReaderDeviceControllerProxy();
-            var vm = new MaintenanceMenuViewModel(new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, qrRdr));
+            var vm = new MaintenanceMenuViewModel(new Mock<INavigationService>().Object,
+                new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, qrRdr));
 
             view.DataContext = vm;
             host.Content = view;

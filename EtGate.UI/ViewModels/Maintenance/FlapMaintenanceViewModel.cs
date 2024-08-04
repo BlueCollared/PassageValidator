@@ -1,6 +1,17 @@
-﻿namespace EtGate.UI.ViewModels.Maintenance;
+﻿using System.Windows.Input;
 
-public class FlapMaintenanceViewModel : ViewModelBase
+namespace EtGate.UI.ViewModels.Maintenance;
+
+public class FlapMaintenanceViewModel : MaintainenaceViewModelBase
 {
+    public FlapMaintenanceViewModel(INavigationService navigationService) : base(navigationService)
+    {
+        
+    }
+
+    public override void Dispose()
+    {
+        
+    }
 }
 
