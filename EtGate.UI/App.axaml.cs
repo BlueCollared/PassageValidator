@@ -15,7 +15,6 @@ using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using EtGate.QrReader.Proxy;
 using EtGate.UI.ViewModels;
-using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views;
 using GateApp;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,7 +57,24 @@ namespace EtGate.UI
             builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
             AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
-            builder.RegisterType<MaintenanceNavigationService>().As<INavigationService>().AsSelf().SingleInstance();
+            builder.Register<Func<Type, MaintainenaceViewModelBase>>(context =>
+            {
+                var componentContext = context.Resolve<IComponentContext>();
+                return viewModelType => (MaintainenaceViewModelBase)componentContext.Resolve(viewModelType);
+            });
+
+            //builder.RegisterType<ViewModelFactory>().AsSelf();
+            builder.RegisterType<MaintenanceNavigationService>()
+               .As<INavigationService>()
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(Func<Type, MaintainenaceViewModelBase>),
+                   (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
+               )
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(IModeService),
+                   (pi, ctx) => ctx.Resolve<IModeService>()
+               ).SingleInstance();
+
             builder.RegisterType<LoginService>().AsSelf().SingleInstance();
 
             builder.RegisterType<QrReaderMgr>()
@@ -86,7 +102,7 @@ namespace EtGate.UI
                 (pi, ctx) => DefaultScheduler.Instance); // Inject default scheduler
 
             builder.RegisterType<MockPassageManager>().As<IPassageManager>();
-            builder.RegisterType<MockMmi>().As<IMMI>();
+            builder.RegisterType<MockMmi>().As<IMMI>();            
 
             builder.RegisterType<InServiceMgr>().InstancePerDependency();            
             builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>();
@@ -94,7 +110,7 @@ namespace EtGate.UI
             Container = builder.Build();
 
             var serviceProvider = new AutofacServiceProvider(Container);
-            serviceProvider.GetService<MaintenanceNavigationService>()._serviceProvider = serviceProvider;
+            //serviceProvider.GetService<MaintenanceNavigationService>()._serviceProvider = serviceProvider;
 
             //var removeMe = serviceProvider.GetService<AgentLoginViewModel>();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

@@ -1,13 +1,11 @@
-﻿using Autofac;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
+using EtGate.QrReader.Proxy;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using GateApp;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace EtGate.UI;
 
@@ -20,16 +18,12 @@ public interface INavigationService
 
 public class MaintenanceNavigationService : INavigationService
 {
-    //private readonly
-    public
-     IServiceProvider _serviceProvider { get; set; }
-
-    public MaintenanceNavigationService(
-        IServiceProvider serviceProvider,
+    public MaintenanceNavigationService(        
+        Func<Type, MaintainenaceViewModelBase> viewModelFactory,
         IModeService modeService
         )
     {
-        _serviceProvider = serviceProvider;
+        this.viewModelFactory = viewModelFactory;        
         this.modeService = modeService;
     }
 
@@ -41,7 +35,9 @@ public class MaintenanceNavigationService : INavigationService
     {
         CurrentViewModel?.Dispose();        
 
-        TViewModel viewModel = EstablishVM<TViewModel>();
+        (TViewModel viewModel, UserControl view) = EstablishVM<TViewModel>(viewModelFactory);
+        view.DataContext = viewModel;
+        host.Content = view;
 
         _viewModelStack.Push(viewModel);
     }
@@ -63,39 +59,35 @@ public class MaintenanceNavigationService : INavigationService
         }
         else
         {
-            CallEstablishVM(vmTop);
+            (MaintainenaceViewModelBase viewModel, UserControl view) = CallEstablishVM(vmTop, viewModelFactory);
+            view.DataContext = viewModel;
+            host.Content = view;
         }
     }
 
-    private TViewModel EstablishVM<TViewModel>() where TViewModel : MaintainenaceViewModelBase
+    private static (TViewModel viewModel, UserControl view) EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory) 
+        where TViewModel : MaintainenaceViewModelBase
     {
-        var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        Type viewModelType = typeof(TViewModel);        
+        MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
+        TViewModel viewModel = (TViewModel)viewModelBase;
+        
         var viewType = typeof(TViewModel).Name.Replace("ViewModel", "View");
-        var view = (Control)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
-        view.DataContext = viewModel;
-        host.Content = view;
-        return viewModel;
+        var view = (UserControl)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
+        return (viewModel, view);
     }
 
-    private MaintainenaceViewModelBase CallEstablishVM(MaintainenaceViewModelBase x)
-    {        
-        Type xType = x.GetType();
-        
-        Type baseType = typeof(MaintainenaceViewModelBase);
+    private static (MaintainenaceViewModelBase, UserControl view) CallEstablishVM(MaintainenaceViewModelBase x, Func<Type, MaintainenaceViewModelBase> viewModelFactory)
+    {
+        Type viewModelType = x.GetType();
+        MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
 
-        // Ensure that x's type derives from MaintainenaceViewModelBase
-        if (baseType.IsAssignableFrom(xType))
-        {            
-            MethodInfo method = typeof(MaintenanceNavigationService).GetMethod(nameof(EstablishVM), BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodInfo genericMethod = method.MakeGenericMethod(xType);
-            
-            var result = genericMethod.Invoke(this, null);
-            
-            return (MaintainenaceViewModelBase)result;
-        }
-        else
-            return null;
+        var viewType = viewModelBase.GetType().Name.Replace("ViewModel", "View");
+        var view = (UserControl)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
+
+        return (viewModelBase, view);
     }
     private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
+    private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
     private readonly IModeService modeService;    
 }
