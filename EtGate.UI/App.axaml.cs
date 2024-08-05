@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Domain;
@@ -71,6 +72,11 @@ namespace EtGate.UI
                    (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
                )
                .WithParameter(
+                    (pi, _) => pi.ParameterType == typeof(Func<Type, UserControl>),
+                   (_, ctx) => 
+                       ctx.Resolve<IViewFactory>()
+                )
+               .WithParameter(
                    (pi, ctx) => pi.ParameterType == typeof(IModeService),
                    (pi, ctx) => ctx.Resolve<IModeService>()
                ).SingleInstance();
@@ -92,6 +98,7 @@ namespace EtGate.UI
             builder.RegisterType<MockOnline>()
                .As<IDeviceStatus<OnlineValidationSystemStatus>>();
 
+            builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
             
             builder.RegisterType<ModeManager>()
             .WithParameter((pi, ctx) =>

@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using EtGate.QrReader.Proxy;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using GateApp;
@@ -20,10 +19,12 @@ public class MaintenanceNavigationService : INavigationService
 {
     public MaintenanceNavigationService(        
         Func<Type, MaintainenaceViewModelBase> viewModelFactory,
+        IViewFactory viewFactory,
         IModeService modeService
         )
     {
-        this.viewModelFactory = viewModelFactory;        
+        this.viewModelFactory = viewModelFactory;
+        this.viewFactory = viewFactory;
         this.modeService = modeService;
     }
 
@@ -35,7 +36,7 @@ public class MaintenanceNavigationService : INavigationService
     {
         CurrentViewModel?.Dispose();        
 
-        (TViewModel viewModel, UserControl view) = EstablishVM<TViewModel>(viewModelFactory);
+        (TViewModel viewModel, UserControl view) = EstablishVM<TViewModel>(viewModelFactory, viewFactory);
         view.DataContext = viewModel;
         host.Content = view;
 
@@ -59,35 +60,36 @@ public class MaintenanceNavigationService : INavigationService
         }
         else
         {
-            (MaintainenaceViewModelBase viewModel, UserControl view) = CallEstablishVM(vmTop, viewModelFactory);
+            (MaintainenaceViewModelBase viewModel, UserControl view) = CallEstablishVM(vmTop, viewModelFactory, viewFactory);
             view.DataContext = viewModel;
             host.Content = view;
         }
     }
 
-    private static (TViewModel viewModel, UserControl view) EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory) 
+    private static (TViewModel viewModel, UserControl view) EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory,
+        IViewFactory viewFactory) 
         where TViewModel : MaintainenaceViewModelBase
     {
         Type viewModelType = typeof(TViewModel);        
         MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
         TViewModel viewModel = (TViewModel)viewModelBase;
         
-        var viewType = typeof(TViewModel).Name.Replace("ViewModel", "View");
-        var view = (UserControl)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
-        return (viewModel, view);
+        return (viewModel, viewFactory.Create(typeof(TViewModel)));
     }
 
-    private static (MaintainenaceViewModelBase, UserControl view) CallEstablishVM(MaintainenaceViewModelBase x, Func<Type, MaintainenaceViewModelBase> viewModelFactory)
+    private static (MaintainenaceViewModelBase, UserControl view) 
+        CallEstablishVM(MaintainenaceViewModelBase x, 
+        Func<Type, MaintainenaceViewModelBase> viewModelFactory, 
+        IViewFactory viewFactory)
     {
         Type viewModelType = x.GetType();
         MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
-
-        var viewType = viewModelBase.GetType().Name.Replace("ViewModel", "View");
-        var view = (UserControl)Activator.CreateInstance(Type.GetType($"EtGate.UI.Views.Maintenance.{viewType}"));
-
-        return (viewModelBase, view);
+        
+        return (viewModelBase, viewFactory.Create(viewModelType));
     }
+
     private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
+    private readonly IViewFactory viewFactory;
     private readonly IModeService modeService;    
 }
