@@ -31,7 +31,7 @@ namespace EtGate.UI.ViewModels.Maintenance
 
         public override void Dispose()
         {
-            
+            IsDisposed = true;
         }
 
         public ICommand FlapMaintenanceSelectedCommand { get; private set; }        

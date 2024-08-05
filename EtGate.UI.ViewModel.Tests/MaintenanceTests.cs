@@ -29,37 +29,90 @@ namespace EtGate.UI.ViewModel.Tests
         }
 
         [Fact]
-        void Test()
+        void State0_MaintNavCurrentViewModelIsNullInStart()
         {
             Assert.Null(nav.CurrentViewModel);
-            {
-                mockModeService.SwitchToMaintenance();
-                //Assert.Equal<Type>(mainVM.CurrentModeViewModel.GetType(), typeof(MaintenanceViewModel));
-                mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
-            }
-            {
-                ((MaintenanceViewModel)mainVM.CurrentModeViewModel).Init(dummy.Dummy_ContentControl);
-                nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
-            }
-            {
-                var agLogVM = (AgentLoginViewModel)nav.CurrentViewModel;
-                agLogVM.IsDisposed.ShouldBeFalse();
+            nav.ViewModelStack.ShouldBeEmpty();
+        }
 
-                agLogVM.LoginCommand.Execute(null);
-                
-                nav.CurrentViewModel.ShouldBeOfType<MaintenanceMenuViewModel>();
-                var mainMenuVM = nav.CurrentViewModel;
-                agLogVM.IsDisposed.ShouldBeTrue();
-
-                mainMenuVM.GoBackCommand.Execute(null);
-                mainMenuVM.IsDisposed.ShouldBeTrue();
-
-            }
-            {                
-
-            }
+        [Fact]
+        void State1_SwitchingToMaintenanceAndCallInit()
+        {
+            mockModeService.SwitchToMaintenance();
+            mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
             
+            ((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init(dummy.Dummy_ContentControl);
+            nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
+        }
 
+        [Fact]
+        void State2_LoginSuccess()
+        {
+            State1_SwitchingToMaintenanceAndCallInit();
+
+            var agLogVM = (AgentLoginViewModel)nav.CurrentViewModel;
+            agLogVM.IsDisposed.ShouldBeFalse();
+
+            agLogVM.LoginCommand.Execute(null);
+
+            nav.CurrentViewModel.ShouldBeOfType<MaintenanceMenuViewModel>();
+            //var mainMenuVM = nav.CurrentViewModel;
+            agLogVM.IsDisposed.ShouldBeTrue();
+        }
+
+        [Fact]
+        void State3_SwitchingToLeafPage()
+        {
+            State2_LoginSuccess();
+
+            var mainMenuVM = (MaintenanceMenuViewModel)nav.CurrentViewModel;
+
+            mainMenuVM.FlapMaintenanceSelectedCommand.Execute(null);
+
+            mainMenuVM.IsDisposed.ShouldBeTrue();
+
+            nav.CurrentViewModel.ShouldBeOfType<FlapMaintenanceViewModel>();
+        }
+
+        [Fact]
+        void State3_Test2()
+        {
+            State3_SwitchingToLeafPage();
+
+            var flapMainVM = (FlapMaintenanceViewModel)nav.CurrentViewModel;
+            flapMainVM.IsDisposed.ShouldBeFalse();
+            var stak = nav.ViewModelStack;
+            stak.Pop();
+            var lastVM = stak.Peek();
+            lastVM.IsDisposed.ShouldBeTrue();
+        }
+
+        [Fact]
+        void State4_GoBackFromLeafPage()
+        {            
+            State3_SwitchingToLeafPage();
+            var stak = nav.ViewModelStack;
+            stak.Pop();
+            var lastVM = stak.Peek();
+
+            // Act
+            nav.CurrentViewModel.GoBackCommand.Execute(null);
+
+            // Assert
+            nav.CurrentViewModel.ShouldBeOfType(lastVM.GetType());
+            nav.CurrentViewModel.IsDisposed.ShouldBeFalse();
+        }
+
+        [Fact]
+        void State5_GoBackToNormal()
+        {
+            State4_GoBackFromLeafPage();
+            mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
+            nav.CurrentViewModel.GoBackCommand.Execute(null);
+
+            nav.CurrentViewModel.ShouldBeNull();
+            nav.ViewModelStack.ShouldBeEmpty();
+            mainVM.CurrentModeViewModel.ShouldNotBeOfType<MaintenanceViewModel>();
         }
 
         MaintainenaceViewModelBase CreateVM(Type typ)
@@ -75,6 +128,8 @@ namespace EtGate.UI.ViewModel.Tests
                 return new AgentLoginViewModel(loginService.Object, nav);
             else if (typ == typeof(MaintenanceMenuViewModel))
                 return new MaintenanceMenuViewModel(nav, dummy.Dummy_IQrReaderMgr);
+            else if (typ == typeof(FlapMaintenanceViewModel))
+                return new FlapMaintenanceViewModel(nav);
             else
                 throw new NotImplementedException();
         }

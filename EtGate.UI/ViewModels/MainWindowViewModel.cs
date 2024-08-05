@@ -53,8 +53,8 @@ namespace EtGate.UI.ViewModels
             //PropertyChanged(nameof(CurrentModeViewModel));
         }
 
-        private ViewModelBase _currentModeViewModel;
-        public ViewModelBase CurrentModeViewModel
+        private ModeViewModel _currentModeViewModel;
+        public ModeViewModel CurrentModeViewModel
         {
             get => _currentModeViewModel;
             set

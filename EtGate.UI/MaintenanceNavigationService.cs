@@ -51,7 +51,17 @@ public class MaintenanceNavigationService : INavigationService
             return;
         }
 
-        var vmTop = _viewModelStack.Peek();
+        var vmTop = _viewModelStack.Pop();
+        vmTop.Dispose();
+
+        if (!_viewModelStack.Any())
+        {
+            modeService.SwitchOutMaintenance();
+            return;
+        }
+
+        vmTop = _viewModelStack.Pop();
+
         if (vmTop.GetType() == typeof(AgentLoginViewModel)
             || vmTop.GetType().IsSubclassOf(typeof(AgentLoginViewModel)))
         {
@@ -63,6 +73,7 @@ public class MaintenanceNavigationService : INavigationService
             (MaintainenaceViewModelBase viewModel, UserControl view) = CallEstablishVM(vmTop, viewModelFactory, viewFactory);
             view.DataContext = viewModel;
             host.Content = view;
+            _viewModelStack.Push(viewModel);
         }
     }
 
@@ -87,6 +98,8 @@ public class MaintenanceNavigationService : INavigationService
         
         return (viewModelBase, viewFactory.Create(viewModelType));
     }
+
+    public Stack<MaintainenaceViewModelBase> ViewModelStack => new Stack<MaintainenaceViewModelBase>(_viewModelStack);
 
     private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
