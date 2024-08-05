@@ -14,7 +14,7 @@ namespace Domain.Services.InService
         private readonly ValidationMgr validationMgr;
         private readonly IPassageManager passage;
         private readonly IMMI mmi;
-        private readonly QrReaderMgr qrReader;
+        private readonly IQrReaderMgr qrReader;
         private Queue<Authorization> authorizations = new();
 
         State state = State.Unknown;
@@ -58,7 +58,7 @@ namespace Domain.Services.InService
             ValidationMgr validationMgr,
             IPassageManager passage,
             IMMI mmi,
-            QrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
+            IQrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
             )
         {
             this.validationMgr = validationMgr;

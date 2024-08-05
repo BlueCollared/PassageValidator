@@ -21,13 +21,13 @@ namespace Domain.Services.Modes
         new ValidationSystemStatus_()
     );
 
-        private readonly QrReaderMgr qrReaderMgr;        
+        private readonly IQrReaderMgr qrReaderMgr;        
         BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
         OpMode opModeDemanded;
         public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
         public Mode CurMode => EquipmentModeSubject.Value;
         
-        public ModeManager(QrReaderMgr qrReaderMgr, 
+        public ModeManager(IQrReaderMgr qrReaderMgr, 
             ValidationMgr validationMgr, 
             IPassageManager passageMgr,
             IScheduler scheduler,

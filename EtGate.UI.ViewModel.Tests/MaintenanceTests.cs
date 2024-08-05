@@ -43,6 +43,19 @@ namespace EtGate.UI.ViewModel.Tests
             
             ((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init(dummy.Dummy_ContentControl);
             nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
+            nav.CurrentViewModel.IsDisposed.ShouldBeFalse();
+        }
+
+        [Fact]
+        void BackFromAgentLoginPage()
+        {
+            State1_SwitchingToMaintenanceAndCallInit();
+            var agentLoginVM = nav.CurrentViewModel;
+
+            agentLoginVM.GoBackCommand.Execute(null);
+            agentLoginVM.IsDisposed.ShouldBeTrue();
+
+            mainVM.CurrentModeViewModel.ShouldNotBeOfType<MaintenanceViewModel>();
         }
 
         [Fact]
@@ -75,7 +88,7 @@ namespace EtGate.UI.ViewModel.Tests
         }
 
         [Fact]
-        void State3_Test2()
+        void State3_LastVMShouldBeDisposedOnMovingForward()
         {
             State3_SwitchingToLeafPage();
 
