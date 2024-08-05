@@ -4,16 +4,14 @@ using GateApp;
 
 namespace EtGate.UI.ViewModels;
 
-public class MaintenanceViewModel : ModeViewModel//, IContentControlHost
+public class MaintenanceViewModel : ModeViewModel
 {
     private readonly INavigationService _navigationService;
 
     public MaintenanceViewModel(IModeService modeService, INavigationService navigationService) : base(modeService)
     {
         _navigationService = navigationService;
-    }
-
-    //public ContentControl ContentControl { get; set; }
+    }   
 
     public void Init(ContentControl host)
     {
@@ -21,9 +19,3 @@ public class MaintenanceViewModel : ModeViewModel//, IContentControlHost
         _navigationService.NavigateTo<AgentLoginViewModel>();
     }
 }
-
-//public interface IContentControlHost
-//{
-//    ContentControl ContentControl { get; set; }
-//    void Init(ContentControl host);
-//}
