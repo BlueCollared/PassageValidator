@@ -4,7 +4,8 @@ namespace EtGate.Domain.Services.Qr
 {
     // it is getting little difficult to decide whether to make it implement IQrReaderStatus, IQrInfoStatus. Ideally we keep it so simple that there is not need of it
     // the 
-    public class QrReaderMgr //: IQrReaderStatus, IQrInfoStatus
+    public class QrReaderMgr : IQrReaderMgr
+    //: IQrReaderStatus, IQrInfoStatus
     {
         private readonly IQrReader qrRdrInfo;
         private readonly IDeviceStatus<QrReaderStatus> statusMgr;

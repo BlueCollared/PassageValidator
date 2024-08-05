@@ -1,74 +1,106 @@
-﻿//using Avalonia.Controls;
-//using Domain;
-//using Domain.Services.InService;
-//using EtGate.UI.ViewModels;
-//using GateApp;
-//using Moq;
-//using System.Reactive.Subjects;
-//using Xunit;
+﻿using Domain;
+using Domain.Services.InService;
+using EtGate.Domain;
+using EtGate.Domain.Services;
+using EtGate.UI.ViewModels;
+using EtGate.UI.ViewModels.Maintenance;
+using GateApp;
+using Moq;
+using Shouldly;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Xunit;
 
-//namespace EtGate.UI.ViewModel.Tests
-//{
-//    public class MaintenanceTests
-//    {
-//        MainWindowViewModel mainVM;
+namespace EtGate.UI.ViewModel.Tests
+{
+    public class MaintenanceTests
+    {
+        MainWindowViewModel mainVM;
+        MaintenanceNavigationService nav;
+        
+        Dummy dummy = new();
+        
+        IModeService mockModeService = new MockModeService();
+        public MaintenanceTests()
+        {
+            nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
 
-//        public MaintenanceTests()
-//        {
-//            // Arrange
-//            var mockModeService = new Mock<IModeService>();
+            mainVM = new MainWindowViewModel(mockModeService, new Mock<IInServiceMgrFactory>().Object, nav);
+        }
+
+        [Fact]
+        void Test()
+        {
+            Assert.Null(nav.CurrentViewModel);
+            {
+                mockModeService.SwitchToMaintenance();
+                //Assert.Equal<Type>(mainVM.CurrentModeViewModel.GetType(), typeof(MaintenanceViewModel));
+                mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
+            }
+            {
+                ((MaintenanceViewModel)mainVM.CurrentModeViewModel).Init(dummy.Dummy_ContentControl);
+                nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
+            }
+            {
+                var agLogVM = (AgentLoginViewModel)nav.CurrentViewModel;
+                agLogVM.IsDisposed.ShouldBeFalse();
+
+                agLogVM.LoginCommand.Execute(null);
+                
+                nav.CurrentViewModel.ShouldBeOfType<MaintenanceMenuViewModel>();
+                var mainMenuVM = nav.CurrentViewModel;
+                agLogVM.IsDisposed.ShouldBeTrue();
+
+                mainMenuVM.GoBackCommand.Execute(null);
+                mainMenuVM.IsDisposed.ShouldBeTrue();
+
+            }
+            {                
+
+            }
             
-//            mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subj);
-//            vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
-//        }
 
-//        MainWindowViewModel vm;
-//        Subject<Mode> subj = new();
+        }
 
-//        [Fact]
-//        public void AppBootingPhase()
-//        {
-//            Assert.Null(vm.CurrentModeViewModel);
+        MaintainenaceViewModelBase CreateVM(Type typ)
+        {
+            Mock<ILoginService> loginService = new();
+            //new Agent { id = "123", name = "abc", opTyp = OpTyp.Supervisor }
+            loginService.Setup(service => service.Login(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new Agent());
+            loginService
+                .Setup(service => service.Logout())
+                .Verifiable();
+            if (typ == typeof(AgentLoginViewModel))
+                return new AgentLoginViewModel(loginService.Object, nav);
+            else if (typ == typeof(MaintenanceMenuViewModel))
+                return new MaintenanceMenuViewModel(nav, dummy.Dummy_IQrReaderMgr);
+            else
+                throw new NotImplementedException();
+        }
 
-//            subj.OnNext(Mode.AppBooting);
-//            Assert.IsType<AppBootingViewModel>(vm.CurrentModeViewModel);
-//        }
+        
+        Subject<Mode> subj = new();
 
-//        [Fact]
-//        public void OOO()
-//        {
-//            subj.OnNext(Mode.OOO);
-//            Assert.IsType<OOOViewModel>(vm.CurrentModeViewModel);
-//        }
+        private class MockModeService : IModeService
+        {
+            Subject<Mode> subjMode = new();
+            public IObservable<Mode> EquipmentModeObservable => subjMode.AsObservable();
 
-//        [Fact]
-//        public void Emergency()
-//        {
-//            subj.OnNext(Mode.Emergency);
-//            Assert.IsType<EmergencyViewModel>(vm.CurrentModeViewModel);
-//        }
+            public bool ChangeMode(OpMode mode, TimeSpan timeout)
+            {
+                return true;
+            }
 
-//        [Fact]
-//        public void OOS()
-//        {
-//            subj.OnNext(Mode.OOS);
-//            Assert.IsType<OOSViewModel>(vm.CurrentModeViewModel);
-//        }
+            public void SwitchOutMaintenance()
+            {
+                subjMode.OnNext(Mode.OOO);
+            }
 
-//        [Fact]
-//        public void Maintenance()
-//        {
-//            subj.OnNext(Mode.Maintenance);
-//            Assert.IsType<MaintenanceViewModel>(vm.CurrentModeViewModel);
-//        }
-
-//        [Fact]
-//        public void InService()
-//        {
-//            subj.OnNext(Mode.InService);
-//            Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
-//        }
-//    }
-
-
-//}
+            public void SwitchToMaintenance()
+            {
+                subjMode.OnNext(Mode.Maintenance);
+            }
+        }
+    }
+}

@@ -1,18 +1,17 @@
 ﻿using EtGate.Domain.Services;
 using ReactiveUI;
 
-//using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels.Maintenance;
 
 public class AgentLoginViewModel : MaintainenaceViewModelBase
 {
-    private readonly LoginService loginService;
+    private readonly ILoginService loginService;
     private readonly INavigationService navService;
 
     // TODO: provision for raising the event.
-    public AgentLoginViewModel(LoginService loginService, INavigationService navService) : base(navService)
+    public AgentLoginViewModel(ILoginService loginService, INavigationService navService) : base(navService)
     {
         this.loginService = loginService;
         this.navService = navService;
@@ -22,7 +21,8 @@ public class AgentLoginViewModel : MaintainenaceViewModelBase
     public ICommand LoginCommand { get; private set; }
 
     public override void Dispose()
-    {        
+    {
+        IsDisposed = true;
     }
 
     private void Login(/*string userId, string passwd*/)

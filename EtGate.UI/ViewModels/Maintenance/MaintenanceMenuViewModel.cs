@@ -10,11 +10,11 @@ namespace EtGate.UI.ViewModels.Maintenance
 {
     public class MaintenanceMenuViewModel : MaintainenaceViewModelBase
     {        
-        private readonly QrReaderMgr qrReaderMgr;
+        private readonly IQrReaderMgr qrReaderMgr;
 
         public bool bQrWorking { get; set; }
 
-        public MaintenanceMenuViewModel(INavigationService navService, QrReaderMgr qrReaderMgr) : base(navService)
+        public MaintenanceMenuViewModel(INavigationService navService, IQrReaderMgr qrReaderMgr) : base(navService)
         {            
             this.qrReaderMgr = qrReaderMgr;
             qrReaderMgr.StatusStream.Subscribe(onNext:

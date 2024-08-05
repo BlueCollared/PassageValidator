@@ -1,6 +1,6 @@
 ﻿namespace EtGate.Domain.Services
-{    
-    public class LoginService
+{
+    public class LoginService : ILoginService
     {
         public async Task<Agent?> Login(string userId, string passwd)
         {
@@ -8,7 +8,7 @@
             agent.id = "Agent_X";
             agent.name = "Frank";
             agent.opTyp = OpTyp.Maintenace;
-            
+
             return agent;
         }
 

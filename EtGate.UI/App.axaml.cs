@@ -81,7 +81,7 @@ namespace EtGate.UI
                    (pi, ctx) => ctx.Resolve<IModeService>()
                ).SingleInstance();
 
-            builder.RegisterType<LoginService>().AsSelf().SingleInstance();
+            builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
 
             builder.RegisterType<QrReaderMgr>()
                .WithParameter(
