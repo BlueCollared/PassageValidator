@@ -22,9 +22,7 @@ namespace EtGate.UI.ViewModels
         public InServiceViewModel(IInServiceMgr inServiceMgr, bool isEntry, IModeService modeService) : base(modeService)
         {
             _inServiceMgr = inServiceMgr;
-            _isEntry = isEntry;
-
-            //    _inServiceMgr.StateChanged += OnStateChanged;
+            _isEntry = isEntry;            
 
             _currentState = _inServiceMgr.StateObservable.ToProperty(this, x => x.CurrentState);
             _notificationMessage = this.WhenAnyValue(x => x.CurrentState)

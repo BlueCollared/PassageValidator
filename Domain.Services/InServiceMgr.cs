@@ -42,7 +42,7 @@ namespace Domain.Services.InService
             SomeAuthorization_s_Queued_ThatHaventBeginTransit
         }
 
-        public IObservable<State> StateObservable { get; }
+        public IObservable<State> StateObservable => Observable.Empty<State>();
 
         public InServiceMgr(
             ValidationMgr validationMgr,
