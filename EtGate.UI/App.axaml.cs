@@ -138,25 +138,7 @@ namespace EtGate.UI
             
         }
     }
-
-    internal class MockMmi : IMMI
-    {
-        public void IntrusionCleared()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void IntrusionDuringAuthorizedPassage(Intrusion x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void IntrusionWhenIdle(Intrusion x)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
+    
     internal class MockPassageManager : IPassageManager
     {
         public IObservable<OneOf<Intrusion, Fraud, PassageInProgress, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone>> PassageStatusObservable => throw new NotImplementedException();

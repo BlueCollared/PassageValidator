@@ -1,12 +1,10 @@
-﻿
-using static Domain.Services.InService.InServiceMgr;
+﻿using static Domain.Services.InService.InServiceMgr;
 
 namespace Domain.Services.InService
 {
-    public interface IInServiceMgr
+    public interface IInServiceMgr : IDisposable
     {
-        IObservable<State> StateObservable { get; }
-        void Dispose(); // TODO: why this interface is not implementing IDisposable
+        IObservable<State> StateObservable { get; }        
         Task HaltFurtherValidations();
     }
 }

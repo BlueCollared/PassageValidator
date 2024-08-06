@@ -12,8 +12,7 @@ namespace Domain.Services.InService
     public class InServiceMgr : ISubModeMgr, IInServiceMgr
     {
         private readonly ValidationMgr validationMgr;
-        private readonly IPassageManager passage;
-        private readonly IMMI mmi;
+        private readonly IPassageManager passage;        
         private readonly IQrReaderMgr qrReader;
         private Queue<Authorization> authorizations = new();
 
@@ -22,15 +21,6 @@ namespace Domain.Services.InService
 
         IDisposable qrCodeSubscription;
         IDisposable passageStatusSubscription;
-
-        // at the moment, we use this feature for 
-        //public enum PassengerStateX
-        //{
-        //    ValidationsNotYetServedInPipeline,
-        //    NoValidationsQueued
-        //}
-        //BehaviorSubject<PassengerStateX> PassengerStateSubject = new BehaviorSubject<PassengerStateX>(PassengerStateX.NoValidationsQueued);
-        //public PassengerStateX PassengerCurState => PassengerStateSubject.Value;
 
         public enum State
         {
@@ -56,14 +46,12 @@ namespace Domain.Services.InService
 
         public InServiceMgr(
             ValidationMgr validationMgr,
-            IPassageManager passage,
-            IMMI mmi,
+            IPassageManager passage,            
             IQrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
             )
         {
             this.validationMgr = validationMgr;
-            this.passage = passage;
-            this.mmi = mmi;
+            this.passage = passage;            
             this.qrReader = qrReader;
 
             qrCodeSubscription = qrReader.QrCodeStream
@@ -88,33 +76,28 @@ namespace Domain.Services.InService
             {
                 case State.Unknown:
                     {
-                        state = State.IntrusionWhenIdle;
-                        mmi.IntrusionWhenIdle(x);
+                        state = State.IntrusionWhenIdle;                        
                         break;
                     }
                 case State.Idle:
                     {
-                        state = State.IntrusionWhenIdle;
-                        mmi.IntrusionWhenIdle(x);
+                        state = State.IntrusionWhenIdle;                        
                         break;
                     }
                 case State.IntrusionWhenIdle:
                     {
-                        state = State.IntrusionWhenIdle;
-                        mmi.IntrusionWhenIdle(x);
+                        state = State.IntrusionWhenIdle;                        
                         break;
                     }
                 case State.IntrusionDuringAuthorizedPassage:
                     {
-                        state = State.IntrusionDuringAuthorizedPassage;
-                        mmi.IntrusionDuringAuthorizedPassage(x);
+                        state = State.IntrusionDuringAuthorizedPassage;                        
                         break;
                     }
                 case State.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
                 case State.PassengerInTransit_NoMorePendingAuthorizations:
                     {
-                        state = State.IntrusionDuringAuthorizedPassage;
-                        mmi.IntrusionDuringAuthorizedPassage(x);
+                        state = State.IntrusionDuringAuthorizedPassage;                        
                         break;
                     }
             }
