@@ -115,10 +115,10 @@ namespace Domain.Services.Modes
         private static Mode CalculateMode(EquipmentStatus e)
         {
             Mode modeAfter;
-            bool bQrAvailaibe = e.QrEntry?.Status?.IsAvailable ?? false;
+            bool bQrAvailable = e.QrEntry?.Status?.IsAvailable ?? false;
             bool bValidationAPIAvailable = e.ValidationAPI?.Status?.IsAvailable ?? false;
 
-            if (bQrAvailaibe && bValidationAPIAvailable)
+            if (bQrAvailable && bValidationAPIAvailable)
                 modeAfter = Mode.InService;
             else
                 modeAfter = Mode.OOO;
@@ -131,7 +131,7 @@ namespace Domain.Services.Modes
             switch (modeAfter)
             {
                 case Mode.InService:
-                    curModeMgr = new InServiceMgr(validationMgr, passageMgr, mmi, qrReaderMgr);
+                    curModeMgr = new InServiceMgr(validationMgr, passageMgr, qrReaderMgr);
                     break;
                 //case Mode.OOO:
                 //    curModeMgr = new OOOMgr(mmi);
@@ -166,6 +166,5 @@ namespace Domain.Services.Modes
         ValidationMgr validationMgr;
         IPassageManager passageMgr;
         private readonly IDisposable _timerSubscription;
-        IMMI mmi;
     }
 }

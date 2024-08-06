@@ -3,6 +3,7 @@ using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using EtGate.Domain.ValidationSystem;
 using Microsoft.Reactive.Testing;
+using Shouldly;
 
 namespace EtGate.Domain.Tests
 {
@@ -87,7 +88,21 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void AllWorking_ModeInservice()
         {
+            // Arrange
+            System s = new MockSytemBuilder().Build();
+            ModeManager modeManager = CreateModeManager(s);
 
+            // Assert
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjQrStatus.OnNext(QrReaderStatus.AllGood);
+            modeManager.CurMode.ShouldBe(Mode.AppBooting);
+
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            modeManager.CurMode.ShouldBe(Mode.InService);
         }
     }
 }

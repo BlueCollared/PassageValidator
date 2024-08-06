@@ -47,4 +47,8 @@
       <DependentUpon>MaintenanceMenuView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\InServiceView.axaml" />
+  </ItemGroup>
 </Project>
