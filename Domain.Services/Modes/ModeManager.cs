@@ -152,8 +152,6 @@ namespace Domain.Services.Modes
         {
             bMaintenacneRequested = true;
             DoModeRelatedX();
-            //curModeMgr
-            //throw new NotImplementedException();
         }
 
         public void SwitchOutMaintenance()

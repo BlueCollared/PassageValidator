@@ -11,18 +11,19 @@ namespace EtGate.Domain.Tests
     {
         readonly TimeSpan timeToCompleteAppBoot = TimeSpan.FromSeconds(30);
         TestScheduler testScheduler = new TestScheduler();
-        ModeManager CreateModeManager(System s)
+
+        System s;
+        ModeManager modeManager;
+
+        public ModeTests()
         {
-            return new ModeManager(s.qr, s.validation, null, testScheduler);
+            s = new MockSytemBuilder().Build();            
+            modeManager = new ModeManager(s.qr, s.validation, null, testScheduler);
         }
 
         [Fact]
         public void AppBootingPhase()
         {
-            // Arrange
-            System s = new MockSytemBuilder().Build();
-            ModeManager modeManager = CreateModeManager(s);
-
             // Assert
             Assert.Equal(Mode.AppBooting, modeManager.CurMode);
 
@@ -39,10 +40,6 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void AppBootingPhase_Timeout()
         {
-            // Arrange
-            System s = new MockSytemBuilder().Build();
-            ModeManager modeManager = CreateModeManager(s);
-
             // Act
             testScheduler.AdvanceBy(TimeSpan.FromSeconds(ModeManager.DEFAULT_TimeToCompleteBoot_InSeconds).Ticks);
 
@@ -52,10 +49,6 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void QrCodeNotWorking_ModeOOO()
         {
-            // Arrange
-            System s = new MockSytemBuilder().Build();            
-            ModeManager modeManager = CreateModeManager(s);
-
             // Act            
             s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
             
@@ -88,10 +81,6 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void AllWorking_ModeInservice()
         {
-            // Arrange
-            System s = new MockSytemBuilder().Build();
-            ModeManager modeManager = CreateModeManager(s);
-
             // Assert
             Assert.Equal(Mode.AppBooting, modeManager.CurMode);
 
@@ -102,7 +91,32 @@ namespace EtGate.Domain.Tests
             Assert.Equal(Mode.AppBooting, modeManager.CurMode);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            modeManager.CurMode.ShouldBe(Mode.InService);            
+        }
+
+        [Fact]
+        public void OldModeMgrDisposed()
+        {
+            AllWorking_ModeInservice();
+
+            var subModeMgr = modeManager.curModeMgr;
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
+            Assert.Equal(Mode.OOO, modeManager.CurMode);
+            subModeMgr.IsDisposed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void InSer_OOO_InSer_NewModelMgrCreated()
+        {
+            AllWorking_ModeInservice();
+
+            var subModeMgr = modeManager.curModeMgr;
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
+            modeManager.CurMode.ShouldBe(Mode.OOO);
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
             modeManager.CurMode.ShouldBe(Mode.InService);
+            modeManager.curModeMgr.ShouldNotBeSameAs(subModeMgr);
+
         }
     }
 }
