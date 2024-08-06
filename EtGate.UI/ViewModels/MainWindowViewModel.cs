@@ -1,22 +1,23 @@
-﻿using System;
-using System.Reactive.Linq;
-using Domain;
-using Domain.Services.InService;
+﻿using Domain;
 using GateApp;
 using ReactiveUI;
+using System;
+using System.Reactive.Linq;
 
 namespace EtGate.UI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IModeService modeService;
-        private readonly IInServiceMgrFactory inServiceMgrFactory;
+        //private readonly IInServiceMgrFactory inServiceMgrFactory;
         private readonly INavigationService maintenanceNavigationService; // TODO: we are using a singleton of it, while we should be creating a new instance for every session
 
-        public MainWindowViewModel(IModeService modeService, IInServiceMgrFactory inServiceMgrFactory, INavigationService maintenanceNavigationService)
+        public MainWindowViewModel(IModeService modeService, 
+            //IInServiceMgrFactory inServiceMgrFactory, 
+            INavigationService maintenanceNavigationService)
         {
             this.modeService = modeService;
-            this.inServiceMgrFactory = inServiceMgrFactory;
+//            this.inServiceMgrFactory = inServiceMgrFactory;
             this.maintenanceNavigationService = maintenanceNavigationService;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
@@ -39,7 +40,9 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new EmergencyViewModel(modeService);
                     break;
                 case Mode.InService:
-                    CurrentModeViewModel = new InServiceViewModel(inServiceMgrFactory.Create(), true, modeService);
+                    CurrentModeViewModel = new InServiceViewModel(
+                        //inServiceMgrFactory.Create(), 
+                        true, modeService);
                     break;
                 case Mode.OOS:
                     CurrentModeViewModel = new OOSViewModel(modeService);

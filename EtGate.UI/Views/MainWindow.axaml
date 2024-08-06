@@ -25,7 +25,7 @@
 			<vu:OOSView/>
 		</DataTemplate>
 		<DataTemplate  DataType="vm:InServiceViewModel">
-			<vu:AppBootingView></vu:AppBootingView>
+			<vu:InServiceView></vu:InServiceView>
 		</DataTemplate>
 		
 	</Window.DataTemplates>

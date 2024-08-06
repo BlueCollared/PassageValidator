@@ -195,8 +195,8 @@ namespace Domain.Services.InService
         }
     }
 
-    public interface IInServiceMgrFactory
-    {
-        IInServiceMgr Create();
-    }
+    //public interface IInServiceMgrFactory
+    //{
+    //    IInServiceMgr Create();
+    //}
 }

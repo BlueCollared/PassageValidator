@@ -7,8 +7,8 @@ using Domain;
 using Domain.InService;
 using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
-using Domain.Services.InService;
 using Domain.Services.Modes;
+using DummyQrReaderDeviceController;
 using EtGate.Domain;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Qr;
@@ -48,7 +48,8 @@ namespace EtGate.UI
             builder.RegisterType<OfflineValidationSystem>().AsSelf();
             builder.RegisterType<OnlineValidationSystem>().AsSelf();
 
-            builder.RegisterType<QrReaderDeviceControllerProxy>()
+            //builder.RegisterType<QrReaderDeviceControllerProxy>()
+            builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
               .As<IQrReader>()
               .As<IDeviceStatus<QrReaderStatus>>()
               .SingleInstance();
@@ -93,10 +94,10 @@ namespace EtGate.UI
                .As<IQrReaderMgr>()
                .SingleInstance();
 
-            builder.RegisterType<MockOffline>()
+            builder.RegisterType<DummyOfflineValidation>()
                .As<IDeviceStatus<OfflineValidationSystemStatus>>();
 
-            builder.RegisterType<MockOnline>()
+            builder.RegisterType<DummyOnlineValidation>()
                .As<IDeviceStatus<OnlineValidationSystemStatus>>();
 
             builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
@@ -110,10 +111,9 @@ namespace EtGate.UI
                 (pi, ctx) => DefaultScheduler.Instance); // Inject default scheduler
 
             builder.RegisterType<MockPassageManager>().As<IPassageManager>();
-            builder.RegisterType<MockMmi>().As<IMMI>();            
 
-            builder.RegisterType<InServiceMgr>().InstancePerDependency();            
-            builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>();
+            //builder.RegisterType<InServiceMgr>().InstancePerDependency();            
+            //builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>().SingleInstance();
 
             Container = builder.Build();
 
@@ -149,27 +149,27 @@ namespace EtGate.UI
         }
     }
 
-    public class MockOffline : IDeviceStatus<OfflineValidationSystemStatus>, IValidate
-    {
-        public override IObservable<OfflineValidationSystemStatus> statusObservable => subject;
-        ReplaySubject<OfflineValidationSystemStatus> subject = new();
+    //public class MockOffline : IDeviceStatus<OfflineValidationSystemStatus>, IValidate
+    //{
+    //    public override IObservable<OfflineValidationSystemStatus> statusObservable => subject;
+    //    ReplaySubject<OfflineValidationSystemStatus> subject = new();
 
-        public QrCodeValidationResult Validate(QrCodeInfo qrCode)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public QrCodeValidationResult Validate(QrCodeInfo qrCode)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
-    public class MockOnline : IDeviceStatus<OnlineValidationSystemStatus>, IValidate
-    {
-        public override IObservable<OnlineValidationSystemStatus> statusObservable => subject;
-        ReplaySubject<OnlineValidationSystemStatus> subject = new();
+    //public class MockOnline : IDeviceStatus<OnlineValidationSystemStatus>, IValidate
+    //{
+    //    public override IObservable<OnlineValidationSystemStatus> statusObservable => subject;
+    //    ReplaySubject<OnlineValidationSystemStatus> subject = new();
 
-        public QrCodeValidationResult Validate(QrCodeInfo qrCode)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public QrCodeValidationResult Validate(QrCodeInfo qrCode)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
     public class MockContextRepository : IContextRepository
     {

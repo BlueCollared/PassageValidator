@@ -162,7 +162,7 @@ namespace Domain.Services.Modes
             DoModeRelatedX();
         }
 
-        ISubModeMgr curModeMgr;
+        public ISubModeMgr curModeMgr { get; private set; }
         ValidationMgr validationMgr;
         IPassageManager passageMgr;
         private readonly IDisposable _timerSubscription;

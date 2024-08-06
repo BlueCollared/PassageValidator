@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Services.InService;
 using Domain.Services.Modes;
 
 namespace GateApp
@@ -16,6 +17,8 @@ namespace GateApp
         }
 
         public Mode CurMode => modeMgr.CurMode;
+
+        public ISubModeMgr curModeMgr => modeMgr.curModeMgr;
 
         public void SwitchToMaintenance()
         {

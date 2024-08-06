@@ -7,7 +7,7 @@ namespace EtGate.UI.ViewModels
 {
     public class InServiceViewModel : ModeViewModel
     {
-        private readonly IInServiceMgr _inServiceMgr;
+        //private readonly IInServiceMgr _inServiceMgr;
         private readonly ObservableAsPropertyHelper<string> _notificationMessage;
         private readonly bool _isEntry;
 
@@ -19,15 +19,17 @@ namespace EtGate.UI.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
         }
 
-        public InServiceViewModel(IInServiceMgr inServiceMgr, bool isEntry, IModeService modeService) : base(modeService)
+        public InServiceViewModel(
+            //IInServiceMgr inServiceMgr, 
+            bool isEntry, IModeService modeService) : base(modeService)
         {
-            _inServiceMgr = inServiceMgr;
+            //_inServiceMgr = inServiceMgr;
             _isEntry = isEntry;            
 
-            _currentState = _inServiceMgr.StateObservable.ToProperty(this, x => x.CurrentState);
-            _notificationMessage = this.WhenAnyValue(x => x.CurrentState)
-                                  .Select(state => state.ToString())
-                                  .ToProperty(this, x => x.NotificationMessage);
+            //_currentState = ((InServiceMgr)(modeService.curModeMgr)).StateObservable.ToProperty(this, x => x.CurrentState);
+            //_notificationMessage = this.WhenAnyValue(x => x.CurrentState)
+            //                      .Select(state => state.ToString())
+            //                      .ToProperty(this, x => x.NotificationMessage);
         }
 
         private readonly ObservableAsPropertyHelper<InServiceMgr.State> _currentState;

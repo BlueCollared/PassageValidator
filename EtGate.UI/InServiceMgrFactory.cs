@@ -1,21 +1,28 @@
-﻿using Autofac;
-using Domain.Services.InService;
+﻿//using Domain.InService;
+//using Domain.Services.InService;
+//using EtGate.Domain.Services.Qr;
+//using EtGate.Domain.Services.Validation;
 
-namespace EtGate.UI
-{
-    public class InServiceMgrFactory : IInServiceMgrFactory
-    {
-        private readonly ILifetimeScope _scope;
+//namespace EtGate.UI
+//{
+//    public class InServiceMgrFactory //: IInServiceMgrFactory
+//    {
+//        private ValidationMgr validationMgr;
+//        private IPassageManager passage;
+//        private IQrReaderMgr qrReader;
 
-        public InServiceMgrFactory(ILifetimeScope scope)
-        {
-            _scope = scope;
-        }
+//        public IInServiceMgr Create()
+//        {
+//            return new InServiceMgr(validationMgr, passage, qrReader);
+//        }
 
-        public IInServiceMgr Create()
-        {
-            // Resolve a new instance of InServiceMgr
-            return _scope.Resolve<InServiceMgr>();
-        }
-    }    
-}
+//        public InServiceMgrFactory(ValidationMgr validationMgr,
+//            IPassageManager passage,
+//            IQrReaderMgr qrReader)
+//        {            
+//            this.validationMgr = validationMgr;
+//            this.passage = passage;
+//            this.qrReader = qrReader;
+//        }
+//    }
+//}

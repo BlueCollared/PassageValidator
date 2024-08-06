@@ -25,7 +25,9 @@ namespace EtGate.UI.ViewModel.Tests
         {
             nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
 
-            mainVM = new MainWindowViewModel(mockModeService, new Mock<IInServiceMgrFactory>().Object, nav);
+            mainVM = new MainWindowViewModel(mockModeService, 
+                //new Mock<IInServiceMgrFactory>().Object, 
+                nav);
         }
 
         [Fact]
@@ -154,6 +156,8 @@ namespace EtGate.UI.ViewModel.Tests
         {
             Subject<Mode> subjMode = new();
             public IObservable<Mode> EquipmentModeObservable => subjMode.AsObservable();
+
+            public ISubModeMgr curModeMgr => throw new NotImplementedException();
 
             public bool ChangeMode(OpMode mode, TimeSpan timeout)
             {
