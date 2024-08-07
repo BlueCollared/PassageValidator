@@ -14,7 +14,6 @@ using EtGate.Domain.Services;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
-using EtGate.QrReader.Proxy;
 using EtGate.UI.ViewModels;
 using EtGate.UI.Views;
 using GateApp;
@@ -22,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OneOf;
 using System;
 using System.Reactive.Concurrency;
-using System.Reactive.Subjects;
 
 namespace EtGate.UI
 {
@@ -43,8 +41,18 @@ namespace EtGate.UI
             var builder = new ContainerBuilder();
             builder.Populate(serviceCollection);
             builder.RegisterInstance(DefaultScheduler.Instance).As<IScheduler>();
-            // Register your ViewModels and other services here
-            builder.RegisterType<MainWindowViewModel>().AsSelf();
+
+            // Register the MainWindowViewModel with bPrimary = true
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter("bPrimary", true))
+                .Named<MainWindowViewModel>("Primary");
+
+            // Register the MainWindowViewModel with bPrimary = false
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter("bPrimary", false))
+                .Named<MainWindowViewModel>("Secondary");
+
+
             builder.RegisterType<OfflineValidationSystem>().AsSelf();
             builder.RegisterType<OnlineValidationSystem>().AsSelf();
 
@@ -116,17 +124,12 @@ namespace EtGate.UI
             //builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>().SingleInstance();
 
             Container = builder.Build();
-
-            var serviceProvider = new AutofacServiceProvider(Container);
-            //serviceProvider.GetService<MaintenanceNavigationService>()._serviceProvider = serviceProvider;
-
-            //var removeMe = serviceProvider.GetService<AgentLoginViewModel>();
+            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = serviceProvider.GetService<MainWindowViewModel>()
-                    //  DataContext = new MainWindowViewModel(),
+                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Primary")                    
                 };
             }
 
@@ -149,27 +152,6 @@ namespace EtGate.UI
         }
     }
 
-    //public class MockOffline : IDeviceStatus<OfflineValidationSystemStatus>, IValidate
-    //{
-    //    public override IObservable<OfflineValidationSystemStatus> statusObservable => subject;
-    //    ReplaySubject<OfflineValidationSystemStatus> subject = new();
-
-    //    public QrCodeValidationResult Validate(QrCodeInfo qrCode)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
-    //public class MockOnline : IDeviceStatus<OnlineValidationSystemStatus>, IValidate
-    //{
-    //    public override IObservable<OnlineValidationSystemStatus> statusObservable => subject;
-    //    ReplaySubject<OnlineValidationSystemStatus> subject = new();
-
-    //    public QrCodeValidationResult Validate(QrCodeInfo qrCode)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
 
     public class MockContextRepository : IContextRepository
     {

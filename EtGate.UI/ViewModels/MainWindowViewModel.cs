@@ -9,15 +9,13 @@ namespace EtGate.UI.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IModeService modeService;
-        //private readonly IInServiceMgrFactory inServiceMgrFactory;
         private readonly INavigationService maintenanceNavigationService; // TODO: we are using a singleton of it, while we should be creating a new instance for every session
 
-        public MainWindowViewModel(IModeService modeService, 
-            //IInServiceMgrFactory inServiceMgrFactory, 
-            INavigationService maintenanceNavigationService)
+        public MainWindowViewModel(IModeService modeService,
+            INavigationService maintenanceNavigationService,
+            bool bPrimary)
         {
             this.modeService = modeService;
-//            this.inServiceMgrFactory = inServiceMgrFactory;
             this.maintenanceNavigationService = maintenanceNavigationService;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
@@ -48,7 +46,7 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModel(modeService, maintenanceNavigationService);
+                    CurrentModeViewModel = new MaintenanceViewModelPassive(modeService);
                     break;
             }
             curMode = x;
@@ -69,11 +67,7 @@ namespace EtGate.UI.ViewModels
                 }
             }
         }
-        //public ModeViewModel CurrentModeViewModel { get; set; }
+        
         private Mode? curMode = null;
-        //= new AppBootingViewModel();
-        //#pragma warning disable CA1822 // Mark members as static
-        //        public string Greeting => "Welcome to Avalonia!";
-        //#pragma warning restore CA1822 // Mark members as static
     }
 }
