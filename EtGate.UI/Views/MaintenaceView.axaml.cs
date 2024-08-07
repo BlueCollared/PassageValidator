@@ -10,10 +10,7 @@ public partial class MaintenanceView : UserControl
     {
         InitializeComponent();
 
-        this.DataContextChanged += OnDataContextChanged;
-        //var viewModel = (MaintenanceViewModel)DataContext;
-        //var x = host;
-        //ViewModelBehavior.SetInitAction(host, viewModel.Init);
+        this.DataContextChanged += OnDataContextChanged;        
     }
 
     private void InitializeComponent()

@@ -33,11 +33,11 @@ namespace DummyQrReaderDeviceController
             {
                 statusSubject.OnNext(new QrReaderStatus(false, "", false));
 
-                Thread.Sleep(5000);
+                Thread.Sleep(50000);
 
                 statusSubject.OnNext(new QrReaderStatus(true, "", false));
 
-                Thread.Sleep(5000);
+                Thread.Sleep(50000);
             }
         }
 

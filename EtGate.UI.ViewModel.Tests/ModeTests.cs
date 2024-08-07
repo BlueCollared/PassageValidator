@@ -33,9 +33,8 @@ namespace EtGate.UI.ViewModel.Tests
             //InServiceMgrFactoryStub.Setup(x => x.Create()).Returns(InServiceMgrStub.Object);
 
             //vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
-            vm = new MainWindowViewModel(mockModeService.Object, 
-                //InServiceMgrFactoryStub.Object, 
-                new Mock<INavigationService>().Object);
+            vm = new MainWindowViewModel(mockModeService.Object,                 
+                new Mock<INavigationService>().Object, true);
         }
 
         MainWindowViewModel vm;

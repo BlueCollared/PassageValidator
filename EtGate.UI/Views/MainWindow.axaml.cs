@@ -13,6 +13,8 @@ namespace EtGate.UI.Views
         {
             InitializeComponent();
             this.KeyDown += OnKeyDown;
+            if (!Design.IsDesignMode)
+                PositionWindowOnPrimaryScreen();
         }
 
         public LoginService loginService { private get; set; }
@@ -24,6 +26,18 @@ namespace EtGate.UI.Views
                 // Ctrl+C
                 ((ModeViewModel)(host.Content)).MaintenaceRequested();
                 e.Handled = true; // Mark the event as handled if needed
+            }
+        }
+
+        private void PositionWindowOnPrimaryScreen()
+        {
+            var screens = Screens.All;
+            if (screens.Count < 1)
+                return;
+            var primaryScreen = screens[0];//.FirstOrDefault(s => s.IsPrimary);
+            if (primaryScreen != null)
+            {
+                Position = primaryScreen.WorkingArea.TopLeft;
             }
         }
     }

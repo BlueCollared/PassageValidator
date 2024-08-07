@@ -10,6 +10,7 @@ namespace EtGate.UI.ViewModels
     {
         private readonly IModeService modeService;
         private readonly INavigationService maintenanceNavigationService; // TODO: we are using a singleton of it, while we should be creating a new instance for every session
+        private readonly bool bPrimary;
 
         public MainWindowViewModel(IModeService modeService,
             INavigationService maintenanceNavigationService,
@@ -17,6 +18,7 @@ namespace EtGate.UI.ViewModels
         {
             this.modeService = modeService;
             this.maintenanceNavigationService = maintenanceNavigationService;
+            this.bPrimary = bPrimary;
             this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
         }
 
@@ -38,20 +40,20 @@ namespace EtGate.UI.ViewModels
                     CurrentModeViewModel = new EmergencyViewModel(modeService);
                     break;
                 case Mode.InService:
-                    CurrentModeViewModel = new InServiceViewModel(
-                        //inServiceMgrFactory.Create(), 
+                    CurrentModeViewModel = new InServiceViewModel(                        
                         true, modeService);
                     break;
                 case Mode.OOS:
                     CurrentModeViewModel = new OOSViewModel(modeService);
                     break;
                 case Mode.Maintenance:
-                    CurrentModeViewModel = new MaintenanceViewModelPassive(modeService);
+                    if (bPrimary)
+                        CurrentModeViewModel = new MaintenanceViewModel(modeService, maintenanceNavigationService);
+                    else
+                        CurrentModeViewModel = new MaintenanceViewModelPassive(modeService);
                     break;
             }
             curMode = x;
-            //this.RaisePropertyChanged(nameof(CurrentModeViewModel));
-            //PropertyChanged(nameof(CurrentModeViewModel));
         }
 
         private ModeViewModel _currentModeViewModel;

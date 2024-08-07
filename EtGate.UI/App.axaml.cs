@@ -129,8 +129,14 @@ namespace EtGate.UI
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Primary")                    
+                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Primary")
                 };
+
+                var secondaryWindow = new SecondaryWindow
+                {
+                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Secondary")
+                };
+                secondaryWindow.Show();
             }
 
             base.OnFrameworkInitializationCompleted();
