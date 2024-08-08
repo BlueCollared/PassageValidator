@@ -42,16 +42,34 @@ namespace EtGate.UI
             builder.Populate(serviceCollection);
             builder.RegisterInstance(DefaultScheduler.Instance).As<IScheduler>();
 
-            // Register the MainWindowViewModel with bPrimary = true
-            builder.RegisterType<MainWindowViewModel>()
-                .WithParameter(new NamedParameter("bPrimary", true))
-                .Named<MainWindowViewModel>("Primary");
+            const string PrimaryEntry = nameof(PrimaryEntry);
+            const string PrimaryExit = nameof(PrimaryExit);
+            const string SecondaryExit = nameof(SecondaryExit);
+            const string SecondaryEntry = nameof(SecondaryEntry);
 
-            // Register the MainWindowViewModel with bPrimary = false
-            builder.RegisterType<MainWindowViewModel>()
-                .WithParameter(new NamedParameter("bPrimary", false))
-                .Named<MainWindowViewModel>("Secondary");
+            const string bPrimary = "bPrimary";
+            const string bEntry = "bEntry";
 
+            
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter(bPrimary, true))
+                .WithParameter(new NamedParameter(bEntry, true))
+                .Named<MainWindowViewModel>(PrimaryEntry);
+
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter(bPrimary, false))
+                .WithParameter(new NamedParameter(bEntry, true))
+                .Named<MainWindowViewModel>(SecondaryEntry);
+
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter(bPrimary, true))
+                .WithParameter(new NamedParameter(bEntry, false))
+                .Named<MainWindowViewModel>(PrimaryExit);
+
+            builder.RegisterType<MainWindowViewModel>()
+                .WithParameter(new NamedParameter(bPrimary, false))
+                .WithParameter(new NamedParameter(bEntry, false))
+                .Named<MainWindowViewModel>(SecondaryExit);
 
             builder.RegisterType<OfflineValidationSystem>().AsSelf();
             builder.RegisterType<OnlineValidationSystem>().AsSelf();
@@ -125,16 +143,17 @@ namespace EtGate.UI
 
             Container = builder.Build();
             
+            // TODO: change it for entry-only/exit-only. also for reverse configuration
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Primary")
+                    DataContext = Container.ResolveNamed<MainWindowViewModel>(PrimaryEntry)
                 };
 
                 var secondaryWindow = new SecondaryWindow
                 {
-                    DataContext = Container.ResolveNamed<MainWindowViewModel>("Secondary")
+                    DataContext = Container.ResolveNamed<MainWindowViewModel>(SecondaryExit)
                 };
                 secondaryWindow.Show();
             }

@@ -25,7 +25,7 @@ namespace EtGate.UI.ViewModel.Tests
         {
             nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
 
-            mainVM = new MainWindowViewModel(mockModeService, nav, true);
+            mainVM = new MainWindowViewModel(mockModeService, nav, true, true);
         }
 
         [Fact]

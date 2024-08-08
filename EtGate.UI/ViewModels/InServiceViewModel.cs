@@ -1,11 +1,11 @@
 ﻿using Domain.Services.InService;
 using GateApp;
 using ReactiveUI;
-using System.Reactive.Linq;
+using System;
 
 namespace EtGate.UI.ViewModels
 {
-    public class InServiceViewModel : ModeViewModel
+    public class InServiceViewModel : ModeViewModel, IDisposable
     {
         //private readonly IInServiceMgr _inServiceMgr;
         private readonly ObservableAsPropertyHelper<string> _notificationMessage;
@@ -36,5 +36,10 @@ namespace EtGate.UI.ViewModels
         public string NotificationMessage => _notificationMessage.Value;
 
         public InServiceMgr.State CurrentState => _currentState.Value;
+
+        public void Dispose()
+        {
+            
+        }
     }
 }

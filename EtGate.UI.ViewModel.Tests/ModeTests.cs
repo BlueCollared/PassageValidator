@@ -34,7 +34,7 @@ namespace EtGate.UI.ViewModel.Tests
 
             //vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
             vm = new MainWindowViewModel(mockModeService.Object,                 
-                new Mock<INavigationService>().Object, true);
+                new Mock<INavigationService>().Object, true, true);
         }
 
         MainWindowViewModel vm;
