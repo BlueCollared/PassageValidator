@@ -26,17 +26,19 @@ namespace Domain.Services.InService
         {
             Unknown, // only when InServiceMgr is created
             Idle,
-            IntrusionWhenIdle,
+            IntrusionAtExitWhenIdle,
+            IntrusionAtEntryWhenIdle,
             IntrusionDuringAuthorizedPassage,
             PassengerInTransit_NoMorePendingAuthorizations,
             SomeAuthorization_s_Queued_ThatHaventBeginTransit
         }
 
-        enum CompoundState
+        public enum CompoundState
         {
             Unknown,
             Idle,
-            IntrusionWhenIdle,
+            IntrusionOnMySideWhenIdle,
+            IntrusionOnOtherSideWhenIdle,
             IntrusionDuringAuthorizedPassage,
             PassengerInTransit_NoMorePendingAuthorizations,
             SomeAuthorization_s_Queued_ThatHaventBeginTransit
@@ -76,17 +78,17 @@ namespace Domain.Services.InService
             {
                 case State.Unknown:
                     {
-                        state = State.IntrusionWhenIdle;                        
+                        state = State.IntrusionAtEntryWhenIdle;                        
                         break;
                     }
                 case State.Idle:
                     {
-                        state = State.IntrusionWhenIdle;                        
+                        state = State.IntrusionAtEntryWhenIdle;                        
                         break;
                     }
-                case State.IntrusionWhenIdle:
+                case State.IntrusionAtEntryWhenIdle:
                     {
-                        state = State.IntrusionWhenIdle;                        
+                        state = State.IntrusionAtEntryWhenIdle;                        
                         break;
                     }
                 case State.IntrusionDuringAuthorizedPassage:
@@ -116,7 +118,7 @@ namespace Domain.Services.InService
         {
             switch (state)
             {
-                case State.IntrusionWhenIdle:
+                case State.IntrusionAtEntryWhenIdle:
                 case State.Unknown:
                     // unexpected
                     break;
