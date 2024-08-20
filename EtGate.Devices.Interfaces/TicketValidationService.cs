@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Passage;
+﻿using Domain.Peripherals.Gate;
 
 namespace Domain.Services
 {

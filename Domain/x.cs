@@ -18,9 +18,4 @@
         public bool IsQrReaderWorking { get; set; }
         public bool IsFlapControllerWorking { get; set; }
     }
-
-    public class ZoneEvent
-    {
-        public string Zone { get; set; }
-    }
 }

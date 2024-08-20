@@ -1,15 +1,21 @@
-﻿using Domain.Peripherals.Passage;
-using OneOf;
+﻿global using ObsAuthEvents = System.IObservable<OneOf.OneOf<EtGate.Domain.Passage.PassageEvts.Intrusion, EtGate.Domain.Passage.PassageEvts.Fraud, EtGate.Domain.Passage.PassageEvts.PassageInProgress, EtGate.Domain.Passage.PassageEvts.PassageTimeout, EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack, EtGate.Domain.Passage.PassageEvts.PassageDone>>;
 
-namespace Domain.InService
+namespace Domain.InService;
+
+//public class AuthroizationRequest
+//{
+//    public int batchId;
+//    public List<int> ticketVirtualIds;
+//}
+
+public interface IPassageManager
 {
-    public interface IPassageManager
-    {
-        IObservable<OneOf<Intrusion, Fraud, PassageInProgress, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone>> PassageStatusObservable { get; }
+    // It is kept general i.e. Idle Status i.e. w/o any authorizations submitted. For our case, we have Free Exit, so possible values include PassageDone are applicable.
+    // But if there is no free exit, then such value would not pop.
+    ObsAuthEvents IdleStatusObservable { get; }
 
-        // returns true if the request is accepted
+    // returns true if the request is accepted
 
-        // {`ticketId`, authorizationId} would be bounced back in the reply when the passage is done/not done/intrusion on other side
-        bool Authorize(string ticketId, int nAuthorizations);
-    }
+    // {`ticketId`, authorizationId} would be bounced back in the reply when the passage is done/not done/intrusion on other side
+    ObsAuthEvents Authorize(string ticketId, int nAuthorizations);
 }

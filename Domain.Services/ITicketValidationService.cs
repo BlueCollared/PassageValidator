@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Passage;
+﻿using Domain.Peripherals.Gate;
 
 namespace Domain.Services
 {
@@ -6,9 +6,6 @@ namespace Domain.Services
     {
         bool ValidateQrCode(Ticket ticket);
         void UpdatePassengerStatus(bool hasCrossedZoneB);
-        //void UpdateGateStatus(bool isQrReaderWorking, bool isFlapControllerWorking);
-        //GateStatus GetGateStatus();
         IPassageController PassageController { get; }
-
     }
 }

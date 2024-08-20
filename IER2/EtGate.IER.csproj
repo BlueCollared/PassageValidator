@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
+    <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
   </ItemGroup>
 
 </Project>

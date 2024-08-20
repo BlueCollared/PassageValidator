@@ -1,4 +1,5 @@
-﻿using Domain.Peripherals.Qr;
+﻿using Domain.InService;
+using Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -12,6 +13,7 @@ namespace EtGate.Domain.Tests
     {        
         public ValidationMgr validation;
         public QrReaderMgr qr;
+        public PassageDeviceMgr passage;
 
         public readonly Subject<QrReaderStatus> subjQrStatus = new();
         public readonly Subject<ValidationSystemStatus> subjValidationStatus = new();
