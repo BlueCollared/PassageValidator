@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Gate;
+﻿using EtGate.Domain.Services.Gate;
 
 namespace Domain.Services
 {

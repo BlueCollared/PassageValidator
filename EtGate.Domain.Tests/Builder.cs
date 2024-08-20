@@ -1,5 +1,5 @@
-﻿using Domain.InService;
-using Domain.Peripherals.Qr;
+﻿using Domain.Peripherals.Qr;
+using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -31,7 +31,7 @@ namespace EtGate.Domain.Tests
             
             // Qr
             var mockQrReaderStatus = new Mock<IDeviceStatus<QrReaderStatus>>();
-            var dummyQr = new Mock<IQrReader>();
+            var dummyQr = new Mock<IQrReaderController>();
             dummyQr.Setup(q => q.qrCodeInfoObservable).Returns(Observable.Empty<QrCodeInfo>());
 
             mockQrReaderStatus.Setup(m => m.statusObservable).Returns(r.subjQrStatus);

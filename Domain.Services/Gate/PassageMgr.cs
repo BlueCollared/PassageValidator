@@ -1,4 +1,4 @@
-﻿namespace Domain.InService;
+﻿namespace EtGate.Domain.Services.Gate;
 
 public enum PassageEvtTypes
 {

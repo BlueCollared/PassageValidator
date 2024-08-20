@@ -1,6 +1,6 @@
-﻿using Domain.Peripherals.Gate;
-using Domain.Peripherals.Passage;
+﻿using Domain.Peripherals.Passage;
 using EtGate.Domain.Passage.PassageEvts;
+using EtGate.Domain.Services.Gate;
 using OneOf;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -44,7 +44,7 @@ public class PasageDeviceController : IPassageController
 
     public IObservable<OneOf<Intrusion, Fraud, PassageInProgress, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone>> PassageStatusObservable => throw new NotImplementedException();
 
-    IObservable<GateHwStatus> IPassageController.GateStatusObservable => throw new NotImplementedException();
+    //IObservable<GateHwStatus> IPassageController.GateStatusObservable => throw new NotImplementedException();
 
     //IObservable<ZoneEvent> IPassageController.ZoneEvents => throw new NotImplementedException();
 }

@@ -1,6 +1,6 @@
-﻿using Domain.InService;
-using Domain.Peripherals.Qr;
+﻿using Domain.Peripherals.Qr;
 using Domain.Services.InService;
+using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;

@@ -4,12 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Domain;
-using Domain.InService;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using EtGate.Domain;
 using EtGate.Domain.Services;
+using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -76,7 +76,7 @@ public partial class App : Avalonia.Application
 
         //builder.RegisterType<QrReaderDeviceControllerProxy>()
         builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
-          .As<IQrReader>()
+          .As<IQrReaderController>()
           .As<IDeviceStatus<QrReaderStatus>>()
           .SingleInstance();
         //builder.RegisterType<ModeManager>().AsSelf();
@@ -112,8 +112,8 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<QrReaderMgr>()
            .WithParameter(
-               (pi, ctx) => pi.ParameterType == typeof(IQrReader),
-               (pi, ctx) => ctx.Resolve<IQrReader>())
+               (pi, ctx) => pi.ParameterType == typeof(IQrReaderController),
+               (pi, ctx) => ctx.Resolve<IQrReaderController>())
            .WithParameter(
                (pi, ctx) => pi.ParameterType == typeof(IDeviceStatus<QrReaderStatus>),
                (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>())

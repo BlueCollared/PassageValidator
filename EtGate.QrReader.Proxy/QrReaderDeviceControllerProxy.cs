@@ -1,5 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
-using EtGate.Domain.Services;
+using EtGate.Devices.Interfaces.Qr;
 
 namespace EtGate.QrReader.Proxy
 {
@@ -44,6 +44,11 @@ namespace EtGate.QrReader.Proxy
         internal void Notify(QrCodeInfo x)
         {
             qrCodeInfoSubject.OnNext(x);
+        }
+
+        public override void Reboot()
+        {
+            throw new NotImplementedException();
         }
     }
 }

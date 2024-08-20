@@ -1,9 +1,14 @@
-﻿using EtGate.QrReader;
+﻿using EtGate.Devices.Interfaces.Qr;
 
 namespace QrReader
 {
     public class QrReaderDeviceController : QrReaderDeviceControllerBase
     {
+        public override void Reboot()
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Start()
         {
             throw new NotImplementedException();

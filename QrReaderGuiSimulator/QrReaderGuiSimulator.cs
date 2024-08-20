@@ -20,7 +20,7 @@ namespace QrReaderGuiSimulator
 
         private void btnStatusChanged_Click(object sender, EventArgs e)
         {
-            vm.QrReaderStatus = new QrReaderStatus(chkConnected.Checked, txtFirmware.Text, chkScanning.Checked);
+            vm.QrReaderStatus = new QrReaderStatus(chkConnected.Checked, chkScanning.Checked);
             //pipeHandler.SendNotification(vm.QrReaderStatus);
             pusher.Push(vm.QrReaderStatus);
         }

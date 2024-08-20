@@ -1,6 +1,8 @@
-﻿using Domain.Peripherals.Gate;
+﻿using Domain;
+using Domain.Services;
+using EtGate.Domain.Services.Gate;
 
-namespace Domain.Services
+namespace EtGate.Devices.Interfaces.Validation
 {
     public class TicketValidationService : ITicketValidationService
     {
@@ -20,7 +22,7 @@ namespace Domain.Services
 
         public bool ValidateQrCode(Ticket ticket)
         {
-            if (ticket.IsValid 
+            if (ticket.IsValid
                 //&& _gateStatus.IsInService 
                 && !_passengerStatus.FlapOpened)
             {

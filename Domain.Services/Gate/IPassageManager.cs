@@ -1,6 +1,6 @@
 ﻿global using ObsAuthEvents = System.IObservable<OneOf.OneOf<EtGate.Domain.Passage.PassageEvts.Intrusion, EtGate.Domain.Passage.PassageEvts.Fraud, EtGate.Domain.Passage.PassageEvts.PassageInProgress, EtGate.Domain.Passage.PassageEvts.PassageTimeout, EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack, EtGate.Domain.Passage.PassageEvts.PassageDone>>;
 
-namespace Domain.InService;
+namespace EtGate.Domain.Services.Gate;
 
 //public class AuthroizationRequest
 //{

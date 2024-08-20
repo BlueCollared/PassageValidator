@@ -1,5 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
-using EtGate.Devices.Interfaces;
+using EtGate.Devices.Interfaces.Validation;
 using EtGate.Domain;
 using EtGate.Domain.ValidationSystem;
 

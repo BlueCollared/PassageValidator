@@ -1,6 +1,6 @@
 ﻿using Domain.Peripherals.Passage;
 
-namespace Domain.Peripherals.Gate;
+namespace EtGate.Domain.Services.Gate;
 
 // It is possible that around the time authroization is submitted, intrusion gets detected.
 // It is its job to suppress raising the Intrusion (by first making sure that Intrusion has really removed)
@@ -13,10 +13,6 @@ public interface IPassageController
     // can change in later versions
     ObsAuthEvents PassageStatusObservable { get; }
 
-    // returns true if the request is accepted
-
-    // {`ticketId`, authorizationId} would be bounced back in the reply when the passage is done/not done/intrusion on other side
-    bool Authorize(int nAuthorizations);
-
-//    IObservable<ZoneEvent> ZoneEvents { get; }
+    // returns true if the request is accepted    
+    bool Authorize(int nAuthorizations);    
 }

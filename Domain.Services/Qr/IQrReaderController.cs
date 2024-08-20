@@ -2,7 +2,7 @@
 
 namespace EtGate.Domain.Services.Qr
 {
-    public interface IQrReader
+    public interface IQrReaderController
     {
         //string id { get; } // typically would be "Entry"/"Exit"
         IObservable<QrCodeInfo> qrCodeInfoObservable { get; }

@@ -1,5 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
-using EtGate.QrReader;
+using EtGate.Devices.Interfaces.Qr;
 
 namespace DummyQrReaderDeviceController
 {
@@ -7,7 +7,7 @@ namespace DummyQrReaderDeviceController
     {
         Task tskStatusDetection;
         bool bStop = false;
-
+        QrReaderStaticData qrStatic = new("1.2.3");
         public DummyQrReaderDeviceController()
         {
             tskStatusDetection = Task.Run(() =>
@@ -18,6 +18,7 @@ namespace DummyQrReaderDeviceController
         }
         public override bool Start()
         {
+            qrCodeStatic.OnNext(qrStatic);
             return true;
         }
 
@@ -31,11 +32,11 @@ namespace DummyQrReaderDeviceController
         {
             while (!bStop)
             {
-                statusSubject.OnNext(new QrReaderStatus(false, "", false));
+                statusSubject.OnNext(new QrReaderStatus(false, false));
 
                 Thread.Sleep(50000);
 
-                statusSubject.OnNext(new QrReaderStatus(true, "", false));
+                statusSubject.OnNext(new QrReaderStatus(true, false));
 
                 Thread.Sleep(50000);
             }
@@ -49,6 +50,11 @@ namespace DummyQrReaderDeviceController
         public override void StopDetecting()
         {
             bStop = true;
+        }
+
+        public override void Reboot()
+        {
+            throw new NotImplementedException();
         }
     }
 }
