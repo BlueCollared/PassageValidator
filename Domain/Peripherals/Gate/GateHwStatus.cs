@@ -1,4 +1,9 @@
-﻿namespace Domain.Peripherals.Passage
+﻿using EtGate.Domain;
+
+namespace Domain.Peripherals.Passage
 {
-    public record GateHwStatus(bool bConnected, string firmwareVersion, bool bWorking);
+    public record GateHwStatus(bool bConnected, bool bWorking) : ModuleStatus
+    {
+        public override bool IsAvailable => throw new NotImplementedException();
+    }
 }

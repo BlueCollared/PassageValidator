@@ -1,6 +1,7 @@
 ﻿using Domain.Peripherals.Passage;
 using EtGate.Domain.Passage.PassageEvts;
 using EtGate.Domain.Services.Gate;
+using IFS2.Equipment.DriverInterface;
 using OneOf;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -31,6 +32,16 @@ public class PasageDeviceController : IPassageController
     }
 
     public bool Authorize(int nAuthorizations)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetOpMode(OpMode mode)
     {
         throw new NotImplementedException();
     }

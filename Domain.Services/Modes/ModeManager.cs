@@ -1,4 +1,5 @@
-﻿using Domain.Peripherals.Qr;
+﻿using Domain.Peripherals.Passage;
+using Domain.Peripherals.Qr;
 using Domain.Services.InService;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
@@ -18,7 +19,8 @@ namespace Domain.Services.Modes
         //private readonly BehaviorSubject<EquipmentStatus> eqptStatusSubject;
         private EquipmentStatus equipmentStatus = new EquipmentStatus(
         new QrReaderStatus_(),
-        new ValidationSystemStatus_()
+        new ValidationSystemStatus_(),
+        new GateHwStatus_()
     );
 
         private readonly IQrReaderMgr qrReaderMgr;        
@@ -29,7 +31,8 @@ namespace Domain.Services.Modes
         
         public ModeManager(IQrReaderMgr qrReaderMgr, 
             ValidationMgr validationMgr, 
-            IPassageManager passageMgr,
+            //IPassageManager passageMgr,
+            IPassageController passageController,
             IScheduler scheduler,
             int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds
             //OpMode opModeDemanded = OpMode.InService
@@ -39,6 +42,7 @@ namespace Domain.Services.Modes
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
             this.passageMgr = passageMgr;
+            this.passageController = passageController;
 
             _timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
                 .Subscribe(_ => DoModeRelatedX());
@@ -50,6 +54,7 @@ namespace Domain.Services.Modes
             validationMgr.StatusStream.Subscribe(onNext: x => {
                 ValidationSystemStatusChanged(x);
             });
+            
             
             //this.opModeDemanded = opModeDemanded;
         }
@@ -85,6 +90,12 @@ namespace Domain.Services.Modes
         private void ValidationSystemStatusChanged(ValidationSystemStatus status)
         {
             equipmentStatus = equipmentStatus with { ValidationAPI = equipmentStatus.ValidationAPI.UpdateStatus(status) };
+            DoModeRelated();
+        }
+
+        private void GateStatusChanged(GateHwStatus status)
+        {
+            equipmentStatus = equipmentStatus with { gateStatus = equipmentStatus.gateStatus.UpdateStatus(status) };
             DoModeRelated();
         }
 
@@ -163,6 +174,7 @@ namespace Domain.Services.Modes
         public ISubModeMgr curModeMgr { get; private set; }
         ValidationMgr validationMgr;
         IPassageManager passageMgr;
+        private readonly IPassageController passageController;
         private readonly IDisposable _timerSubscription;
     }
 }

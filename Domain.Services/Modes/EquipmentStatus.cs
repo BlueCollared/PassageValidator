@@ -1,4 +1,5 @@
-﻿using Domain.Peripherals.Qr;
+﻿using Domain.Peripherals.Passage;
+using Domain.Peripherals.Qr;
 using EtGate.Domain.ValidationSystem;
 
 namespace Domain.Services.Modes
@@ -18,10 +19,19 @@ namespace Domain.Services.Modes
         public bool IsKnown { get; init; } = false;
         public ValidationSystemStatus Status { get; init; }//= ValidationSystemStatus.Default;
     }
-    
-    public record EquipmentStatus(        
+
+    public record GateHwStatus_
+    {
+        public GateHwStatus_ UpdateStatus(GateHwStatus newStatus) => this with { IsKnown = true, Status = newStatus };
+
+        public bool IsKnown { get; init; } = false;
+        public GateHwStatus Status { get; init; }//= ValidationSystemStatus.Default;
+    }
+
+    public record EquipmentStatus(
         QrReaderStatus_ QrEntry// = ModuleStatus.Unknown,        
         , ValidationSystemStatus_ ValidationAPI//; = ModuleStatus.Unknown,        
+        , GateHwStatus_ gateStatus
         , bool Emergency = false
         );
 }

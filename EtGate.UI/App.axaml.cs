@@ -180,8 +180,8 @@ internal class MockPassageManager : IPassageManager
 
 public class MockContextRepository : IContextRepository
 {
-    public void SaveMode(OpMode mode)
+    public void SaveMode(global::Domain.OpMode mode)
     {
-        //throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

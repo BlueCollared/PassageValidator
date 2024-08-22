@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Gate\" />
-  </ItemGroup>
-
 </Project>
