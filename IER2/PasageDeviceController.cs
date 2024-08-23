@@ -8,6 +8,13 @@ namespace EtGate.Devices.IER;
 public class PasageDeviceController : GateControllerBase
 {
     bool bIsConnected = false;
+    CIERRpcHelper ier;
+
+    public PasageDeviceController(string ipAddress, int portNum)
+    {
+        ier = new CIERRpcHelper(ipAddress, portNum.ToString());
+    }
+
     public override bool Authorize(int nAuthorizations)
     {
         throw new NotImplementedException();
@@ -20,7 +27,7 @@ public class PasageDeviceController : GateControllerBase
 
         try
         {
-            object[] result = CIERRpcHelper.Reboot(bHardboot);
+            object[] result = ier.Reboot(bHardboot);
             if (int.Parse(result[0].ToString()) > 0)
                 return true;
             else
@@ -40,13 +47,5 @@ public class PasageDeviceController : GateControllerBase
     public override void SetOpMode(OpMode mode)
     {
         throw new NotImplementedException();
-    }
-    
-    public PasageDeviceController(string ipAddress, int portNum)
-    {
-        if (!CIERRpcHelper.InitializeRpc(ipAddress, portNum.ToString()))
-        {
-            throw new Exception("Device not connected");
-        }
-    }
+    }    
 }

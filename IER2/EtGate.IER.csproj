@@ -14,4 +14,13 @@
     <ProjectReference Include="..\EtGate.Devices.Interfaces\EtGate.Devices.Interfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Horizon.XmlRpc.Client">
+      <HintPath>C:\IFS2\Software\Equipment\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Horizon.XmlRpc.Core">
+      <HintPath>C:\IFS2\Software\Equipment\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -1,14 +1,22 @@
 ﻿using Horizon.XmlRpc.Client;
-//using IFS2.Common.CoreTechnical;
 using System.Collections;
 
 namespace IFS2.Equipment.HardwareInterface.IERPLCManager
 {
     public class CIERRpcHelper
     {
-        private static IIERXmlRpcInterface _iERXmlRpcInterface = null;
-        private static bool _bisInitialized = false;
-        //private static string _port, _url;
+        public CIERRpcHelper(string url, string port)
+        {
+            _iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
+
+            this.url = url;
+            this.port = port;
+        }
+
+        private IIERXmlRpcInterface _iERXmlRpcInterface;
+        
+        private readonly string url;
+        private readonly string port;        
 
 
         public static int ResponseParser(object obj, ref Dictionary<string, object> dict)
@@ -59,65 +67,39 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             return str;
         }
 
-        public static bool InitializeRpc(string url, string port)
-        {
-            try
-            {
-                if (_iERXmlRpcInterface != null || _bisInitialized == true)
-                {
-                    _iERXmlRpcInterface = null;
-                    _bisInitialized = false;
-                }
-                //_port = port;
-                //_url = url;
-                _iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
-                _bisInitialized = true;
-                //_iERXmlRpcInterface.Url = _url + ":" + _port.ToString();
-            }
-            catch (Exception e)
-            {
-                _bisInitialized = false;
-            }
-            return _bisInitialized;
-
-        }
-
-        //public int SendCommad(string fun, object param);
-        public static string[] ListAvailableMethods()
+        
+        public string[] ListAvailableMethods()
         {
             return _iERXmlRpcInterface.SystemListMethods();
         }
 
-        public static object[] SetAuthorization(int[] param)
+        public object[] SetAuthorization(int[] param)
         {
             return _iERXmlRpcInterface.SetAuthorisation(param);
         }
-
-        //SetEmergency
-        public static object[] SetEmergency(int[] param)
+        
+        public object[] SetEmergency(int[] param)
         {
             return _iERXmlRpcInterface.SetEmergency(param);
         }
-
-        //SetMaintenanceMode
-        public static object[] SetMaintenanceMode(int[] param)
+        
+        public object[] SetMaintenanceMode(int[] param)
         {
             return _iERXmlRpcInterface.SetMaintenanceMode(param);
         }
-
-        //SendReboot
-        public static object[] Reboot(bool bhardboot)
+        
+        public object[] Reboot(bool bhardboot)
         {
             if (bhardboot) return _iERXmlRpcInterface.SendReboot();
             else return _iERXmlRpcInterface.SendRestart();
         }
 
-        public static object[] ApplyUpdate()
+        public object[] ApplyUpdate()
         {
             return _iERXmlRpcInterface.ApplyUpdate();
         }
 
-        public static object[] SetDate(DateTime dt, string timezone = "")
+        public object[] SetDate(DateTime dt, string timezone = "")
         {
             object[] dtparams = new object[7];
             dtparams[0] = (int)dt.Year;
@@ -132,19 +114,19 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             return _iERXmlRpcInterface.SetDate(dtparams);
         }
 
-        public static object[] GetDate()
+        public object[] GetDate()
         {
             return _iERXmlRpcInterface.GetDate();
         }
 
         // object ();
 
-        public static object GetStatusEx()
+        public object GetStatusEx()
         {
             return _iERXmlRpcInterface.GetStatusStd();
         }
 
-        public static IERSWVersion GetVersion()
+        public IERSWVersion GetVersion()
         {
             IERSWVersion iERSW = new();
             object[] ret = _iERXmlRpcInterface.GetVersion();
@@ -159,59 +141,59 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             return iERSW;
         }
 
-        public static object[] GetCounter()
+        public object[] GetCounter()
         {
             return _iERXmlRpcInterface.GetCounter();
         }
 
-        public static object[] SetMode(string[] param)
+        public object[] SetMode(string[] param)
         {
             return _iERXmlRpcInterface.SetMode(param);
         }
-        public static object[] SetCredentials(string[] param)
+        public object[] SetCredentials(string[] param)
         {
             return _iERXmlRpcInterface.SetCredentials(param);
         }
-        public static object[] GetSetTempo(int[] param)
+        public object[] GetSetTempo(int[] param)
         {
             return _iERXmlRpcInterface.GetSetTempo(param);
         }
-        public static object[] GetSetTempoFlow(int[] param)
+        public object[] GetSetTempoFlow(int[] param)
         {
             return _iERXmlRpcInterface.GetSetTempoFlow(param);
         }
-        public static object[] GetCurrentPassage()
+        public object[] GetCurrentPassage()
         {
             return _iERXmlRpcInterface.GetCurrentPassage();
         }
-        public static string methodHelp(string MethodName)
+        public string methodHelp(string MethodName)
         {
             return _iERXmlRpcInterface.methodHelp(MethodName);
         }
-        public static object[] SetOutputClient(int[] param)
+        public object[] SetOutputClient(int[] param)
         {
             return _iERXmlRpcInterface.SetOutputClient(param);
         }
-        public static object[] GetMotorSpeed()
+        public object[] GetMotorSpeed()
         {
             return _iERXmlRpcInterface.GetMotorSpeed();
         }
-        public static object[] SetMotorSpeed(object[] param)
+        public object[] SetMotorSpeed(object[] param)
         {
             return _iERXmlRpcInterface.SetMotorSpeed(param);
         }
 
-        public static object[] SetBuzzerFraud(int[] param)
+        public object[] SetBuzzerFraud(int[] param)
         {
             return _iERXmlRpcInterface.SetBuzzerFraud(param);
         }
 
-        public static object[] SetBuzzerIntrusion(int[] param)
+        public object[] SetBuzzerIntrusion(int[] param)
         {
             return _iERXmlRpcInterface.SetBuzzerIntrusion(param);
         }
 
-        public static object[] SetBuzzerMode(int[] param)
+        public object[] SetBuzzerMode(int[] param)
         {
             return _iERXmlRpcInterface.SetBuzzerMode(param);
         }
