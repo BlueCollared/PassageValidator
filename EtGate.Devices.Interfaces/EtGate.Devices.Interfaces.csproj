@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
-    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
   </ItemGroup>
 
 </Project>

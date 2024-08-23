@@ -13,12 +13,12 @@ global using ObsIdleEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.IdleEvts.PassageDone>>;
 
 
-global using RawEventsInNominalMode = System.IObservable<OneOf.OneOf<
+global using RawEventsInNominalMode = OneOf.OneOf<
     EtGate.Devices.Interfaces.Gate.Intrusion,
     EtGate.Devices.Interfaces.Gate.Fraud,
     EtGate.Devices.Interfaces.Gate.OpenDoor,
     EtGate.Devices.Interfaces.Gate.WaitForAuthroization,
-    EtGate.Devices.Interfaces.Gate.CloseDoor>>;
+    EtGate.Devices.Interfaces.Gate.CloseDoor>;
 
 using EtGate.Domain.Services.Gate;
 

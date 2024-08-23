@@ -13,7 +13,7 @@ namespace EtGate.Domain.Tests
     {        
         public ValidationMgr validation;
         public QrReaderMgr qr;
-        public PassageDeviceMgr passage;
+        public IPassageManager passage;
 
         public readonly Subject<QrReaderStatus> subjQrStatus = new();
         public readonly Subject<ValidationSystemStatus> subjValidationStatus = new();

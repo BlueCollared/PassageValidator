@@ -1,17 +1,13 @@
-﻿using Domain.Peripherals.Passage;
-using EtGate.Devices.Interfaces.Gate;
+﻿using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
 using IFS2.Equipment.DriverInterface;
+using IFS2.Equipment.HardwareInterface.IERPLCManager;
 
 namespace EtGate.Devices.IER;
 
-public class PasageDeviceController : PassageControllerBase
+public class PasageDeviceController : GateControllerBase
 {
-//    private readonly Subject<ZoneEvent> _zoneEventsSubject = new Subject<ZoneEvent>();
-
-
-    public IObservable<GateHwStatus> GateStatusObservable => throw new NotImplementedException();
-
+    bool bIsConnected = false;
     public override bool Authorize(int nAuthorizations)
     {
         throw new NotImplementedException();
@@ -19,7 +15,21 @@ public class PasageDeviceController : PassageControllerBase
 
     public override bool Reboot(bool bHardboot)
     {
-        throw new NotImplementedException();
+        if (!bIsConnected)
+            return false;
+
+        try
+        {
+            object[] result = CIERRpcHelper.Reboot(bHardboot);
+            if (int.Parse(result[0].ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public override void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)
@@ -30,5 +40,13 @@ public class PasageDeviceController : PassageControllerBase
     public override void SetOpMode(OpMode mode)
     {
         throw new NotImplementedException();
+    }
+    
+    public PasageDeviceController(string ipAddress, int portNum)
+    {
+        if (!CIERRpcHelper.InitializeRpc(ipAddress, portNum.ToString()))
+        {
+            throw new Exception("Device not connected");
+        }
     }
 }

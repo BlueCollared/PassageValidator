@@ -32,7 +32,7 @@ namespace Domain.Services.Modes
         public ModeManager(IQrReaderMgr qrReaderMgr, 
             ValidationMgr validationMgr, 
             //IPassageManager passageMgr,
-            IPassageController passageController,
+            IGateModeController passageController,
             IScheduler scheduler,
             int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds
             //OpMode opModeDemanded = OpMode.InService
@@ -174,7 +174,7 @@ namespace Domain.Services.Modes
         public ISubModeMgr curModeMgr { get; private set; }
         ValidationMgr validationMgr;
         IPassageManager passageMgr;
-        private readonly IPassageController passageController;
+        private readonly IGateModeController passageController;
         private readonly IDisposable _timerSubscription;
     }
 }
