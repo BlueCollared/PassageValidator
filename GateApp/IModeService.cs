@@ -9,8 +9,8 @@ namespace GateApp
         IObservable<Mode> EquipmentModeObservable { get; }
 
         bool ChangeMode(OpMode mode, TimeSpan timeout);
-        void SwitchOutMaintenance();
-        void SwitchToMaintenance();
+        Task SwitchOutMaintenance();
+        Task SwitchToMaintenance();
         ISubModeMgr curModeMgr { get; }
     }
 }

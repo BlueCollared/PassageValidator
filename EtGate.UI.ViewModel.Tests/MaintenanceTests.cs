@@ -162,14 +162,16 @@ namespace EtGate.UI.ViewModel.Tests
                 return true;
             }
 
-            public void SwitchOutMaintenance()
+            public Task SwitchOutMaintenance()
             {
                 subjMode.OnNext(Mode.OOO);
+                return Task.CompletedTask;
             }
 
-            public void SwitchToMaintenance()
+            public Task SwitchToMaintenance()
             {
                 subjMode.OnNext(Mode.Maintenance);
+                return Task.CompletedTask;
             }
         }
     }

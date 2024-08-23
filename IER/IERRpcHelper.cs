@@ -8,7 +8,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
     {
         private static IIERXmlRpcInterface _iERXmlRpcInterface = null;
         private static bool _bisInitialized = false;
-        private static string _port, _url;
+        //private static string _port, _url;
 
 
         public static int ResponseParser(object obj, ref Dictionary<string, object> dict)
@@ -68,11 +68,11 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                     _iERXmlRpcInterface = null;
                     _bisInitialized = false;
                 }
-                _port = port;
-                _url = url;
+                //_port = port;
+                //_url = url;
                 _iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
                 _bisInitialized = true;
-                _iERXmlRpcInterface.Url = _url + ":" + _port.ToString();
+                //_iERXmlRpcInterface.Url = _url + ":" + _port.ToString();
             }
             catch (Exception e)
             {

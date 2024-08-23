@@ -3,11 +3,11 @@ using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Domain;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using EtGate.Domain;
+using EtGate.Domain.Passage.IdleEvts;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
@@ -17,12 +17,13 @@ using EtGate.UI.ViewModels;
 using EtGate.UI.Views;
 using GateApp;
 using Microsoft.Extensions.DependencyInjection;
+using OneOf;
 using System;
 using System.Reactive.Concurrency;
 
 namespace EtGate.UI;
 
-using ObsAuthEvents = System.IObservable<OneOf.OneOf<EtGate.Domain.Passage.PassageEvts.Intrusion, EtGate.Domain.Passage.PassageEvts.Fraud, EtGate.Domain.Passage.PassageEvts.PassageInProgress, EtGate.Domain.Passage.PassageEvts.PassageTimeout, EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack, EtGate.Domain.Passage.PassageEvts.PassageDone>>;
+using ObsAuthEvents = System.IObservable<OneOf.OneOf<EtGate.Domain.Passage.PassageEvts.Intrusion, EtGate.Domain.Passage.PassageEvts.Fraud, EtGate.Domain.Passage.PassageEvts.OpenDoor, EtGate.Domain.Passage.PassageEvts.PassageTimeout, EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack, EtGate.Domain.Passage.PassageEvts.PassageDone>>;
 
 public partial class App : Avalonia.Application
 {
@@ -169,7 +170,7 @@ public partial class App : Avalonia.Application
 
 internal class MockPassageManager : IPassageManager
 {
-    public ObsAuthEvents IdleStatusObservable => throw new NotImplementedException();
+    public IObservable<OneOf<Intrusion, Fraud, PassageTimeout, PassageDone>> IdleStatusObservable => throw new NotImplementedException();
 
     public ObsAuthEvents Authorize(string ticketId, int nAuthorizations)
     {

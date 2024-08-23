@@ -2,8 +2,21 @@
 
 namespace Domain.Peripherals.Passage
 {
-    public record GateHwStatus(bool bConnected, bool bWorking) : ModuleStatus
+    public enum eDoorsStatesMachine
     {
-        public override bool IsAvailable => throw new NotImplementedException();
+        NONE = -1,
+        EGRESS,
+        NOMINAL, //Normal mode .. if set then check for doors Nominal Mode 
+        EMERGENCY,
+        MAINTENANCE,
+        LOCKED_OPEN,// FORCED_OPEN,
+        POWER_DOWN,
+        TECHNICAL_FAILURE //OUTOFORER
+    }
+
+    // TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
+    public record GateHwStatus(bool bConnected, eDoorsStatesMachine doorState) : ModuleStatus
+    {
+        public override bool IsAvailable =>bConnected && doorState == eDoorsStatesMachine.NOMINAL;
     }
 }

@@ -74,34 +74,14 @@
 
     public class cPLCStateMachine
     {
-        public eDoorsStatesMachine doorsStates;
-        public eDoorNominalModes doorNominalModes;
+        //public eDoorsStatesMachine doorsStates;
+        //public eDoorNominalModes doorNominalModes;
         public cPLCStateMachine()
         {
-            doorsStates = eDoorsStatesMachine.NONE;
-            doorNominalModes = eDoorNominalModes.NONE;
+            //doorsStates = eDoorsStatesMachine.NONE;
+          //  doorNominalModes = eDoorNominalModes.NONE;
 
         }
-    }
-    public enum eDoorsStatesMachine
-    {
-        NONE = -1,
-        EGRESS,
-        NOMINAL, //Normal mode .. if set then check for doors Nominal Mode 
-        EMERGENCY,
-        MAINTENANCE,
-        LOCKED_OPEN,// FORCED_OPEN,
-        POWER_DOWN,
-        TECHNICAL_FAILURE //OUTOFORER
-    }
-    public enum eDoorNominalModes //Normal case
-    {
-        NONE = -1,
-        OPEN_DOOR, //Doors are opened
-        CLOSE_DOOR, //Doors are closed
-        FRAUD, //A Fraud has occured
-        INTRUSION, // Intrusion
-        WAIT_FOR_AUTHORIZATION //The gate is ready to accept a new authorisation to start a boarding (or for a person to enter the gate)
     }
 
     public enum ePassageTimeouts

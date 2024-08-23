@@ -114,7 +114,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     private void PassageEvt(AuthroizedPassengerSteppedBack x)
     { }
 
-    private void PassageEvt(PassageInProgress x)
+    private void PassageEvt(OpenDoor x)
     {
         switch (state)
         {
@@ -134,7 +134,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     private void PassageEvt(PassageDone x)
     { }
 
-    private void PassageEvt(OneOf<Intrusion, Fraud, PassageInProgress, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone> x)
+    private void PassageEvt(OneOf<Intrusion, Fraud, OpenDoor, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone> x)
     {
         if (x.IsT0)
             PassageEvt(x.AsT0);
@@ -165,6 +165,11 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     public override void Dispose()
     {
         IsDisposed = true;
+    }
+
+    public override Task Stop()
+    {
+        throw new NotImplementedException();
     }
 }
 

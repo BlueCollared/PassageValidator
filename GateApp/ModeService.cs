@@ -20,18 +20,24 @@ namespace GateApp
 
         public ISubModeMgr curModeMgr => modeMgr.curModeMgr;
 
-        public void SwitchToMaintenance()
+        public async Task SwitchToMaintenance()
         {
             if (modeMgr.CurMode == Mode.Maintenance)
                 return;
 
+            await curModeMgr.Stop();
+            curModeMgr.Dispose();
+
             modeMgr.SwitchToMaintenance();
         }
 
-        public void SwitchOutMaintenance()
+        public async Task SwitchOutMaintenance()
         {
             if (modeMgr.CurMode != Mode.Maintenance)
                 return;
+
+            await curModeMgr.Stop();
+            curModeMgr.Dispose();
 
             modeMgr.SwitchOutMaintenance();
         }

@@ -71,7 +71,7 @@ namespace Domain.Services.Modes
                     if (curModeMgr == null)
                         return;
                     if (curModeMgr is InServiceMgr x)
-                    {                        
+                    {
                         // we don't want to corrupt the public API with async. So, we use Wait()
                         x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitly.
                         curModeMgr.Dispose();
