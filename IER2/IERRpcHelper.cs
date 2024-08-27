@@ -1,12 +1,8 @@
 ﻿using EtGate.IER;
-using Horizon.XmlRpc.Client;
 using IFS2.Common;
 using IFS2.Common.CoreTechnical;
-using IFS2.Equipment.DriverInterface;
 using LanguageExt;
-using System;
 using System.Collections;
-using System.Net;
 
 namespace IFS2.Equipment.HardwareInterface.IERPLCManager;
 
@@ -15,19 +11,9 @@ public class CIERRpcHelper
     public CIERRpcHelper(IERXmlRpcRaw _iERXmlRpcInterface)
     {
         this.xmlRpcRaw = _iERXmlRpcInterface;
-        //_iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
-
-        //  this.url = url;
-        //this.port = port;
     }
 
-    //private IIERXmlRpcInterface _iERXmlRpcInterface; // TODO: if required, inject it rather than creating it here
     private IIERXmlRpcRaw xmlRpcRaw;
-
-
-    //private readonly string url;
-    //private readonly string port;        
-
 
     public static int ResponseParser(object obj, ref Dictionary<string, object> dict)
     {
@@ -82,14 +68,25 @@ public class CIERRpcHelper
         return xmlRpcRaw.SetAuthorisation(param);
     }
     
-    public Option<object[]> SetEmergency(int[] param)
+    public bool SetEmergency(bool onOff)
     {
-        return xmlRpcRaw.SetEmergency(param);
+        int[] paramGateMode = { 0 };
+        paramGateMode[0] = onOff ? 1 : 0;
+        return xmlRpcRaw.SetEmergency(paramGateMode)
+            .Match(Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
     
-    public Option<object[]> SetMaintenanceMode(int[] param)
+    public bool SetMaintenanceMode(bool onOff)
     {
-        return xmlRpcRaw.SetMaintenanceMode(param);
+        int[] paramGateMode = { 0 };
+        paramGateMode[0] = onOff ? 1 : 0;
+
+        return xmlRpcRaw.SetMaintenanceMode(paramGateMode)
+            .Match(Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
 
     readonly Func<object[], bool> successGenCriter = (object[] op) =>
@@ -139,7 +136,7 @@ public class CIERRpcHelper
             );
         }    
 
-    public Option<object[]> SetDate(DateTime dt, string timezone = "")
+    public bool SetDate(DateTime dt, string timezone = "")
     {
         object[] dtparams = new object[7];
         dtparams[0] = (int)dt.Year;
@@ -151,7 +148,10 @@ public class CIERRpcHelper
         dtparams[6] = (string)timezone;// dt.timezo;
         //for test
         //Logging.Verbose(new LogContext("Log","",""), ((int)dtparams[0]).ToString(), ((int)dtparams[1]).ToString(), ((int)dtparams[2]).ToString(), ((int)dtparams[3]).ToString(), ((int)dtparams[4]).ToString(), ((int)dtparams[5]).ToString(), ((string)dtparams[6]).ToString());
-        return xmlRpcRaw.SetDate(dtparams);
+        return xmlRpcRaw.SetDate(dtparams).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
 
     public Option<object[]> GetDate()
