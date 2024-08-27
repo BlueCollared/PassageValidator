@@ -2,20 +2,11 @@
 {
     public class IERSWVersion
     {
-        public string LaneType;
-        public string SWVersion;
-        public string CompilationDate;
-        public string GITVersion;
-        public string GITDate;
-
-        public IERSWVersion()
-        {
-            LaneType="";
-            SWVersion= "";
-            CompilationDate = "";
-            GITVersion = "";
-            GITDate = "";
-        }
+        public string LaneType { get; set; } = "";
+        public string SWVersion { get; set; } = "";
+        public string CompilationDate { get; set; } = "";
+        public string GITVersion { get; set; } = "";
+        public string GITDate { get; set; } = "";
     }
 
     public enum eIERDoorModes

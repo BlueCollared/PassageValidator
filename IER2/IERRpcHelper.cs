@@ -1,8 +1,10 @@
 ﻿using EtGate.IER;
 using Horizon.XmlRpc.Client;
 using IFS2.Common;
+using IFS2.Common.CoreTechnical;
 using IFS2.Equipment.DriverInterface;
 using LanguageExt;
+using System;
 using System.Collections;
 using System.Net;
 
@@ -89,22 +91,23 @@ public class CIERRpcHelper
     {
         return xmlRpcRaw.SetMaintenanceMode(param);
     }
-    
+
+    readonly Func<object[], bool> successGenCriter = (object[] op) =>
+    op.Length > 1
+    && int.TryParse(op[0].ToString(), out int res)
+    && res > 0;
+
+
     public bool Reboot(bool bhardboot)
-    {
-        var bootSuccess = (object[] op) => 
-            op.Length > 1
-            && int.TryParse(op[0].ToString(), out int res)
-            && res > 0;
-        
+    {        
         if (bhardboot)
             return xmlRpcRaw.Reboot().Match(
-                Some: o => bootSuccess(o),
+                Some: o => successGenCriter(o),
                 None: () => false
                 );
         else
             return xmlRpcRaw.Restart().Match(
-                Some: o => bootSuccess(o),
+                Some: o => successGenCriter(o),
                 None: () => false
                 );
     }
@@ -163,77 +166,81 @@ public class CIERRpcHelper
         return xmlRpcRaw.GetStatusEx();
     }
 
-    public IERSWVersion GetVersion()
+    public Option<IERSWVersion> GetVersion()
     {
-        IERSWVersion iERSW = new();
-        object[] ret = xmlRpcRaw.GetVersion();
-        if (ret.Length > 0)
-        {
-            iERSW.LaneType = (string)ret[0];
-            iERSW.SWVersion = (string)ret[1];
-            iERSW.CompilationDate = (string)ret[2];
-            iERSW.GITVersion = (string)ret[3];
-            iERSW.GITDate = (string)ret[4];
-        }
-        return iERSW;
+        var versionExtract = (object[] op) =>
+            op.Length > 5 ?
+            new IERSWVersion {
+                LaneType = (string)op[0],
+                SWVersion = (string)op[1],
+                CompilationDate = (string)op[2],
+                GITVersion = (string)op[3],
+                GITDate = (string)op[4]
+            } : Option<IERSWVersion>.None;
+
+        return xmlRpcRaw.GetVersion().Bind(versionExtract);
     }
 
-    public Dictionary<int, int> GetCounter()
+    public Option<Dictionary<int, int>> GetCounter()
     {
-        Dictionary<int, int> counters = new();
-        object[] result = xmlRpcRaw.GetCounter();
-        int nb;
-        if (result.Length > 0) nb = Convert.ToInt32(((int)result[0]));
-        if (result.Length > 1)
+        var countersExtract = (object[] result) =>
         {
-            IList idict = (IList)result[1];
-            foreach (IDictionary idict1 in idict)
+            int nb;
+            Dictionary<int, int> counters = new();
+            if (result.Length > 0) nb = Convert.ToInt32(((int)result[0]));
+            if (result.Length > 1)
             {
-                try
+                IList idict = (IList)result[1];
+                foreach (IDictionary idict1 in idict)
                 {
-                    int val = 0;
-                    const int type = 2; // Taking from the matured SGP, where only value for `type` used is 2
-                    switch (type)
+                    try
                     {
-                        case 1:
-                            val = (int)idict1["Partial"];
-                            break;
-                        case 2:
-                            val = (int)idict1["Main"];
-                            break;
-                        case 3:
-                            val = (int)idict1["Perp"];
-                            break;
+                        int val = 0;
+                        const int type = 2; // Taking from the matured SGP, where only value for `type` used is 2
+                        switch (type)
+                        {
+                            case 1:
+                                val = (int)idict1["Partial"];
+                                break;
+                            case 2:
+                                val = (int)idict1["Main"];
+                                break;
+                            case 3:
+                                val = (int)idict1["Perp"];
+                                break;
+                        }
+                        string name = (string)idict1["name"];
+                        int cpt = Convert.ToInt32(name);
+                        switch (cpt)
+                        {
+                            case 1048:
+                                cpt = 14;
+                                break;
+                            case 1052:
+                                cpt = 15;
+                                break;
+                            case 1076:
+                                cpt = 16;
+                                break;
+                            case 1077:
+                                cpt = 17;
+                                break;
+                            default:
+                                cpt -= 1000;
+                                break;
+                        }
+                        counters.Add(cpt, val);
                     }
-                    string name = (string)idict1["name"];
-                    int cpt = Convert.ToInt32(name);
-                    switch (cpt)
+                    catch
                     {
-                        case 1048:
-                            cpt = 14;
-                            break;
-                        case 1052:
-                            cpt = 15;
-                            break;
-                        case 1076:
-                            cpt = 16;
-                            break;
-                        case 1077:
-                            cpt = 17;
-                            break;
-                        default:
-                            cpt -= 1000;
-                            break;
+                        //   Logging.Error(LogContext, "IERPLCMain.GetCounters " + e1.Message);
                     }
-                    counters.Add(cpt, val);
-                }
-                catch
-                {
-                    //   Logging.Error(LogContext, "IERPLCMain.GetCounters " + e1.Message);
                 }
             }
-        }
-        return counters;
+            return counters;
+        };
+
+        return xmlRpcRaw.GetCounter().Map(countersExtract);
     }
 public Option<object[]> SetMode(string[] param)
     {

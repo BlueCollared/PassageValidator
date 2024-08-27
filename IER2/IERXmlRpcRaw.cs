@@ -276,7 +276,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object> IIERXmlRpcRaw.GetStatusEx()
+    public Option<object> GetStatusEx()
     {
         try
         {
