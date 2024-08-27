@@ -1,9 +1,11 @@
 ﻿
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
+using System.Net;
 
 namespace EtGate.IER;
 
+// TODO: this API is bad. It should return parsed structures rather than object[].
 public class IERXmlRpcRaw : IIERXmlRpcRaw
 {
     private readonly IIERXmlRpcInterface worker;
@@ -19,7 +21,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             return worker.ApplyUpdate();
         }
-        catch (System.Net.WebException )
+        catch (WebException )
         {
             MarkDisconnected();
         }
@@ -37,7 +39,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             return worker.GetCounter();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -50,7 +52,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             return worker.GetCurrentPassage();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -63,7 +65,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         { 
         return worker.GetDate();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -75,7 +77,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try {
         return worker.GetMotorSpeed();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -87,7 +89,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.GetSetTempo();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -100,7 +102,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         { 
         return worker.GetSetTempoFlow();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -112,7 +114,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.GetVersion();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -124,7 +126,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try {
         return worker.SendReboot();
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -136,7 +138,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SendRestart(); // TODO: 
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -148,7 +150,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetAuthorisation(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -160,7 +162,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetBuzzerFraud(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -172,7 +174,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetBuzzerIntrusion(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -185,7 +187,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetBuzzerMode(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -197,7 +199,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetCredentials(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -209,7 +211,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetDate(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -221,7 +223,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetEmergency(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -233,7 +235,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetMaintenanceMode(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -245,7 +247,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetMode(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -257,7 +259,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetMotorSpeed(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -269,7 +271,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         try { 
         return worker.SetOutputClient(param);
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -282,11 +284,16 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             return worker.GetStatusStd(); // TODO: there are two versions GetStatusStd and GetStatus
         }
-        catch (System.Net.WebException)
+        catch (WebException)
         {
             MarkDisconnected();
         }
         return Option<object>.None;
 
+    }
+
+    public Option<IERStatus> GetStatus()
+    {
+        throw new NotImplementedException();
     }
 }

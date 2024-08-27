@@ -83,8 +83,7 @@
         LANG_NO_CROSSING_TIMEOUT=3, //A passenger coming did not cross the gate in the allotted time
         LANG_NO_ENTRY_TIMEOUT=4, // Timeouts during boarding (the person did not enter the gate in the allotted time)
         LANG_SECURITY_TIMEOUT=5, //A passenger took too much time to exit the safety zone and prevents the closure of the doorsa
-        LANG_VALIDATION_TIMEOUT=6,
-        LANG_NOENTRY_TIMEOUT=4
+        LANG_VALIDATION_TIMEOUT=6        
     }
 
     public enum eIERPLCErrors

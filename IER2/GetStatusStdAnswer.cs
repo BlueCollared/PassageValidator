@@ -5,6 +5,22 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager;
 
 public partial class CIERRpcHelper
 {
+    public class DictionaryXmlInt
+    {
+        [XmlElement("key")]
+        public string key;
+        [XmlElement("value")]
+        public int value;
+
+        public DictionaryXmlInt() { }
+
+        public DictionaryXmlInt(string key_, int value_)
+        {
+            key = key_;
+            value = value_;
+        }
+    }
+
     [XmlRoot("Data")]
     public class GetStatusStdAnswer
     {

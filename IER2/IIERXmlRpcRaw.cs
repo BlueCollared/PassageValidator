@@ -26,5 +26,6 @@ namespace EtGate.IER
         Option<object[]> SetBuzzerFraud(int[] param);
         Option<object[]> SetBuzzerIntrusion(int[] param);
         Option<object[]> SetBuzzerMode(int[] param);
+        Option<IERStatus> GetStatus();
     }
 }
