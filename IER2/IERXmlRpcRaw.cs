@@ -7,12 +7,13 @@ namespace EtGate.IER;
 public class IERXmlRpcRaw : IIERXmlRpcRaw
 {
     private readonly IIERXmlRpcInterface worker;
+    readonly Option<object[]> none = Option<object[]>.None;
 
     public IERXmlRpcRaw(IIERXmlRpcInterface worker)
     {
         this.worker = worker;
     }
-    public object[] ApplyUpdate()
+    public Option<object[]> ApplyUpdate()
     {
         try
         {
@@ -22,7 +23,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
     private void MarkDisconnected()
@@ -30,7 +31,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         throw new NotImplementedException();
     }
 
-    public object[] GetCounter()
+    public Option<object[]> GetCounter()
     {
         try
         {
@@ -40,10 +41,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] GetCurrentPassage()
+    public Option<object[]> GetCurrentPassage()
     {
         try
         {
@@ -53,10 +54,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] GetDate()
+    public Option<object[]> GetDate()
     {
         try
         { 
@@ -66,10 +67,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] GetMotorSpeed()
+    public Option<object[]> GetMotorSpeed()
     {
         try {
         return worker.GetMotorSpeed();
@@ -78,10 +79,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] GetSetTempo(int[] param)
+    public Option<object[]> GetSetTempo(int[] param)
     {
         try { 
         return worker.GetSetTempo();
@@ -90,10 +91,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] GetSetTempoFlow(int[] param)
+    public Option<object[]> GetSetTempoFlow(int[] param)
     {
         try
         { 
@@ -103,22 +104,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object GetStatusEx()
-    {
-        try {
-        return worker.GetStatusStd(); // TODO: there are two versions GetStatusStd and GetStatus
-        }
-        catch (System.Net.WebException)
-        {
-            MarkDisconnected();
-        }
-        return null;
-    }
-
-    public object[] GetVersion()
+    public Option<object[]> GetVersion()
     {
         try { 
         return worker.GetVersion();
@@ -127,7 +116,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
     public Option<object[]> Reboot()
@@ -154,7 +143,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return Option<object[]>.None;
     }
 
-    public object[] SetAuthorisation(int[] param)
+    public Option<object[]> SetAuthorisation(int[] param)
     {
         try { 
         return worker.SetAuthorisation(param);
@@ -163,10 +152,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetBuzzerFraud(int[] param)
+    public Option<object[]> SetBuzzerFraud(int[] param)
     {
         try { 
         return worker.SetBuzzerFraud(param);
@@ -175,10 +164,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetBuzzerIntrusion(int[] param)
+    public Option<object[]> SetBuzzerIntrusion(int[] param)
     {
         try { 
         return worker.SetBuzzerIntrusion(param);
@@ -187,10 +176,11 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
+    
 
-    public object[] SetBuzzerMode(int[] param)
+    public Option<object[]> SetBuzzerMode(int[] param)
     {
         try { 
         return worker.SetBuzzerMode(param);
@@ -199,10 +189,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetCredentials(string[] param)
+    public Option<object[]> SetCredentials(string[] param)
     {
         try { 
         return worker.SetCredentials(param);
@@ -211,10 +201,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetDate(object[] param)
+    public Option<object[]> SetDate(object[] param)
     {
         try { 
         return worker.SetDate(param);
@@ -223,10 +213,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetEmergency(int[] param)
+    public Option<object[]> SetEmergency(int[] param)
     {
         try { 
         return worker.SetEmergency(param);
@@ -235,10 +225,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetMaintenanceMode(int[] param)
+    public Option<object[]> SetMaintenanceMode(int[] param)
     {
         try { 
         return worker.SetMaintenanceMode(param);
@@ -247,10 +237,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetMode(string[] param)
+    public Option<object[]> SetMode(string[] param)
     {
         try { 
         return worker.SetMode(param);
@@ -259,10 +249,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetMotorSpeed(object[] param)
+    public Option<object[]> SetMotorSpeed(object[] param)
     {
         try { 
         return worker.SetMotorSpeed(param);
@@ -271,10 +261,10 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
     }
 
-    public object[] SetOutputClient(int[] param)
+    public Option<object[]> SetOutputClient(int[] param)
     {
         try { 
         return worker.SetOutputClient(param);
@@ -283,6 +273,20 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return none;
+    }
+
+    public Option<object> IIERXmlRpcRaw.GetStatusEx()
+    {
+        try
+        {
+            return worker.GetStatusStd(); // TODO: there are two versions GetStatusStd and GetStatus
+        }
+        catch (System.Net.WebException)
+        {
+            MarkDisconnected();
+        }
+        return Option<object>.None;
+
     }
 }
