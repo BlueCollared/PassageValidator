@@ -1,9 +1,10 @@
 ﻿
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
+using LanguageExt;
 
 namespace EtGate.IER;
 
-internal class IERXmlRpcRaw : IIERXmlRpcRaw
+public class IERXmlRpcRaw : IIERXmlRpcRaw
 {
     private readonly IIERXmlRpcInterface worker;
 
@@ -129,7 +130,7 @@ internal class IERXmlRpcRaw : IIERXmlRpcRaw
         return null;
     }
 
-    public object[] Reboot()
+    public Option<object[]> Reboot()
     {
         try {
         return worker.SendReboot();
@@ -138,10 +139,10 @@ internal class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return Option<object[]>.None;
     }
 
-    public object[] Restart()
+    public Option<object[]> Restart()
     {
         try { 
         return worker.SendRestart(); // TODO: 
@@ -150,10 +151,10 @@ internal class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             MarkDisconnected();
         }
-        return null;
+        return Option<object[]>.None;
     }
 
-    public object[] SetAuthorization(int[] param)
+    public object[] SetAuthorisation(int[] param)
     {
         try { 
         return worker.SetAuthorisation(param);

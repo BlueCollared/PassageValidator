@@ -1,5 +1,7 @@
 ﻿using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
+using EtGate.IER;
+using Horizon.XmlRpc.Client;
 using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 
@@ -10,9 +12,13 @@ public class PasageDeviceController : GateControllerBase
     bool bIsConnected = false;
     CIERRpcHelper ier;
 
-    public PasageDeviceController(string ipAddress, int portNum)
+    public PasageDeviceController(string url)
     {
-        ier = new CIERRpcHelper(ipAddress, portNum.ToString());
+        var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
+        xmlRpc.Url = url;
+        ier = new CIERRpcHelper(
+            new IERXmlRpcRaw(xmlRpc)
+            );
     }
 
     public override bool Authorize(int nAuthorizations)
@@ -25,18 +31,7 @@ public class PasageDeviceController : GateControllerBase
         if (!bIsConnected)
             return false;
 
-        try
-        {
-            object[] result = ier.Reboot(bHardboot);
-            if (int.Parse(result[0].ToString()) > 0)
-                return true;
-            else
-                return false;
-        }
-        catch
-        {
-            return false;
-        }
+        return ier.Reboot(bHardboot);
     }
 
     public override void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)

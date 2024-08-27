@@ -1,12 +1,14 @@
-﻿namespace EtGate.IER
+﻿using LanguageExt;
+
+namespace EtGate.IER
 {
     public interface IIERXmlRpcRaw
     {
-        object[] SetAuthorization(int[] param);
+        object[] SetAuthorisation(int[] param);
         object[] SetEmergency(int[] param);
         object[] SetMaintenanceMode(int[] param);
-        object[] Reboot();
-        object[] Restart();
+        Option<object[]> Reboot();
+        Option<object[]> Restart();
         object[] ApplyUpdate();
         object[] SetDate(object[] param);
         object[] GetDate();

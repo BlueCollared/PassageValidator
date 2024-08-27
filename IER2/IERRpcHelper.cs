@@ -1,22 +1,27 @@
-﻿using Horizon.XmlRpc.Client;
+﻿using EtGate.IER;
+using Horizon.XmlRpc.Client;
+using LanguageExt;
 using System.Collections;
 
 namespace IFS2.Equipment.HardwareInterface.IERPLCManager
 {
     public class CIERRpcHelper
     {
-        public CIERRpcHelper(string url, string port)
+        public CIERRpcHelper(IERXmlRpcRaw _iERXmlRpcInterface)
         {
-            _iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
+            this.xmlRpcRaw = _iERXmlRpcInterface;
+            //_iERXmlRpcInterface = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
 
-            this.url = url;
-            this.port = port;
+            //  this.url = url;
+            //this.port = port;
         }
 
-        private IIERXmlRpcInterface _iERXmlRpcInterface; // TODO: if required, inject it rather than creating it here
-        
-        private readonly string url;
-        private readonly string port;        
+        //private IIERXmlRpcInterface _iERXmlRpcInterface; // TODO: if required, inject it rather than creating it here
+        private IIERXmlRpcRaw xmlRpcRaw;
+
+
+        //private readonly string url;
+        //private readonly string port;        
 
 
         public static int ResponseParser(object obj, ref Dictionary<string, object> dict)
@@ -65,38 +70,45 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                    str = c.Info;
                }*/
             return str;
-        }
+        }        
 
-        
-        public string[] ListAvailableMethods()
+        public object[] SetAuthorisation(int[] param)
         {
-            return _iERXmlRpcInterface.SystemListMethods();
-        }
-
-        public object[] SetAuthorization(int[] param)
-        {
-            return _iERXmlRpcInterface.SetAuthorisation(param);
+            return xmlRpcRaw.SetAuthorisation(param);
         }
         
         public object[] SetEmergency(int[] param)
         {
-            return _iERXmlRpcInterface.SetEmergency(param);
+            return xmlRpcRaw.SetEmergency(param);
         }
         
         public object[] SetMaintenanceMode(int[] param)
         {
-            return _iERXmlRpcInterface.SetMaintenanceMode(param);
+            return xmlRpcRaw.SetMaintenanceMode(param);
         }
         
-        public object[] Reboot(bool bhardboot)
+        public bool Reboot(bool bhardboot)
         {
-            if (bhardboot) return _iERXmlRpcInterface.SendReboot();
-            else return _iERXmlRpcInterface.SendRestart();
+            var bootSuccess = (object[] op) => 
+                op.Length > 1
+                && int.TryParse(op[0].ToString(), out int res)
+                && res > 0;
+            
+            if (bhardboot)
+                return xmlRpcRaw.Reboot().Match(
+                    Some: o => bootSuccess(o),
+                    None: () => false
+                    );
+            else
+                return xmlRpcRaw.Restart().Match(
+                    Some: o => bootSuccess(o),
+                    None: () => false
+                    );
         }
 
         public object[] ApplyUpdate()
         {
-            return _iERXmlRpcInterface.ApplyUpdate();
+            return xmlRpcRaw.ApplyUpdate();
         }
 
         public object[] SetDate(DateTime dt, string timezone = "")
@@ -111,25 +123,25 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             dtparams[6] = (string)timezone;// dt.timezo;
             //for test
             //Logging.Verbose(new LogContext("Log","",""), ((int)dtparams[0]).ToString(), ((int)dtparams[1]).ToString(), ((int)dtparams[2]).ToString(), ((int)dtparams[3]).ToString(), ((int)dtparams[4]).ToString(), ((int)dtparams[5]).ToString(), ((string)dtparams[6]).ToString());
-            return _iERXmlRpcInterface.SetDate(dtparams);
+            return xmlRpcRaw.SetDate(dtparams);
         }
 
         public object[] GetDate()
         {
-            return _iERXmlRpcInterface.GetDate();
+            return xmlRpcRaw.GetDate();
         }
 
         // object ();
 
         public object GetStatusEx()
         {
-            return _iERXmlRpcInterface.GetStatusStd();
+            return xmlRpcRaw.GetStatusEx();
         }
 
         public IERSWVersion GetVersion()
         {
             IERSWVersion iERSW = new();
-            object[] ret = _iERXmlRpcInterface.GetVersion();
+            object[] ret = xmlRpcRaw.GetVersion();
             if (ret.Length > 0)
             {
                 iERSW.LaneType = (string)ret[0];
@@ -144,7 +156,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
         public Dictionary<int, int> GetCounter()
         {
             Dictionary<int, int> counters = new();
-            object[] result = _iERXmlRpcInterface.GetCounter();
+            object[] result = xmlRpcRaw.GetCounter();
             int nb;
             if (result.Length > 0) nb = Convert.ToInt32(((int)result[0]));
             if (result.Length > 1)
@@ -201,54 +213,50 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
 
             public object[] SetMode(string[] param)
         {
-            return _iERXmlRpcInterface.SetMode(param);
+            return xmlRpcRaw.SetMode(param);
         }
         public object[] SetCredentials(string[] param)
         {
-            return _iERXmlRpcInterface.SetCredentials(param);
+            return xmlRpcRaw.SetCredentials(param);
         }
         public object[] GetSetTempo(int[] param)
         {
-            return _iERXmlRpcInterface.GetSetTempo(param);
+            return xmlRpcRaw.GetSetTempo(param);
         }
         public object[] GetSetTempoFlow(int[] param)
         {
-            return _iERXmlRpcInterface.GetSetTempoFlow(param);
+            return xmlRpcRaw.GetSetTempoFlow(param);
         }
         public object[] GetCurrentPassage()
         {
-            return _iERXmlRpcInterface.GetCurrentPassage();
-        }
-        public string methodHelp(string MethodName)
-        {
-            return _iERXmlRpcInterface.methodHelp(MethodName);
+            return xmlRpcRaw.GetCurrentPassage();
         }
         public object[] SetOutputClient(int[] param)
         {
-            return _iERXmlRpcInterface.SetOutputClient(param);
+            return xmlRpcRaw.SetOutputClient(param);
         }
         public object[] GetMotorSpeed()
         {
-            return _iERXmlRpcInterface.GetMotorSpeed();
+            return xmlRpcRaw.GetMotorSpeed();
         }
         public object[] SetMotorSpeed(object[] param)
         {
-            return _iERXmlRpcInterface.SetMotorSpeed(param);
+            return xmlRpcRaw.SetMotorSpeed(param);
         }
 
         public object[] SetBuzzerFraud(int[] param)
         {
-            return _iERXmlRpcInterface.SetBuzzerFraud(param);
+            return xmlRpcRaw.SetBuzzerFraud(param);
         }
 
         public object[] SetBuzzerIntrusion(int[] param)
         {
-            return _iERXmlRpcInterface.SetBuzzerIntrusion(param);
+            return xmlRpcRaw.SetBuzzerIntrusion(param);
         }
 
         public object[] SetBuzzerMode(int[] param)
         {
-            return _iERXmlRpcInterface.SetBuzzerMode(param);
+            return xmlRpcRaw.SetBuzzerMode(param);
         }
     }
 }
