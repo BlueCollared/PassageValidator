@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using IFS2.Common;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace IFS2.Equipment.DriverInterface
@@ -21,12 +22,12 @@ namespace IFS2.Equipment.DriverInterface
         QRCodeOnly
     }
 
-    public enum GlobalEquipmentAisle
-    {
-        Unknown = -1,
-        NormallyClosed,
-        NormallyOpen
-    }
+    //public enum GlobalEquipmentAisle
+    //{
+    //    Unknown = -1,
+    //    NormallyClosed,
+    //    NormallyOpen
+    //}
 
     public enum ExitTTType
     {
@@ -103,363 +104,36 @@ namespace IFS2.Equipment.DriverInterface
         Simulated,
         FreeControlled
     }
-    public enum GlobalEquipmentMode
-    {
-        Unknown = -1,
-        InService = 0,
-        Maintenance = 1,
-        Emergency = 2,
-        StationClosed = 3,
-        OutOfService = 5,
-        OutOfOrder = 6,
-        Closed = 7
-    }
+    //public enum GlobalEquipmentMode
+    //{
+    //    Unknown = -1,
+    //    InService = 0,
+    //    Maintenance = 1,
+    //    Emergency = 2,
+    //    StationClosed = 3,
+    //    OutOfService = 5,
+    //    OutOfOrder = 6,
+    //    Closed = 7
+    //}
 
 
-    [XmlRoot("ChangeEquipmentMode")]
+    
     public class ChangeEquipmentMode
-    {
-        [XmlElement("Mode")]
-        public int _Mode = -1;
-
-        [XmlElement("Direction")]
-        public int _Direction = -1;
-
-        [XmlElement("PaidReader")]
-        public int _PaidReader = -1;
-
-        [XmlElement("UnpaidReader")]
-        public int _UnpaidReader = -1;
-
-        [XmlElement("EntryMode")]
-        public int _EntryMode = -1;
-
-        [XmlElement("ExitMode")]
-        public int _ExitMode = -1;
-
-        [XmlElement("EntryTTMode")]
-        public int _EntryTTType = -1;
-
-        [XmlElement("ExitTTMode")]
-        public int _ExitTTType = -1;
-
-        [XmlElement("Aisle")]
-        public int _Aisle = -1;
-
-        [XmlElement("Simulated")]
-        public int _Simulated = -1;
-
-        [XmlElement("HCEMode")]
-        public int _HCEMode = -1;
-
-        [XmlElement("SpecialEvent")]
-        public int _SpecialEvent = -1;
-
-        [XmlElement("EntrySpecialEvent")]
-        public int _EntrySpecialEvent = 0;
-
-        [XmlElement("ExitSpecialEvent")]
-        public int _ExitSpecialEvent = 0;
-
-        [XmlElement("EntryOutOfOrder")]
-        public int _EntryOutOfOrder = 0;
-
-        [XmlElement("ExitOutOfOrder")]
-        public int _ExitOutOfOrder = 0;
-
-        [XmlElement("Emergency")]
-        public int _Emergency = -1;
-
-        [XmlElement("Maintenance")]
-        public int _Maintenance = -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentMode Mode
-        {
-            get
-            {
-                return (GlobalEquipmentMode)_Mode;
-            }
-            set
-            {
-                _Mode = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool Mode_Present => _Mode != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentDirection Direction
-        {
-            get
-            {
-                return (GlobalEquipmentDirection)_Direction;
-            }
-            set
-            {
-                _Direction = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool Direction_Present => _Direction != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentPaidReader PaidReader
-        {
-            get
-            {
-                return (GlobalEquipmentPaidReader)_PaidReader;
-            }
-            set
-            {
-                _PaidReader = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool PaidReader_Present => _PaidReader != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentUnpaidReader UnpaidReader
-        {
-            get
-            {
-                return (GlobalEquipmentUnpaidReader)_UnpaidReader;
-            }
-            set
-            {
-                _UnpaidReader = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool UnpaidReader_Present => _UnpaidReader != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentEntryMode EntryMode
-        {
-            get
-            {
-                return (GlobalEquipmentEntryMode)_EntryMode;
-            }
-            set
-            {
-                _EntryMode = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool EntryMode_Present => _EntryMode != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentExitMode ExitMode
-        {
-            get
-            {
-                return (GlobalEquipmentExitMode)_ExitMode;
-            }
-            set
-            {
-                _ExitMode = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool ExitMode_Present => _ExitMode != -1;
-
-        [XmlIgnore]
-        public EntryTTType EntryTTType
-        {
-            get
-            {
-                return (EntryTTType)_EntryTTType;
-            }
-            set
-            {
-                _EntryTTType = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool EntryTTType_Present => _EntryTTType != -1;
-
-        [XmlIgnore]
-        public ExitTTType ExitTTType
-        {
-            get
-            {
-                return (ExitTTType)_ExitTTType;
-            }
-            set
-            {
-                _ExitTTType = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool ExitTTType_Present => _ExitTTType != -1;
-
-        [XmlIgnore]
-        public GlobalEquipmentAisle Aisle
-        {
-            get
-            {
-                return (GlobalEquipmentAisle)_Aisle;
-            }
-            set
-            {
-                _Aisle = (int)value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool Aisle_Present => _Aisle != -1;
-
-        [XmlIgnore]
-        public bool Simulated
-        {
-            get
-            {
-                return _Simulated == 1;
-            }
-            set
-            {
-                _Simulated = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool Simulated_Present => _Simulated != -1;
-
-        [XmlIgnore]
-        public bool HCEMode
-        {
-            get
-            {
-                return _HCEMode == 1;
-            }
-            set
-            {
-                _HCEMode = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool HCEMode_Present => _HCEMode != -1;
-
-        [XmlIgnore]
-        public bool SpecialEvent
-        {
-            get
-            {
-                return _SpecialEvent == 1;
-            }
-            set
-            {
-                _SpecialEvent = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool SpecialEvent_Present => _SpecialEvent != -1;
-
-        [XmlIgnore]
-        public bool EntrySpecialEvent
-        {
-            get
-            {
-                return _EntrySpecialEvent == 1;
-            }
-            set
-            {
-                _EntrySpecialEvent = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool EntrySpecialEvent_Present => _EntrySpecialEvent != -1;
-
-        [XmlIgnore]
-        public bool ExitSpecialEvent
-        {
-            get
-            {
-                return _ExitSpecialEvent == 1;
-            }
-            set
-            {
-                _ExitSpecialEvent = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool ExitSpecialEvent_Present => _ExitSpecialEvent != -1;
-
-        [XmlIgnore]
-        public bool EntryOutOfOrder
-        {
-            get
-            {
-                return _EntryOutOfOrder == 1;
-            }
-            set
-            {
-                _EntryOutOfOrder = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool EntryOutOfOrder_Present => _EntryOutOfOrder != -1;
-
-        [XmlIgnore]
-        public bool ExitOutOfOrder
-        {
-            get
-            {
-                return _ExitOutOfOrder == 1;
-            }
-            set
-            {
-                _ExitOutOfOrder = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool ExitOutOfOrder_Present => _ExitOutOfOrder != -1;
-
-        [XmlIgnore]
-        public bool Emergency
-        {
-            get
-            {
-                return _Emergency == 1;
-            }
-            set
-            {
-                _Emergency = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool Emergency_Present => _Emergency != -1;
-
-        [XmlIgnore]
-        public bool Maintenance
-        {
-            get
-            {
-                return _Maintenance == 1;
-            }
-            set
-            {
-                _Maintenance = (value ? 1 : 0);
-            }
-        }
-
-        [XmlIgnore]
-        public bool Maintenance_Present => _Maintenance != -1;
+    {        
+        public GlobalEquipmentMode Mode { get; set; }
+        public GlobalEquipmentDirection Direction { get; set; }        
+        public GlobalEquipmentPaidReader PaidReader { get; set; }        
+        public GlobalEquipmentUnpaidReader UnpaidReader { get; set; }
+        public GlobalEquipmentEntryMode EntryMode { get; set; }        
+        public GlobalEquipmentExitMode ExitMode { get; set; }        
+        public EntryTTType EntryTTType { get; set; }
+        public ExitTTType ExitTTType { get; set; }
+        public GlobalEquipmentAisle Aisle { get; set; }
+        public bool Simulated { get; set; }
+        public bool EntryOutOfOrder { get; set; }
+        public bool ExitOutOfOrder { get; set; }
+        public bool Emergency { get; set; }        
+        public bool Maintenance { get; set; }
 
         public ChangeEquipmentMode(GlobalEquipmentMode Mode_)
         {
@@ -469,12 +143,7 @@ namespace IFS2.Equipment.DriverInterface
         public ChangeEquipmentMode(GlobalEquipmentDirection Direction_)
         {
             Direction = Direction_;
-        }
-
-        public ChangeEquipmentMode(bool Simulated_)
-        {
-            _Simulated = (Simulated_ ? 1 : 0);
-        }
+        }        
 
         public ChangeEquipmentMode(ChangeEquipmentMode init)
         {
@@ -488,10 +157,6 @@ namespace IFS2.Equipment.DriverInterface
             ExitTTType = init.ExitTTType;
             Aisle = init.Aisle;
             Simulated = init.Simulated;
-            HCEMode = init.HCEMode;
-            SpecialEvent = init.SpecialEvent;
-            EntrySpecialEvent = init.EntrySpecialEvent;
-            ExitSpecialEvent = init.ExitSpecialEvent;
             EntryOutOfOrder = init.EntryOutOfOrder;
             ExitOutOfOrder = init.ExitOutOfOrder;
             Emergency = init.Emergency;

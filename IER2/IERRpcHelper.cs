@@ -1,6 +1,7 @@
 ﻿using EtGate.IER;
 using IFS2.Common;
 using IFS2.Common.CoreTechnical;
+using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using System.Collections;
 
@@ -63,9 +64,23 @@ public class CIERRpcHelper
         return str;
     }        
 
-    public Option<object[]> SetAuthorisation(int[] param)
+    public bool SetAuthorisation(int nbpassage, int direction)
     {
-        return xmlRpcRaw.SetAuthorisation(param);
+        int[] param = new int[] { 0, 0, 0, 0, 0, 0 };
+        switch (direction)
+        {
+            case 0:
+                param[0] = nbpassage;
+                break;
+            case 1:
+                param[1] = nbpassage;
+                break;
+        }
+        
+        return xmlRpcRaw.SetAuthorisation(param)
+            .Match(Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
     
     public bool SetEmergency(bool onOff)
@@ -154,9 +169,15 @@ public class CIERRpcHelper
                 );
     }
 
-    public Option<object[]> GetDate()
+    public Option<DateTime> GetDate()
     {
-        return xmlRpcRaw.GetDate();
+        var dateExtract = (object[] resp) =>
+            resp.Length > 7 ?
+            (new DateTime
+            ((int)resp[0], (int)resp[1], (int)resp[2], (int)resp[3], (int)resp[4], (int)resp[5])).AddSeconds((int)resp[6])
+             : Option<DateTime>.None;
+
+        return xmlRpcRaw.GetVersion().Bind(dateExtract);        
     }
 
     // object ();
@@ -242,21 +263,139 @@ public class CIERRpcHelper
 
         return xmlRpcRaw.GetCounter().Map(countersExtract);
     }
-public Option<object[]> SetMode(string[] param)
+    
+    public bool SetFlapOperationlMode(string FlapsMode, string OperatingModes_EntrySide, string OperatingModes_ExitSide)
     {
-        return xmlRpcRaw.SetMode(param);
+        string[] paramGateMode = new string[3];
+        paramGateMode[0] = FlapsMode;
+        paramGateMode[1] = OperatingModes_EntrySide;
+        paramGateMode[2] = OperatingModes_ExitSide;
+
+        return xmlRpcRaw.SetMode(paramGateMode)
+            .Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
+
+    public bool SetOOO()
+    {
+        return SetDoorlMode("BlockClosed", "", "");
+    }
+
+    public bool SetInservice(ChangeEquipmentMode EM)
+    {
+        DoorModeConf doorMode = new(ForceDoorinReverseSide:false, ForceDoorinEntrySide:true, ForceDoorinFreeSide:true);
+        return SetDoorlMode(TransformFromChangeModeDoorsMode(EM, doorMode).ToString(), TransformFromChangeModeSideA(EM).ToString(), TransformFromChangeModeSideB(EM).ToString());
+    }
+
+    bool SetDoorlMode(string FlapsMode, string OperatingModes_EntrySide, string OperatingModes_ExitSide)
+    {
+        string[] paramGateMode = new string[3];
+        paramGateMode[0] = FlapsMode;
+        paramGateMode[1] = OperatingModes_EntrySide;
+        paramGateMode[2] = OperatingModes_ExitSide;
+
+        return xmlRpcRaw.SetMode(paramGateMode)
+            .Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
+    }
+
     public Option<object[]> SetCredentials(string[] param)
     {
         return xmlRpcRaw.SetCredentials(param);
     }
-    public Option<object[]> GetSetTempo(int[] param)
+    static SideOperatingModes TransformFromChangeModeSideA(ChangeEquipmentMode EM)
     {
-        return xmlRpcRaw.GetSetTempo(param);
+        SideOperatingModes _SideOperationModeA = SideOperatingModes.Closed;
+        if (EM.Mode == GlobalEquipmentMode.InService)
+        {
+            switch (EM.EntryMode)
+            {
+                case DriverInterface.GlobalEquipmentEntryMode.Controlled:
+                    if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Entry || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
+                        _SideOperationModeA = SideOperatingModes.Controlled;
+                    break;
+                case DriverInterface.GlobalEquipmentEntryMode.Free:
+                case DriverInterface.GlobalEquipmentEntryMode.FreeControlled:
+                    if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Entry || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
+                        _SideOperationModeA = SideOperatingModes.Free;
+                    break;
+            }
+        }
+        return _SideOperationModeA;
     }
-    public Option<object[]> GetSetTempoFlow(int[] param)
+    static SideOperatingModes TransformFromChangeModeSideB(ChangeEquipmentMode EM)
     {
-        return xmlRpcRaw.GetSetTempoFlow(param);
+        SideOperatingModes _SideOperationModeB = SideOperatingModes.Closed;
+        if (EM.Mode == GlobalEquipmentMode.InService)
+        {
+            switch (EM.ExitMode)
+            {
+                case DriverInterface.GlobalEquipmentExitMode.Controlled:
+                    if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Exit || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
+                        _SideOperationModeB = SideOperatingModes.Controlled;
+                    break;
+                case DriverInterface.GlobalEquipmentExitMode.Free:
+                case DriverInterface.GlobalEquipmentExitMode.FreeControlled:
+                    if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Exit || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
+                        _SideOperationModeB = SideOperatingModes.Free;
+                    break;
+            }
+        }
+        return _SideOperationModeB;
+    }
+
+    public class TempoConf
+    {
+        public int FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
+        public int TimeToEnterAfterAuthorisation;              //Time allotted to enter in the lane after an authorisation is granted    public Option<object[]> GetSetTempo(int[] param) 
+        public int TimeToValidateAfterDetection;                  //Time allotted to badge after a user is detected in the lane (in Controlled Mode only)        return xmlRpcRaw.GetSetTempo(param);
+
+        public int TimeToCrossAfterDetection; //Time allotted to completely cross the lane after a person is detected.    public Option<object[]> GetSetTempoFlow(int[] param)
+        public int TimeAllowedToExitSafetyZone;             //Time allotted to exit the safety zone.    {
+        public int TimeAllowedToCrossLaneAfterAuthorisation;         //Time allotted to completely cross the lane after an authorisation is granted        return xmlRpcRaw.GetSetTempoFlow(param);
+    }
+
+    public class TempoFlowConf
+    {
+        // NOTE: it is there in both TempoConf and TempoFlowConf
+        public int FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
+        public int FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
+    }
+
+    public bool GetSetTempo(TempoConf conf)
+    {
+        int[] param = new int[9];
+
+        param[0] = conf.FlapRemainOpenPostFreePasses;
+        param[1] = -1; // not int use
+        param[2] = conf.TimeToEnterAfterAuthorisation;
+        param[3] = -1;// not in use
+        param[4] = conf.TimeToValidateAfterDetection;
+        param[5] = -1;// not int use
+        param[6] = conf.TimeToCrossAfterDetection;
+        param[7] = conf.TimeAllowedToExitSafetyZone;
+        param[8] = conf.TimeAllowedToCrossLaneAfterAuthorisation;
+
+        return xmlRpcRaw.GetSetTempo(param).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
+    }
+
+    public bool GetSetTempoFlow(TempoFlowConf conf)
+    {
+        int[] param2 = new int[2];
+        param2[0] = conf.FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
+        param2[1] = conf.FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
+
+        return xmlRpcRaw.GetSetTempoFlow(param2).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                ); ;
     }
     public Option<object[]> GetCurrentPassage()
     {
@@ -268,25 +407,159 @@ public Option<object[]> SetMode(string[] param)
     }
     public Option<object[]> GetMotorSpeed()
     {
-        return xmlRpcRaw.GetMotorSpeed();
-    }
-    public Option<object[]> SetMotorSpeed(object[] param)
-    {
-        return xmlRpcRaw.SetMotorSpeed(param);
+        throw new NotImplementedException(); // TODO: not done in SGP
     }
 
-    public Option<object[]> SetBuzzerFraud(int[] param)
+    public class MotorSpeed
     {
-        return xmlRpcRaw.SetBuzzerFraud(param);
+        public int StandardOpeningSpeed = 100;
+        public int StandardClosingSpeed = 100;
+        public int SecurityOpeningSpeed = 20;
+        public int DisappearanceSpeed = 20;
+        public int FraudClosingSpeed = 100;
+        public int SecurityFraudClosingSpeed = 20;
     }
 
-    public Option<object[]> SetBuzzerIntrusion(int[] param)
+    public bool SetMotorSpeed(MotorSpeed conf)
     {
-        return xmlRpcRaw.SetBuzzerIntrusion(param);
+        object[] param3 = new object[7];
+        param3[0] = "Entry";    // TODO: for now, copied from SGP
+        param3[1] = conf.StandardOpeningSpeed;
+        param3[2] = conf.StandardClosingSpeed;
+        param3[3] = conf.SecurityOpeningSpeed;
+        param3[4] = conf.DisappearanceSpeed;
+        param3[5] = conf.FraudClosingSpeed;
+        param3[6] = conf.SecurityFraudClosingSpeed;
+
+        return xmlRpcRaw.SetMotorSpeed(param3).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
     }
 
-    public Option<object[]> SetBuzzerMode(int[] param)
+    public bool SetBuzzerFraud(int volume, int note)
     {
-        return xmlRpcRaw.SetBuzzerMode(param);
+        return xmlRpcRaw.SetBuzzerFraud([volume, note]).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
+    }
+
+    public bool SetBuzzerIntrusion(int volume, int note)
+    {
+        return xmlRpcRaw.SetBuzzerIntrusion([volume, note]).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
+    }
+
+    public bool SetBuzzerMode(int ModeBuzzer)
+    {
+        return xmlRpcRaw.SetBuzzerMode([ModeBuzzer]).Match(
+                Some: o => successGenCriter(o),
+                None: () => false
+                );
+    }
+    public record DoorModeConf
+        (
+        bool ForceDoorinReverseSide,
+        bool ForceDoorinEntrySide,
+        bool ForceDoorinFreeSide
+        );
+    public static DoorsMode TransformFromChangeModeDoorsMode(ChangeEquipmentMode EM, DoorModeConf conf)
+    {
+        DoorsMode _doorsMode = DoorsMode.BlockClosed;
+        if (EM.Mode == GlobalEquipmentMode.InService)
+        {
+            if (EM.Aisle == GlobalEquipmentAisle.NormallyClosed)
+            {
+                _doorsMode = DoorsMode.Nc;
+            }
+            else if (EM.Aisle == GlobalEquipmentAisle.NormallyOpen)
+            {
+                switch (EM.Direction)
+                {
+                    case DriverInterface.GlobalEquipmentDirection.Entry:
+                        {
+                            switch (EM.EntryMode)
+                            {
+                                case DriverInterface.GlobalEquipmentEntryMode.Controlled:
+                                    _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
+                                    break;
+                                case DriverInterface.GlobalEquipmentEntryMode.Free:
+                                case DriverInterface.GlobalEquipmentEntryMode.FreeControlled:
+                                    _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
+                                    break;
+                            }
+                            break;
+                        }
+                    case DriverInterface.GlobalEquipmentDirection.Exit:
+                        {
+                            switch (EM.ExitMode)
+                            {
+                                case DriverInterface.GlobalEquipmentExitMode.Controlled:
+                                    _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
+                                    break;
+                                case DriverInterface.GlobalEquipmentExitMode.Free:
+                                case DriverInterface.GlobalEquipmentExitMode.FreeControlled:
+                                    _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
+                                    break;
+                            }
+                            break;
+                        }
+                    case DriverInterface.GlobalEquipmentDirection.BiDirectional:
+                        {
+                            switch (EM.EntryMode)
+                            {
+                                case DriverInterface.GlobalEquipmentEntryMode.Controlled:
+                                    switch (EM.ExitMode)
+                                    {
+                                        case DriverInterface.GlobalEquipmentExitMode.Controlled:
+                                            _doorsMode = conf.ForceDoorinEntrySide ? DoorsMode.Noa : DoorsMode.Nob;
+                                            break;
+                                        case DriverInterface.GlobalEquipmentExitMode.Free:
+                                        case DriverInterface.GlobalEquipmentExitMode.FreeControlled:
+                                            _doorsMode = conf.ForceDoorinFreeSide ? DoorsMode.Nob : DoorsMode.Noa;
+                                            break;
+                                        case DriverInterface.GlobalEquipmentExitMode.Closed:
+                                            _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
+                                            break;
+                                    }
+                                    break;
+                                case DriverInterface.GlobalEquipmentEntryMode.Free:
+                                case DriverInterface.GlobalEquipmentEntryMode.FreeControlled:
+                                    switch (EM.ExitMode)
+                                    {
+                                        case DriverInterface.GlobalEquipmentExitMode.Controlled:
+                                            _doorsMode = conf.ForceDoorinFreeSide ? DoorsMode.Noa : DoorsMode.Nob;
+                                            break;
+                                        case DriverInterface.GlobalEquipmentExitMode.Free:
+                                        case DriverInterface.GlobalEquipmentExitMode.FreeControlled:
+                                            _doorsMode = conf.ForceDoorinEntrySide ? DoorsMode.OpticalA : DoorsMode.OpticalB;
+                                            break;
+                                        case DriverInterface.GlobalEquipmentExitMode.Closed:
+                                            _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
+                                            break;
+                                    }
+                                    break;
+                                case DriverInterface.GlobalEquipmentEntryMode.Closed:
+                                    switch (EM.ExitMode)
+                                    {
+                                        case DriverInterface.GlobalEquipmentExitMode.Controlled:
+                                            _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
+                                            break;
+                                        case DriverInterface.GlobalEquipmentExitMode.Free:
+                                        case DriverInterface.GlobalEquipmentExitMode.FreeControlled:
+                                            _doorsMode = conf.ForceDoorinReverseSide  ? DoorsMode.Noa : DoorsMode.Nob;
+                                            break;
+                                    }
+                                    break;
+                            }
+                            break;
+                        }
+                }
+            }
+        }
+        return _doorsMode;
     }
 }
