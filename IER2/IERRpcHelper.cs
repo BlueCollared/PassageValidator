@@ -86,22 +86,22 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
         {
             return xmlRpcRaw.SetMaintenanceMode(param);
         }
-        
+
+        readonly Func<object[], bool> successGenCriter = (object[] op) =>
+    op.Length > 1
+    && int.TryParse(op[0].ToString(), out int res)
+    && res > 0;
+
         public bool Reboot(bool bhardboot)
-        {
-            var bootSuccess = (object[] op) => 
-                op.Length > 1
-                && int.TryParse(op[0].ToString(), out int res)
-                && res > 0;
-            
+        {            
             if (bhardboot)
                 return xmlRpcRaw.Reboot().Match(
-                    Some: o => bootSuccess(o),
+                    Some: o => successGenCriter(o),
                     None: () => false
                     );
             else
                 return xmlRpcRaw.Restart().Match(
-                    Some: o => bootSuccess(o),
+                    Some: o => successGenCriter(o),
                     None: () => false
                     );
         }
