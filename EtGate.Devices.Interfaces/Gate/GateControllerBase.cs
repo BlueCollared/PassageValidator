@@ -6,7 +6,7 @@ using System.Reactive.Subjects;
 
 namespace EtGate.Devices.Interfaces.Gate;
 
-abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IPassageControllerEx
+abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGateController
 {
     readonly protected ReplaySubject<GateHwStatus> GateStatusSubject = new();
     public IObservable<GateHwStatus> GateStatusObservable => GateStatusSubject.AsObservable();

@@ -13,7 +13,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             this.port = port;
         }
 
-        private IIERXmlRpcInterface _iERXmlRpcInterface;
+        private IIERXmlRpcInterface _iERXmlRpcInterface; // TODO: if required, inject it rather than creating it here
         
         private readonly string url;
         private readonly string port;        
@@ -141,12 +141,65 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             return iERSW;
         }
 
-        public object[] GetCounter()
+        public Dictionary<int, int> GetCounter()
         {
-            return _iERXmlRpcInterface.GetCounter();
+            Dictionary<int, int> counters = new();
+            object[] result = _iERXmlRpcInterface.GetCounter();
+            int nb;
+            if (result.Length > 0) nb = Convert.ToInt32(((int)result[0]));
+            if (result.Length > 1)
+            {
+                IList idict = (IList)result[1];
+                foreach (IDictionary idict1 in idict)
+                {
+                    try
+                    {
+                        int val = 0;
+                        const int type = 2; // Taking from the matured SGP, where only value for `type` used is 2
+                        switch (type)
+                        {
+                            case 1:
+                                val = (int)idict1["Partial"];
+                                break;
+                            case 2:
+                                val = (int)idict1["Main"];
+                                break;
+                            case 3:
+                                val = (int)idict1["Perp"];
+                                break;
+                        }
+                        string name = (string)idict1["name"];
+                        int cpt = Convert.ToInt32(name);
+                        switch (cpt)
+                        {
+                            case 1048:
+                                cpt = 14;
+                                break;
+                            case 1052:
+                                cpt = 15;
+                                break;
+                            case 1076:
+                                cpt = 16;
+                                break;
+                            case 1077:
+                                cpt = 17;
+                                break;
+                            default:
+                                cpt -= 1000;
+                                break;
+                        }
+                        counters.Add(cpt, val);
+                    }
+                    catch
+                    {
+                        //   Logging.Error(LogContext, "IERPLCMain.GetCounters " + e1.Message);
+                    }
+                }
+            }
+            return counters;
         }
 
-        public object[] SetMode(string[] param)
+            public object[] SetMode(string[] param)
         {
             return _iERXmlRpcInterface.SetMode(param);
         }
