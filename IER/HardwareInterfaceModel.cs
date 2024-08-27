@@ -492,13 +492,12 @@ namespace IFS2.Equipment.DriverInterface
         //public Dictionary<string, string[]> failures;
         private Dictionary<string, int> inputs;
         public Dictionary<string, object> rawData;
-        public STATUS callreturnStatus = STATUS.NOK;
+        
         public int bInfractionsDirection = -1;
        
 
         public CPLCStatus()
-        {
-            callreturnStatus = STATUS.NOK;
+        {            
             //door_mode = DoorsMode.NONE;
             eDoorState = eDoorCurrentState.NONE;
             //eplcState = ePLCState.ERROR_INIT;
@@ -521,8 +520,7 @@ namespace IFS2.Equipment.DriverInterface
 
         }
         public void Reset()
-        {
-            this.callreturnStatus = STATUS.NOK;
+        {            
             //this.door_mode = DoorsMode.NONE;
             this.eDoorState = eDoorCurrentState.NONE;
             //this.eplcState = ePLCState.ERROR_INIT;
