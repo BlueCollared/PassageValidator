@@ -122,16 +122,6 @@ public partial class CIERRpcHelper
                 );
     }
 
-    public Option<DateTime> GetDate()
-    {
-        var dateExtract = (object[] resp) =>
-            resp.Length > 7 ?
-            (new DateTime
-            ((int)resp[0], (int)resp[1], (int)resp[2], (int)resp[3], (int)resp[4], (int)resp[5])).AddSeconds((int)resp[6])
-             : Option<DateTime>.None;
-
-        return xmlRpcRaw.GetDate().Bind(dateExtract);        
-    }
 
     public class ForFailure
     {

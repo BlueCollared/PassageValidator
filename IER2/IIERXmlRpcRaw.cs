@@ -7,6 +7,7 @@ namespace EtGate.IER
     {
         bValueOutOfRange,
         bInvalidNumberOfParameters,
+        bUnexpectedAnswer,
         bDeviceInaccessible
     };
 
@@ -19,7 +20,7 @@ namespace EtGate.IER
         Option<object[]> Restart();
         Option<object[]> ApplyUpdate();
         Option<object[]> SetDate(object[] param);
-        Option<object[]> GetDate();
+        Either<IERApiError, DateTime> GetDate();
         Option<object> GetStatusEx();
         Option<object[]> GetVersion();
         Option<object[]> GetCounter();

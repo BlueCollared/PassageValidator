@@ -61,17 +61,25 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object[]> GetDate()
+    public Either<IERApiError, DateTime> GetDate()
     {
-        try
-        { 
-        return worker.GetDate();
-        }
-        catch (WebException)
+        Func<object[], Either<IERApiError, DateTime>> dateExtract = (object[] resp) =>
         {
-            MarkDisconnected();
-        }
-        return none;
+            try
+            {
+                return resp.Length > 7 ?
+            (new DateTime
+            ((int)resp[0], (int)resp[1], (int)resp[2], (int)resp[3], (int)resp[4], (int)resp[5])).AddSeconds((int)resp[6])
+         : IERApiError.bUnexpectedAnswer;
+            }
+            catch
+            {
+                return IERApiError.bUnexpectedAnswer;
+            }
+        };
+
+        return MakeCall(() => worker.GetDate())
+            .Bind(dateExtract);        
     }
 
     public Option<object[]> GetMotorSpeed()
@@ -131,10 +139,11 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
             conf.TimeAllowedToExitSafetyZone,
             conf.TimeAllowedToCrossLaneAfterAuthorisation,
         ];
-        var res = MakeCall(() => worker.GetSetTempo(param));            
-        return res.Bind(CheckNumberOfIpParams)
+        
+        return MakeCall(() => worker.GetSetTempo(param))
+            .Bind(CheckNumberOfIpParams)
             .Bind(x => InputOutOfRange(x, param.Length))
-            .Bind(x => Either<IERApiError, bool>.Right(true));        
+            .Bind(x => Either<IERApiError, bool>.Right(true));
     }
 
     public Either<IERApiError, TempoConf> GetTempo()
