@@ -3,6 +3,8 @@ using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 using System.Net;
 
+using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
+
 namespace EtGate.IER;
 
 // TODO: this API is bad. It should return parsed structures rather than object[].
@@ -84,16 +86,73 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object[]> GetSetTempo(int[] param)
+    static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) => 
+                  result.Length == 1
+                && result[0] is int
+                && (int)result[0] == 0 ? IERApiError.bInvalidNumberOfParameters : result;
+
+    static readonly Func<IERApiResult, IERApiResult> IsNumberOfParamsIncorrectX = (ip)=>
+        ip.Bind(CheckNumberOfIpParams);
+    
+      
+    static readonly Func<object[], int, IERApiResult> InputOutOfRange = (result, nMinusOnes) =>
     {
-        try { 
-        return worker.GetSetTempo();
+        if (result.Length != nMinusOnes)
+            return result;
+        foreach (object o in result)
+            if (!(o is int) || (Int32)o != -1)
+                return result;
+        return IERApiError.bValueOutOfRange;
+    };
+
+    IERApiResult MakeCall(Func<object[]> act)
+    {
+        try
+        {
+            return act();
+        }
+        catch(WebException exp)
+        {
+            return IERApiError.bDeviceInaccessible;
+        }
+    }
+
+    public Either<IERApiError, bool> SetTempo(TempoConf conf)
+    {
+        int[] param =
+        [
+            conf.FlapRemainOpenPostFreePasses,
+            -1, // not int use
+            conf.TimeToEnterAfterAuthorisation,
+            -1,// not in use
+            conf.TimeToValidateAfterDetection,
+            -1,// not int use
+            conf.TimeToCrossAfterDetection,
+            conf.TimeAllowedToExitSafetyZone,
+            conf.TimeAllowedToCrossLaneAfterAuthorisation,
+        ];
+        var res = MakeCall(() => worker.GetSetTempo(param));            
+        return res.Bind(CheckNumberOfIpParams)
+            .Bind(x => InputOutOfRange(x, param.Length))
+            .Bind(x => Either<IERApiError, bool>.Right(true));        
+    }
+
+    public Either<IERApiError, TempoConf> GetTempo()
+    {
+        try
+        {
+            var result = worker.GetSetTempo();
+            if (CheckNumberOfIpParams(result))
+                return IERApiError.bInvalidNumberOfParameters;
+            else if (InputOutOfRange(result, 2))
+                return IERApiError.bValueOutOfRange;
+            throw new NotImplementedException();
         }
         catch (WebException)
         {
             MarkDisconnected();
+            return IERApiError.bDeviceInaccessible;
         }
-        return none;
     }
 
     public Option<object[]> GetSetTempoFlow(int[] param)

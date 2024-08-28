@@ -31,7 +31,7 @@ public partial class CIERRpcHelper
         }
         
         return xmlRpcRaw.SetAuthorisation(param)
-            .Match(Some: o => successGenCriter(o),
+            .Match(Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -41,7 +41,7 @@ public partial class CIERRpcHelper
         int[] paramGateMode = { 0 };
         paramGateMode[0] = onOff ? 1 : 0;
         return xmlRpcRaw.SetEmergency(paramGateMode)
-            .Match(Some: o => successGenCriter(o),
+            .Match(Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -52,27 +52,27 @@ public partial class CIERRpcHelper
         paramGateMode[0] = onOff ? 1 : 0;
 
         return xmlRpcRaw.SetMaintenanceMode(paramGateMode)
-            .Match(Some: o => successGenCriter(o),
+            .Match(Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
 
-    readonly Func<object[], bool> successGenCriter = (object[] op) =>
+    readonly Func<object[], bool> firstElementIsOne = (object[] op) =>
     op.Length > 1
     && int.TryParse(op[0].ToString(), out int res)
-    && res > 0;
+    && res == 1;
 
 
     public bool Reboot(bool bhardboot)
     {        
         if (bhardboot)
             return xmlRpcRaw.Reboot().Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
         else
             return xmlRpcRaw.Restart().Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -117,7 +117,7 @@ public partial class CIERRpcHelper
         //for test
         //Logging.Verbose(new LogContext("Log","",""), ((int)dtparams[0]).ToString(), ((int)dtparams[1]).ToString(), ((int)dtparams[2]).ToString(), ((int)dtparams[3]).ToString(), ((int)dtparams[4]).ToString(), ((int)dtparams[5]).ToString(), ((string)dtparams[6]).ToString());
         return xmlRpcRaw.SetDate(dtparams).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -130,7 +130,7 @@ public partial class CIERRpcHelper
             ((int)resp[0], (int)resp[1], (int)resp[2], (int)resp[3], (int)resp[4], (int)resp[5])).AddSeconds((int)resp[6])
              : Option<DateTime>.None;
 
-        return xmlRpcRaw.GetVersion().Bind(dateExtract);        
+        return xmlRpcRaw.GetDate().Bind(dateExtract);        
     }
 
     public class ForFailure
@@ -271,7 +271,7 @@ public partial class CIERRpcHelper
 
         return xmlRpcRaw.SetMode(paramGateMode)
             .Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -296,7 +296,7 @@ public partial class CIERRpcHelper
 
         return xmlRpcRaw.SetMode(paramGateMode)
             .Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -306,25 +306,7 @@ public partial class CIERRpcHelper
         return xmlRpcRaw.SetCredentials(param);
     }
 
-    public bool GetSetTempo(TempoConf conf)
-    {
-        int[] param = new int[9];
-
-        param[0] = conf.FlapRemainOpenPostFreePasses;
-        param[1] = -1; // not int use
-        param[2] = conf.TimeToEnterAfterAuthorisation;
-        param[3] = -1;// not in use
-        param[4] = conf.TimeToValidateAfterDetection;
-        param[5] = -1;// not int use
-        param[6] = conf.TimeToCrossAfterDetection;
-        param[7] = conf.TimeAllowedToExitSafetyZone;
-        param[8] = conf.TimeAllowedToCrossLaneAfterAuthorisation;
-
-        return xmlRpcRaw.GetSetTempo(param).Match(
-                Some: o => successGenCriter(o),
-                None: () => false
-                );
-    }
+    
 
     public bool GetSetTempoFlow(TempoFlowConf conf)
     {
@@ -333,7 +315,7 @@ public partial class CIERRpcHelper
         param2[1] = conf.FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
 
         return xmlRpcRaw.GetSetTempoFlow(param2).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 ); ;
     }
@@ -347,7 +329,7 @@ public partial class CIERRpcHelper
     public bool SetOutputClient(int[] param)
     {
         return xmlRpcRaw.SetOutputClient(param).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }    
@@ -379,7 +361,7 @@ public partial class CIERRpcHelper
         param3[6] = conf.SecurityFraudClosingSpeed;
 
         return xmlRpcRaw.SetMotorSpeed(param3).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -387,7 +369,7 @@ public partial class CIERRpcHelper
     public bool SetBuzzerFraud(int volume, int note)
     {
         return xmlRpcRaw.SetBuzzerFraud([volume, note]).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -395,7 +377,7 @@ public partial class CIERRpcHelper
     public bool SetBuzzerIntrusion(int volume, int note)
     {
         return xmlRpcRaw.SetBuzzerIntrusion([volume, note]).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }
@@ -403,7 +385,7 @@ public partial class CIERRpcHelper
     public bool SetBuzzerMode(int ModeBuzzer)
     {
         return xmlRpcRaw.SetBuzzerMode([ModeBuzzer]).Match(
-                Some: o => successGenCriter(o),
+                Some: o => firstElementIsOne(o),
                 None: () => false
                 );
     }    

@@ -1,7 +1,15 @@
-﻿using LanguageExt;
+﻿using IFS2.Equipment.HardwareInterface.IERPLCManager;
+using LanguageExt;
 
 namespace EtGate.IER
 {
+    public enum IERApiError
+    {
+        bValueOutOfRange,
+        bInvalidNumberOfParameters,
+        bDeviceInaccessible
+    };
+
     public interface IIERXmlRpcRaw
     {
         Option<object[]> SetAuthorisation(int[] param);
@@ -17,7 +25,8 @@ namespace EtGate.IER
         Option<object[]> GetCounter();
         Option<object[]> SetMode(string[] param);
         Option<object[]> SetCredentials(string[] param);
-        Option<object[]> GetSetTempo(int[] param);
+        Either<IERApiError, bool> SetTempo(TempoConf conf);
+        Either<IERApiError, TempoConf> GetTempo();
         Option<object[]> GetSetTempoFlow(int[] param);
         Option<object[]> GetCurrentPassage();
         Option<object[]> SetOutputClient(int[] param);
