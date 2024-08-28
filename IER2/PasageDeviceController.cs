@@ -31,7 +31,8 @@ public class PasageDeviceController : GateControllerBase
         if (!bIsConnected)
             return false;
 
-        return ier.Reboot(bHardboot);
+        throw new NotImplementedException();
+        //return ier.Reboot(bHardboot);
     }
 
     public override void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)

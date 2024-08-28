@@ -8,34 +8,38 @@ namespace EtGate.IER
         bValueOutOfRange,
         bInvalidNumberOfParameters,
         bUnexpectedAnswer,
+        DeviceRefused,
         bDeviceInaccessible
     };
-
+    public record Success;
     public interface IIERXmlRpcRaw
     {
-        Option<object[]> SetAuthorisation(int[] param);
-        Option<object[]> SetEmergency(int[] param);
-        Option<object[]> SetMaintenanceMode(int[] param);
-        Option<object[]> Reboot();
-        Option<object[]> Restart();
+        Either<IERApiError, Success> SetAuthorisation(int nbpassage, int direction);
+        //Option<object[]> ResetAuthorisation(int[] param);
+        Either<IERApiError, Success> SetEmergency(bool bEnabled);
+        Either<IERApiError, Success> SetMaintenanceMode(bool bEnabled);
+        Either<IERApiError, Success> Reboot();
+        Either<IERApiError, Success> Restart();
         Option<object[]> ApplyUpdate();
-        Option<object[]> SetDate(object[] param);
+        Either<IERApiError, Success> SetDate(DateTime dt, string timezone = "");
         Either<IERApiError, DateTime> GetDate();
-        Option<object> GetStatusEx();
-        Option<object[]> GetVersion();
+        Option<object> GetStatusFull();
+        Either<IERApiError, IERStatus> GetStatus();
+        Either<IERApiError, IERSWVersion> GetVersion();
         Option<object[]> GetCounter();
         Option<object[]> SetMode(string[] param);
         Option<object[]> SetCredentials(string[] param);
-        Either<IERApiError, bool> SetTempo(TempoConf conf);
+        Either<IERApiError, Success> SetTempo(TempoConf conf);
         Either<IERApiError, TempoConf> GetTempo();
         Option<object[]> GetSetTempoFlow(int[] param);
         Option<object[]> GetCurrentPassage();
         Option<object[]> SetOutputClient(int[] param);
         Option<object[]> GetMotorSpeed();
         Option<object[]> SetMotorSpeed(object[] param);
-        Option<object[]> SetBuzzerFraud(int[] param);
-        Option<object[]> SetBuzzerIntrusion(int[] param);
-        Option<object[]> SetBuzzerMode(int[] param);
-        Option<IERStatus> GetStatus();
+        Either<IERApiError, Success> SetBuzzerFraud(int volume, int note);
+        Either<IERApiError, Success> SetBuzzerIntrusion(int volume, int note);
+        // SetBuzzerIntrusion is not mentioned in the document. Imlies that it must be old
+        
+        Option<object[]> SetBuzzerMode(int[] param);        
     }
 }

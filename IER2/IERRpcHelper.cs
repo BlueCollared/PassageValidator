@@ -17,65 +17,10 @@ public partial class CIERRpcHelper
 
     private IIERXmlRpcRaw xmlRpcRaw;
 
-    public bool SetAuthorisation(int nbpassage, int direction)
-    {
-        int[] param = new int[] { 0, 0, 0, 0, 0, 0 };
-        switch (direction)
-        {
-            case 0:
-                param[0] = nbpassage;
-                break;
-            case 1:
-                param[1] = nbpassage;
-                break;
-        }
-        
-        return xmlRpcRaw.SetAuthorisation(param)
-            .Match(Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-    
-    public bool SetEmergency(bool onOff)
-    {
-        int[] paramGateMode = { 0 };
-        paramGateMode[0] = onOff ? 1 : 0;
-        return xmlRpcRaw.SetEmergency(paramGateMode)
-            .Match(Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-    
-    public bool SetMaintenanceMode(bool onOff)
-    {
-        int[] paramGateMode = { 0 };
-        paramGateMode[0] = onOff ? 1 : 0;
-
-        return xmlRpcRaw.SetMaintenanceMode(paramGateMode)
-            .Match(Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-
     readonly Func<object[], bool> firstElementIsOne = (object[] op) =>
     op.Length > 1
     && int.TryParse(op[0].ToString(), out int res)
     && res == 1;
-
-
-    public bool Reboot(bool bhardboot)
-    {        
-        if (bhardboot)
-            return xmlRpcRaw.Reboot().Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-        else
-            return xmlRpcRaw.Restart().Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
 
     public bool SetFirmware(string fileName)
     {
@@ -102,25 +47,7 @@ public partial class CIERRpcHelper
             Some: _ => true, 
             None: () => false
             );
-        }    
-
-    public bool SetDate(DateTime dt, string timezone = "")
-    {
-        object[] dtparams = new object[7];
-        dtparams[0] = (int)dt.Year;
-        dtparams[1] = (int)dt.Month;
-        dtparams[2] = (int)dt.Day;
-        dtparams[3] = (int)dt.Hour;
-        dtparams[4] = (int)dt.Minute;
-        dtparams[5] = (int)dt.Second;
-        dtparams[6] = (string)timezone;// dt.timezo;
-        //for test
-        //Logging.Verbose(new LogContext("Log","",""), ((int)dtparams[0]).ToString(), ((int)dtparams[1]).ToString(), ((int)dtparams[2]).ToString(), ((int)dtparams[3]).ToString(), ((int)dtparams[4]).ToString(), ((int)dtparams[5]).ToString(), ((string)dtparams[6]).ToString());
-        return xmlRpcRaw.SetDate(dtparams).Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
+        }
 
 
     public class ForFailure
@@ -172,22 +99,7 @@ public partial class CIERRpcHelper
                 return Option<CPLCStatus>.None;
             }
         };
-        return xmlRpcRaw.GetStatusEx().Bind(extractor);
-    }
-
-    public Option<IERSWVersion> GetVersion()
-    {
-        var versionExtract = (object[] op) =>
-            op.Length > 5 ?
-            new IERSWVersion {
-                LaneType = (string)op[0],
-                SWVersion = (string)op[1],
-                CompilationDate = (string)op[2],
-                GITVersion = (string)op[3],
-                GITDate = (string)op[4]
-            } : Option<IERSWVersion>.None;
-
-        return xmlRpcRaw.GetVersion().Bind(versionExtract);
+        return xmlRpcRaw.GetStatusFull().Bind(extractor);
     }
 
     public Option<Dictionary<int, int>> GetCounter()
@@ -355,22 +267,7 @@ public partial class CIERRpcHelper
                 None: () => false
                 );
     }
-
-    public bool SetBuzzerFraud(int volume, int note)
-    {
-        return xmlRpcRaw.SetBuzzerFraud([volume, note]).Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-
-    public bool SetBuzzerIntrusion(int volume, int note)
-    {
-        return xmlRpcRaw.SetBuzzerIntrusion([volume, note]).Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
+        
 
     public bool SetBuzzerMode(int ModeBuzzer)
     {

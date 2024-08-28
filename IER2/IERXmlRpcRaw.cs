@@ -1,9 +1,12 @@
 ﻿
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
+using OneOf;
+using System;
 using System.Net;
 
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
+
 
 namespace EtGate.IER;
 
@@ -17,6 +20,60 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
     {
         this.worker = worker;
     }
+
+    #region Helper
+    static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) =>
+                  result.Length == 1
+                && result[0] is int
+                && (int)result[0] == 0 ? IERApiError.bInvalidNumberOfParameters : result;
+
+    static readonly Func<object[], IERApiResult> CheckZeroethParam_Minus1 = (result) =>
+              result.Length == 1
+            && result[0] is int
+            && (int)result[0] == -1 ? IERApiError.DeviceRefused : result;
+
+    static readonly Func<object[], IERApiResult> CheckZeroethParam_0 = (result) =>
+              result.Length == 1
+            && result[0] is int
+            && (int)result[0] == 0 ? IERApiError.DeviceRefused : result;
+
+    static readonly Func<object[], Either<IERApiError, Success>> CheckZeroethParam_1_MeansSuccess = (result) =>
+              (result.Length == 1
+            && result[0] is int
+            && (int)result[0] == 1) ? new Success() : IERApiError.bUnexpectedAnswer;
+
+    static readonly Func<object[], Either<IERApiError, Success>> TristateChecker = (result) =>
+    {
+        if (result.Length != 1)
+            return IERApiError.bUnexpectedAnswer;
+        if (!(result[0] is int))
+            return IERApiError.bUnexpectedAnswer;
+        int r = (int)result[0];
+        switch (r)
+        {
+            case -1:
+                return IERApiError.bValueOutOfRange;
+            case 1:
+                return new Success();
+            case 0:
+                return IERApiError.bInvalidNumberOfParameters;
+            default:
+                return IERApiError.bUnexpectedAnswer;
+        }
+    };
+
+
+    static readonly Func<object[], int, IERApiResult> InputOutOfRange = (result, nMinusOnes) =>
+    {
+        if (result.Length != nMinusOnes)
+            return result;
+        foreach (object o in result)
+            if (!(o is int) || (Int32)o != -1)
+                return result;
+        return IERApiError.bValueOutOfRange;
+    };
+    #endregion
+
     public Option<object[]> ApplyUpdate()
     {
         try
@@ -94,25 +151,6 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) => 
-                  result.Length == 1
-                && result[0] is int
-                && (int)result[0] == 0 ? IERApiError.bInvalidNumberOfParameters : result;
-
-    static readonly Func<IERApiResult, IERApiResult> IsNumberOfParamsIncorrectX = (ip)=>
-        ip.Bind(CheckNumberOfIpParams);
-    
-      
-    static readonly Func<object[], int, IERApiResult> InputOutOfRange = (result, nMinusOnes) =>
-    {
-        if (result.Length != nMinusOnes)
-            return result;
-        foreach (object o in result)
-            if (!(o is int) || (Int32)o != -1)
-                return result;
-        return IERApiError.bValueOutOfRange;
-    };
-
     IERApiResult MakeCall(Func<object[]> act)
     {
         try
@@ -125,7 +163,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         }
     }
 
-    public Either<IERApiError, bool> SetTempo(TempoConf conf)
+    public Either<IERApiError, Success> SetTempo(TempoConf conf)
     {
         int[] param =
         [
@@ -143,7 +181,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return MakeCall(() => worker.GetSetTempo(param))
             .Bind(CheckNumberOfIpParams)
             .Bind(x => InputOutOfRange(x, param.Length))
-            .Bind(x => Either<IERApiError, bool>.Right(true));
+            .Bind(x => Either<IERApiError, Success>.Right(new Success()));
     }
 
     public Either<IERApiError, TempoConf> GetTempo()
@@ -177,78 +215,75 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object[]> GetVersion()
+    public Either<IERApiError, IERSWVersion> GetVersion()
     {
-        try { 
-        return worker.GetVersion();
-        }
-        catch (WebException)
+        Func<object[], Either<IERApiError, IERSWVersion>> versionExtract = (object[] op) =>
         {
-            MarkDisconnected();
-        }
-        return none;
+            try
+            {
+                if (op.Length != 5)
+                    return IERApiError.bUnexpectedAnswer;
+
+                return new IERSWVersion
+                {
+                    LaneType = (string)op[0],
+                    SWVersion = (string)op[1],
+                    CompilationDate = (string)op[2],
+                    GITVersion = (string)op[3],
+                    GITDate = (string)op[4]
+                };
+            }
+            catch
+            {
+                return IERApiError.bUnexpectedAnswer;
+            }
+        };
+        return MakeCall(() => worker.GetVersion())
+            .Bind(versionExtract);
     }
 
-    public Option<object[]> Reboot()
+    public Either<IERApiError, Success> Reboot()
     {
-        try {
-        return worker.SendReboot();
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return Option<object[]>.None;
+        return MakeCall(() => worker.SendReboot())
+            .Bind(CheckZeroethParam_Minus1)
+            .Bind(CheckZeroethParam_1_MeansSuccess);
     }
 
-    public Option<object[]> Restart()
+    public Either<IERApiError, Success> Restart()
     {
-        try { 
-        return worker.SendRestart(); // TODO: 
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return Option<object[]>.None;
+        return MakeCall(() => worker.SendRestart())
+            .Bind(CheckZeroethParam_1_MeansSuccess);
     }
 
-    public Option<object[]> SetAuthorisation(int[] param)
+    public Either<IERApiError, Success> SetAuthorisation(int nbpassage, int direction)
     {
-        try { 
-        return worker.SetAuthorisation(param);
-        }
-        catch (WebException)
+        int[] param = new int[] { 0, 0, 0, 0, 0, 0 };
+        switch (direction)
         {
-            MarkDisconnected();
+            case 0:
+                param[0] = nbpassage;
+                break;
+            case 1:
+                param[1] = nbpassage;
+                break;
         }
-        return none;
+        return MakeCall(() => worker.SetAuthorisation(param))
+            .Bind(CheckZeroethParam_Minus1)
+            .Bind(CheckZeroethParam_1_MeansSuccess);
     }
 
-    public Option<object[]> SetBuzzerFraud(int[] param)
+    public Either<IERApiError, Success> SetBuzzerFraud(int volume, int note)
     {
-        try { 
-        return worker.SetBuzzerFraud(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        int[] param = new int[] { volume, note};
+        return MakeCall(() => worker.SetBuzzerFraud(param))
+            .Bind(TristateChecker);
     }
-
-    public Option<object[]> SetBuzzerIntrusion(int[] param)
+    public Either<IERApiError, Success> SetBuzzerIntrusion(int volume, int note)
     {
-        try { 
-        return worker.SetBuzzerIntrusion(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        int[] param = new int[] { volume, note };
+        return MakeCall(() => worker.SetBuzzerIntrusion(param))
+            .Bind(TristateChecker);
     }
-    
 
     public Option<object[]> SetBuzzerMode(int[] param)
     {
@@ -274,40 +309,35 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object[]> SetDate(object[] param)
+    public Either<IERApiError, Success> SetDate(DateTime dt, string timezone = "")
     {
-        try { 
-        return worker.SetDate(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        object[] dtparams = new object[7];
+        dtparams[0] = (int)dt.Year;
+        dtparams[1] = (int)dt.Month;
+        dtparams[2] = (int)dt.Day;
+        dtparams[3] = (int)dt.Hour;
+        dtparams[4] = (int)dt.Minute;
+        dtparams[5] = (int)dt.Second;
+        dtparams[6] = (string)timezone;// dt.timezone;
+
+        return MakeCall(() => worker.SetDate(dtparams))
+            .Bind(CheckNumberOfIpParams)
+            .Bind(CheckZeroethParam_Minus1)            
+            .Bind(CheckZeroethParam_1_MeansSuccess);
     }
 
-    public Option<object[]> SetEmergency(int[] param)
+    public Either<IERApiError, Success> SetEmergency(bool bEnabled)
     {
-        try { 
-        return worker.SetEmergency(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        int[] param = { bEnabled? 1: 0 };
+        return MakeCall(() => worker.SetEmergency(param))
+            .Bind(TristateChecker);
     }
 
-    public Option<object[]> SetMaintenanceMode(int[] param)
+    public Either<IERApiError, Success> SetMaintenanceMode(bool bEnabled)
     {
-        try { 
-        return worker.SetMaintenanceMode(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        int[] param = { bEnabled ? 1 : 0 };
+        return MakeCall(() => worker.SetEmergency(param))
+            .Bind(TristateChecker);
     }
 
     public Option<object[]> SetMode(string[] param)
@@ -346,7 +376,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         return none;
     }
 
-    public Option<object> GetStatusEx()
+    public Option<object> GetStatusFull()
     {
         try
         {
@@ -360,8 +390,20 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
 
     }
 
-    public Option<IERStatus> GetStatus()
+    public Either<IERApiError, IERStatus> GetStatus()
     {
-        throw new NotImplementedException();
+        Func<object[], Either<IERApiError, IERStatus>> statusExtract = (object[] resp) =>
+        {
+            throw new NotImplementedException();
+            try
+            {
+            }
+            catch
+            {
+                return IERApiError.bUnexpectedAnswer;
+            }
+        };
+        return MakeCall(() => worker.GetStatus())
+            .Bind(statusExtract);            
     }
 }
