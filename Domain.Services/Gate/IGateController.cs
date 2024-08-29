@@ -1,4 +1,5 @@
-﻿global using ObsAuthEvents = System.IObservable<OneOf.OneOf<
+﻿/*
+global using ObsAuthEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.PassageEvts.Intrusion,
     EtGate.Domain.Passage.PassageEvts.Fraud,
     EtGate.Domain.Passage.PassageEvts.OpenDoor,
@@ -13,7 +14,7 @@ global using ObsIdleEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.IdleEvts.PassageDone>>;
 
 
-
+*/
 using EtGate.Domain.Services.Gate;
 
 namespace EtGate.Devices.Interfaces.Gate;

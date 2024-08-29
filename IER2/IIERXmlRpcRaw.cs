@@ -5,11 +5,11 @@ namespace EtGate.IER
 {
     public enum IERApiError
     {
-        bValueOutOfRange,
-        bInvalidNumberOfParameters,
-        bUnexpectedAnswer,
+        ValueOutOfRange,
+        InvalidNumberOfParameters,
+        UnexpectedAnswer,
         DeviceRefused,
-        bDeviceInaccessible
+        DeviceInaccessible
     };
     public record Success;
     public interface IIERXmlRpcRaw
@@ -38,8 +38,7 @@ namespace EtGate.IER
         Option<object[]> SetMotorSpeed(object[] param);
         Either<IERApiError, Success> SetBuzzerFraud(int volume, int note);
         Either<IERApiError, Success> SetBuzzerIntrusion(int volume, int note);
-        // SetBuzzerIntrusion is not mentioned in the document. Imlies that it must be old
-        
-        Option<object[]> SetBuzzerMode(int[] param);        
+        // SetBuzzerIntrusion is not mentioned in the document. Imlies that it must be old        
+        Option<object[]> SetBuzzerMode(int[] param);
     }
 }

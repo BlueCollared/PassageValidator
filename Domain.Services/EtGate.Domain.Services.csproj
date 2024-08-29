@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
-    <ProjectReference Include="..\IER\IER.csproj" />
   </ItemGroup>
 
 </Project>

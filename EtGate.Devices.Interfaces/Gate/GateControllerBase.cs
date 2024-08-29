@@ -1,4 +1,11 @@
-﻿using Domain.Peripherals.Passage;
+﻿global using RawEventsInNominalMode = OneOf.OneOf<
+    EtGate.Devices.Interfaces.Gate.Intrusion,
+    EtGate.Devices.Interfaces.Gate.Fraud,
+    EtGate.Devices.Interfaces.Gate.OpenDoor,
+    EtGate.Devices.Interfaces.Gate.WaitForAuthroization,
+    EtGate.Devices.Interfaces.Gate.CloseDoor>;
+
+using Domain.Peripherals.Passage;
 using EtGate.Domain.Services.Gate;
 using IFS2.Equipment.DriverInterface;
 using System.Reactive.Linq;

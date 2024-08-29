@@ -25,7 +25,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
     static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) =>
                   result.Length == 1
                 && result[0] is int
-                && (int)result[0] == 0 ? IERApiError.bInvalidNumberOfParameters : result;
+                && (int)result[0] == 0 ? IERApiError.InvalidNumberOfParameters : result;
 
     static readonly Func<object[], IERApiResult> CheckZeroethParam_Minus1 = (result) =>
               result.Length == 1
@@ -40,25 +40,25 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
     static readonly Func<object[], Either<IERApiError, Success>> CheckZeroethParam_1_MeansSuccess = (result) =>
               (result.Length == 1
             && result[0] is int
-            && (int)result[0] == 1) ? new Success() : IERApiError.bUnexpectedAnswer;
+            && (int)result[0] == 1) ? new Success() : IERApiError.UnexpectedAnswer;
 
     static readonly Func<object[], Either<IERApiError, Success>> TristateChecker = (result) =>
     {
         if (result.Length != 1)
-            return IERApiError.bUnexpectedAnswer;
+            return IERApiError.UnexpectedAnswer;
         if (!(result[0] is int))
-            return IERApiError.bUnexpectedAnswer;
+            return IERApiError.UnexpectedAnswer;
         int r = (int)result[0];
         switch (r)
         {
             case -1:
-                return IERApiError.bValueOutOfRange;
+                return IERApiError.ValueOutOfRange;
             case 1:
                 return new Success();
             case 0:
-                return IERApiError.bInvalidNumberOfParameters;
+                return IERApiError.InvalidNumberOfParameters;
             default:
-                return IERApiError.bUnexpectedAnswer;
+                return IERApiError.UnexpectedAnswer;
         }
     };
 
@@ -70,7 +70,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         foreach (object o in result)
             if (!(o is int) || (Int32)o != -1)
                 return result;
-        return IERApiError.bValueOutOfRange;
+        return IERApiError.ValueOutOfRange;
     };
     #endregion
 
@@ -127,11 +127,11 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
                 return resp.Length > 7 ?
             (new DateTime
             ((int)resp[0], (int)resp[1], (int)resp[2], (int)resp[3], (int)resp[4], (int)resp[5])).AddSeconds((int)resp[6])
-         : IERApiError.bUnexpectedAnswer;
+         : IERApiError.UnexpectedAnswer;
             }
             catch
             {
-                return IERApiError.bUnexpectedAnswer;
+                return IERApiError.UnexpectedAnswer;
             }
         };
 
@@ -159,7 +159,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         }
         catch(WebException exp)
         {
-            return IERApiError.bDeviceInaccessible;
+            return IERApiError.DeviceInaccessible;
         }
     }
 
@@ -190,15 +190,15 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
         {
             var result = worker.GetSetTempo();
             if (CheckNumberOfIpParams(result))
-                return IERApiError.bInvalidNumberOfParameters;
+                return IERApiError.InvalidNumberOfParameters;
             else if (InputOutOfRange(result, 2))
-                return IERApiError.bValueOutOfRange;
+                return IERApiError.ValueOutOfRange;
             throw new NotImplementedException();
         }
         catch (WebException)
         {
             MarkDisconnected();
-            return IERApiError.bDeviceInaccessible;
+            return IERApiError.DeviceInaccessible;
         }
     }
 
@@ -222,7 +222,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
             try
             {
                 if (op.Length != 5)
-                    return IERApiError.bUnexpectedAnswer;
+                    return IERApiError.UnexpectedAnswer;
 
                 return new IERSWVersion
                 {
@@ -235,7 +235,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
             }
             catch
             {
-                return IERApiError.bUnexpectedAnswer;
+                return IERApiError.UnexpectedAnswer;
             }
         };
         return MakeCall(() => worker.GetVersion())
@@ -400,7 +400,7 @@ public class IERXmlRpcRaw : IIERXmlRpcRaw
             }
             catch
             {
-                return IERApiError.bUnexpectedAnswer;
+                return IERApiError.UnexpectedAnswer;
             }
         };
         return MakeCall(() => worker.GetStatus())

@@ -23,8 +23,8 @@ public enum OpMode
 public interface IGateModeController
 { 
     void SetMode(eSideOperatingModeGate entry, // Closed/Controlled/Free
-    eSideOperatingModeGate exit, // Closed/Controlled/Free
-    DoorsMode doorsMode
+        eSideOperatingModeGate exit, // Closed/Controlled/Free
+        DoorsMode doorsMode
     );
 
     void SetOpMode(OpMode mode);
