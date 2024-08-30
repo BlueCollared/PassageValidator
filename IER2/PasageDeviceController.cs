@@ -17,7 +17,7 @@ public class PasageDeviceController : GateControllerBase
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;
         ier = new CIERRpcHelper(
-            new IERXmlRpcRaw(xmlRpc)
+            new IERXmlRpc(xmlRpc)
             );
     }
 

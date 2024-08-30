@@ -12,7 +12,7 @@ namespace EtGate.IER
         DeviceInaccessible
     };
     public record Success;
-    public interface IIERXmlRpcRaw
+    public interface IIERXmlRpc
     {
         Either<IERApiError, Success> SetAuthorisation(int nbpassage, int direction);
         //Option<object[]> ResetAuthorisation(int[] param);

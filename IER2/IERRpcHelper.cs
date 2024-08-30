@@ -10,12 +10,12 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager;
 
 public partial class CIERRpcHelper
 {
-    public CIERRpcHelper(IERXmlRpcRaw _iERXmlRpcInterface)
+    public CIERRpcHelper(IERXmlRpc _iERXmlRpcInterface)
     {
         this.xmlRpcRaw = _iERXmlRpcInterface;
     }
 
-    private IIERXmlRpcRaw xmlRpcRaw;
+    private IIERXmlRpc xmlRpcRaw;
 
     readonly Func<object[], bool> firstElementIsOne = (object[] op) =>
     op.Length > 1
