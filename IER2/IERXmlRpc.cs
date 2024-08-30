@@ -2,8 +2,6 @@
 using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
-using OneOf;
-using System;
 using System.Net;
 
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;

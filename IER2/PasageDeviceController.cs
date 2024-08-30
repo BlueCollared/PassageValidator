@@ -1,9 +1,9 @@
 ﻿using EtGate.Devices.Interfaces.Gate;
-using EtGate.Domain.Services.Gate;
 using EtGate.IER;
 using Horizon.XmlRpc.Client;
 using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
+using LanguageExt;
 
 namespace EtGate.Devices.IER;
 
@@ -37,13 +37,22 @@ public class PasageDeviceController : GateControllerBase
             return ier.Restart();
     }
 
-    public override void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)
+    public override bool SetEmergency()
+    {
+        if (!bIsConnected)
+            return false;
+        return ier.SetEmergency();
+    }
+
+    public override bool SetMaintenance()
+    {
+        if (!bIsConnected)
+            return false;
+        return ier.SetMaintenance();
+    }
+
+    public override bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
     {
         throw new NotImplementedException();
     }
-
-    public override void SetOpMode(OpMode mode)
-    {
-        throw new NotImplementedException();
-    }    
 }

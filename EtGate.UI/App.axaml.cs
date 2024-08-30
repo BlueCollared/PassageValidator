@@ -176,6 +176,11 @@ internal class MockPassageManager : IPassageManager
     {
         throw new NotImplementedException();
     }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

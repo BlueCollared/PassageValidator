@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace EtGate.Domain.Services.Gate.Functions;
 
-internal class DateMgr : IDisposable
+public class DateMgr : IDisposable
 {
     public class Config
     {

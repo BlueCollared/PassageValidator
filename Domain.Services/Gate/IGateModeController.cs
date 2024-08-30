@@ -1,33 +1,16 @@
 ﻿using Domain.Peripherals.Passage;
 using IFS2.Equipment.DriverInterface;
+using LanguageExt;
 
 namespace EtGate.Domain.Services.Gate;
 
-public enum OpMode
-{
-    /// <summary>
-    /// Normal operation mode.
-    /// </summary>
-    Normal,
-    /// <summary>
-    /// Maintenance operation mode.
-    /// </summary>
-    Maintenance,
-    /// <summary>
-    /// Emergency operation mode.
-    /// </summary>
-    Emergency
-}
-
 // will be used by ModeService
 public interface IGateModeController
-{ 
-    void SetMode(eSideOperatingModeGate entry, // Closed/Controlled/Free
-        eSideOperatingModeGate exit, // Closed/Controlled/Free
-        DoorsMode doorsMode
-    );
-
-    void SetOpMode(OpMode mode);
+{
+    bool SetEmergency();
+    bool SetMaintenance();
+    bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit);
+    
 
     IObservable<GateHwStatus> GateStatusObservable { get; }
 }

@@ -20,7 +20,7 @@ namespace EtGate.Domain.Services.Gate;
 //    public List<int> ticketVirtualIds;
 //}
 
-public interface IPassageManager
+public interface IPassageManager : IDisposable
 {
     // It is kept general i.e. Idle Status i.e. w/o any authorizations submitted. For our case, we have Free Exit, so possible values include PassageDone are applicable.
     // But if there is no free exit, then such value would not pop.

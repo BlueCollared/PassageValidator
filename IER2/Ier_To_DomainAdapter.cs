@@ -32,7 +32,17 @@ namespace EtGate.IER
             return worker.SetMode(DoorsMode.BlockClosed, Option<SideOperatingModes>.None, Option<SideOperatingModes>.None).IsRight;
         }
 
-        public bool SetMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
+        public bool SetMaintenance()
+        {
+            return worker.SetMaintenanceMode(true).IsRight;
+        }
+
+        public bool SetEmergency()
+        {
+            return worker.SetEmergency(true).IsRight;
+        }
+
+        public bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
         {
             if (entry.IsNone && exit.IsNone)
                 return true;
