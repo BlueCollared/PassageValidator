@@ -586,8 +586,7 @@ namespace IFS2.Equipment.DriverInterface
     {
         Closed,
         Controlled,
-        Free,
-        None
+        Free        
     }
     public enum eSideOperatingModeGate
     {
@@ -597,8 +596,7 @@ namespace IFS2.Equipment.DriverInterface
         //OP_MODE_SIDE_FREECONTROLLED
     }
     public enum DoorsMode
-    {
-        NONE = -1,
+    {       
         BlockClosed, /*Locked CLosed*/
         Nc,  /*Normally Closed*/
         Noa, /*Normally Opened A*/

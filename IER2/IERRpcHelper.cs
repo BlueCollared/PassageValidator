@@ -162,53 +162,12 @@ public partial class CIERRpcHelper
         };
 
         return xmlRpcRaw.GetCounter().Map(countersExtract);
-    }
-    
-    public bool SetFlapOperationlMode(string FlapsMode, string OperatingModes_EntrySide, string OperatingModes_ExitSide)
-    {
-        string[] paramGateMode = new string[3];
-        paramGateMode[0] = FlapsMode;
-        paramGateMode[1] = OperatingModes_EntrySide;
-        paramGateMode[2] = OperatingModes_ExitSide;
-
-        return xmlRpcRaw.SetMode(paramGateMode)
-            .Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-
-    public bool SetOOO()
-    {
-        return SetDoorlMode("BlockClosed", "", "");
-    }
-
-    public bool SetInservice(ChangeEquipmentMode EM)
-    {
-        DoorModeConf doorMode = new(ForceDoorinReverseSide:false, ForceDoorinEntrySide:true, ForceDoorinFreeSide:true);
-        return SetDoorlMode(IERRHelper.TransformFromChangeModeDoorsMode(EM, doorMode).ToString(), IERRHelper.TransformFromChangeModeSideA(EM).ToString(), IERRHelper.TransformFromChangeModeSideB(EM).ToString());
-    }
-
-    bool SetDoorlMode(string FlapsMode, string OperatingModes_EntrySide, string OperatingModes_ExitSide)
-    {
-        string[] paramGateMode = new string[3];
-        paramGateMode[0] = FlapsMode;
-        paramGateMode[1] = OperatingModes_EntrySide;
-        paramGateMode[2] = OperatingModes_ExitSide;
-
-        return xmlRpcRaw.SetMode(paramGateMode)
-            .Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
+    }    
 
     public Option<object[]> SetCredentials(string[] param)
     {
         return xmlRpcRaw.SetCredentials(param);
-    }
-
-    
+    }    
 
     public bool GetSetTempoFlow(TempoFlowConf conf)
     {

@@ -1,4 +1,5 @@
 ﻿
+using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 using OneOf;
@@ -160,6 +161,10 @@ public class IERXmlRpc : IIERXmlRpc
         catch(WebException exp)
         {
             return IERApiError.DeviceInaccessible;
+        }
+        catch(Exception exp)
+        {
+            return IERApiError.UnexpectedException;
         }
     }
 
@@ -338,18 +343,35 @@ public class IERXmlRpc : IIERXmlRpc
         int[] param = { bEnabled ? 1 : 0 };
         return MakeCall(() => worker.SetEmergency(param))
             .Bind(TristateChecker);
-    }
+    }    
 
-    public Option<object[]> SetMode(string[] param)
+    static readonly Dictionary<SideOperatingModes, string> diSideOperatingMode = new Dictionary<SideOperatingModes, string>{
+        { SideOperatingModes.Closed, "Closed"},
+        { SideOperatingModes.Controlled, "Controlled"},
+        { SideOperatingModes.Free, "Free"}
+    };
+
+    static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
+        {DoorsMode.BlockClosed, "BlockClosed" },
+        {DoorsMode.Nc, "Nc" },
+        {DoorsMode.Noa, "Noa" },
+        {DoorsMode.Nob, "Nob" },
+        {DoorsMode.OpticalA, "OpticalA" },
+        {DoorsMode.OpticalB, "OpticalB" },
+        {DoorsMode.LockedOpenA, "LockedOpenA" },
+        {DoorsMode.LockedOpenB, "LockedOpenB" }
+     };
+
+    public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
     {
-        try { 
-        return worker.SetMode(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        
+        string[] param = { "", "", "" };
+        doorsMode.IfSome(x => { param[0] = diDoorsMode[x]; });
+        entry.IfSome(x => { param[1] = diSideOperatingMode[x]; });
+        exit.IfSome(x => { param[2] = diSideOperatingMode[x]; });
+
+        return MakeCall(() => worker.SetMode(param))
+            .Bind(TristateChecker);        
     }
 
     public Option<object[]> SetMotorSpeed(object[] param)

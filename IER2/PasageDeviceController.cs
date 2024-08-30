@@ -10,13 +10,13 @@ namespace EtGate.Devices.IER;
 public class PasageDeviceController : GateControllerBase
 {
     bool bIsConnected = false;
-    CIERRpcHelper ier;
+    Ier_To_DomainAdapter ier;
 
     public PasageDeviceController(string url)
     {
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;
-        ier = new CIERRpcHelper(
+        ier = new Ier_To_DomainAdapter(
             new IERXmlRpc(xmlRpc)
             );
     }
@@ -31,8 +31,10 @@ public class PasageDeviceController : GateControllerBase
         if (!bIsConnected)
             return false;
 
-        throw new NotImplementedException();
-        //return ier.Reboot(bHardboot);
+        if (bHardboot)
+            return ier.Reboot();
+        else
+            return ier.Restart();
     }
 
     public override void SetMode(eSideOperatingModeGate entry, eSideOperatingModeGate exit, DoorsMode doorsMode)
