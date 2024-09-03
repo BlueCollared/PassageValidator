@@ -22,7 +22,7 @@ namespace EtGate.Domain.Services.Gate
         public void Dispose()
         {
             dateMgr?.Dispose();
-            passageMgr?.Dispose();
+            //passageMgr?.Dispose();
         }
     }
 }

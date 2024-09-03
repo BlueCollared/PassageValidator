@@ -1,10 +1,10 @@
 ﻿using EtGate.Domain;
+using LanguageExt;
 
 namespace Domain.Peripherals.Passage
 {
     public enum eDoorsStatesMachine
-    {
-        NONE = -1,
+    {        
         EGRESS,
         NOMINAL, //Normal mode .. if set then check for doors Nominal Mode 
         EMERGENCY,
@@ -15,7 +15,7 @@ namespace Domain.Peripherals.Passage
     }
 
     // TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
-    public record GateHwStatus(bool bConnected, eDoorsStatesMachine doorState) : ModuleStatus
+    public record GateHwStatus(bool bConnected, Option<eDoorsStatesMachine> doorState) : ModuleStatus
     {
         public override bool IsAvailable =>bConnected && doorState == eDoorsStatesMachine.NOMINAL;
     }

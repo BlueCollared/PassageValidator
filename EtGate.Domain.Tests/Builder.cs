@@ -1,4 +1,7 @@
-﻿using Domain.Peripherals.Qr;
+﻿using Domain.Peripherals.Passage;
+using Domain.Peripherals.Qr;
+using Domain.Services.Modes;
+using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
@@ -13,12 +16,13 @@ namespace EtGate.Domain.Tests
     {        
         public ValidationMgr validation;
         public QrReaderMgr qr;
-        public IPassageManager passage;
+        public GateMgr gate;
 
         public readonly Subject<QrReaderStatus> subjQrStatus = new();
         public readonly Subject<ValidationSystemStatus> subjValidationStatus = new();
         public readonly Subject<OfflineValidationSystemStatus> subjOfflineStatus = new();
         public readonly Subject<OnlineValidationSystemStatus> subjOnlineStatus = new();
+        public readonly Subject<GateHwStatus> subjGateStatus = new();
     }
 
     internal class MockSytemBuilder
@@ -37,6 +41,12 @@ namespace EtGate.Domain.Tests
             mockQrReaderStatus.Setup(m => m.statusObservable).Returns(r.subjQrStatus);
 
             r.qr = new QrReaderMgr(dummyQr.Object, mockQrReaderStatus.Object);
+
+            var mockGateStatus = new Mock<IDeviceStatus<GateHwStatus>>();
+            mockGateStatus.Setup(m => m.statusObservable).Returns(r.subjGateStatus);
+
+            var dummyGate = new Mock<IGateController>();            
+            r.gate = new GateMgr(dummyGate.Object, mockGateStatus.Object);            
 
             // Valiation
             var mockOfflineStatus = new Mock<IDeviceStatus<OfflineValidationSystemStatus>>();

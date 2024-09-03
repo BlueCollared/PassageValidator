@@ -31,8 +31,8 @@ namespace Domain.Services.Modes
         
         public ModeManager(IQrReaderMgr qrReaderMgr, 
             ValidationMgr validationMgr, 
-            //IPassageManager passageMgr,
-            IGateModeController passageController,
+            GateMgr gateMgr,
+            //IGateModeController passageController,
             IScheduler scheduler,
             int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds
             //OpMode opModeDemanded = OpMode.InService
@@ -41,22 +41,18 @@ namespace Domain.Services.Modes
             //equipmentStatus = new();
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
-            this.passageMgr = passageMgr;
-            this.passageController = passageController;
+            this.gateMgr = gateMgr;
+            //this.passageController = passageController;
 
-            _timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
-                .Subscribe(_ => DoModeRelatedX());
+            _timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds),
+                                                  scheduler)
+                                           .Subscribe(_ => DoModeRelatedX());
 
-            qrReaderMgr.StatusStream.Subscribe(onNext:
-                x => { QrRdrStatusChanged(x); }
-                );
+            qrReaderMgr.StatusStream.Subscribe(onNext: QrRdrStatusChanged);
 
-            validationMgr.StatusStream.Subscribe(onNext: x => {
-                ValidationSystemStatusChanged(x);
-            });
+            validationMgr.StatusStream.Subscribe(onNext: ValidationSystemStatusChanged);
             
-            
-            //this.opModeDemanded = opModeDemanded;
+            gateMgr.StatusStream.Subscribe(onNext: GateStatusChanged);            
         }
 
 
@@ -128,8 +124,9 @@ namespace Domain.Services.Modes
             Mode modeAfter;
             bool bQrAvailable = e.QrEntry?.Status?.IsAvailable ?? false;
             bool bValidationAPIAvailable = e.ValidationAPI?.Status?.IsAvailable ?? false;
+            bool bGateAvailable = e.gateStatus?.Status?.IsAvailable ?? false;
 
-            if (bQrAvailable && bValidationAPIAvailable)
+            if (bQrAvailable && bValidationAPIAvailable && bGateAvailable)
                 modeAfter = Mode.InService;
             else
                 modeAfter = Mode.OOO;
@@ -142,7 +139,7 @@ namespace Domain.Services.Modes
             switch (modeAfter)
             {
                 case Mode.InService:
-                    curModeMgr = new InServiceMgr(validationMgr, passageMgr, qrReaderMgr);
+                    curModeMgr = new InServiceMgr(validationMgr, new PassageMgr(), qrReaderMgr);
                     break;
                 //case Mode.OOO:
                 //    curModeMgr = new OOOMgr(mmi);
@@ -173,8 +170,8 @@ namespace Domain.Services.Modes
 
         public ISubModeMgr curModeMgr { get; private set; }
         ValidationMgr validationMgr;
-        IPassageManager passageMgr;
-        private readonly IGateModeController passageController;
+        GateMgr gateMgr;
+        //private readonly IGateModeController passageController;
         private readonly IDisposable _timerSubscription;
     }
 }

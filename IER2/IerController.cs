@@ -7,12 +7,12 @@ using LanguageExt;
 
 namespace EtGate.Devices.IER;
 
-public class PasageDeviceController : GateControllerBase
+public class IerController : GateControllerBase
 {
     bool bIsConnected = false;
     Ier_To_DomainAdapter ier;
 
-    public PasageDeviceController(string url)
+    public IerController(string url)
     {
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;

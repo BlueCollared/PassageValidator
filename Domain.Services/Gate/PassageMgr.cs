@@ -15,11 +15,16 @@ using ObsIdleEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.IdleEvts.PassageTimeout,
     EtGate.Domain.Passage.IdleEvts.PassageDone>>;
 
-public class PassageDeviceMgr : IPassageManager
+public class PassageMgr : IPassageManager
 {
     private readonly IPassageController controller;
 
-    public PassageDeviceMgr(IPassageController controller)
+    public PassageMgr()
+    {
+        throw new NotImplementedException();
+    }
+
+    public PassageMgr(IPassageController controller)
     {
         this.controller = controller;
     }

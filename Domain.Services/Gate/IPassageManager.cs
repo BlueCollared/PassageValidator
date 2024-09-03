@@ -14,13 +14,7 @@ global using ObsIdleEvents = System.IObservable<OneOf.OneOf<
 
 namespace EtGate.Domain.Services.Gate;
 
-//public class AuthroizationRequest
-//{
-//    public int batchId;
-//    public List<int> ticketVirtualIds;
-//}
-
-public interface IPassageManager : IDisposable
+public interface IPassageManager
 {
     // It is kept general i.e. Idle Status i.e. w/o any authorizations submitted. For our case, we have Free Exit, so possible values include PassageDone are applicable.
     // But if there is no free exit, then such value would not pop.

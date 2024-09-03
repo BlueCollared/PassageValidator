@@ -5,8 +5,10 @@ namespace EtGate.Domain.Services.Gate
 {
     public class GateMgr
     {
-        private readonly IGateController gateController;
+        public IGateController gateController { get; private set;}
         private readonly IDeviceStatus<GateHwStatus> statusMgr;
+
+        public IObservable<GateHwStatus> StatusStream => statusMgr.statusObservable;
 
         GateConnectedSession session;
 

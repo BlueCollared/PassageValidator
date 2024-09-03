@@ -1,4 +1,4 @@
-﻿global using RawEventsInNominalMode = OneOf.OneOf<
+﻿global using EventInNominalMode = OneOf.OneOf<
     EtGate.Devices.Interfaces.Gate.Intrusion,
     EtGate.Devices.Interfaces.Gate.Fraud,
     EtGate.Devices.Interfaces.Gate.OpenDoor,
@@ -18,8 +18,8 @@ abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGate
     readonly protected ReplaySubject<GateHwStatus> GateStatusSubject = new();
     public IObservable<GateHwStatus> GateStatusObservable => GateStatusSubject.AsObservable();
 
-    readonly protected ReplaySubject<RawEventsInNominalMode> RawEventsInNominalModeSubject = new();
-    public IObservable<RawEventsInNominalMode> PassageStatusObservable => RawEventsInNominalModeSubject.AsObservable();
+    readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
+    public IObservable<EventInNominalMode> PassageStatusObservable => EventsInNominalModeSubject.AsObservable();
     
     public abstract bool SetEmergency();
     public abstract bool SetMaintenance();

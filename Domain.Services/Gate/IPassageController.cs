@@ -1,4 +1,4 @@
-﻿global using RawEventsInNominalMode = OneOf.OneOf<
+﻿global using EventInNominalMode = OneOf.OneOf<
     EtGate.Devices.Interfaces.Gate.Intrusion,
     EtGate.Devices.Interfaces.Gate.Fraud,
     EtGate.Devices.Interfaces.Gate.OpenDoor,
@@ -12,7 +12,7 @@ namespace EtGate.Devices.Interfaces.Gate
 
     public interface IPassageController
     {
-        IObservable<RawEventsInNominalMode> PassageStatusObservable { get; }
+        IObservable<EventInNominalMode> PassageStatusObservable { get; }
 
         // returns true if the request is accepted    
         bool Authorize(int nAuthorizations);
