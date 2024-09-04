@@ -26,7 +26,7 @@ public record OpenDoor(bool bEntry);
 public record CloseDoor(bool bEntry);
 public record WaitForAuthroization;
 
-public interface IGateController : IPassageController, IGateModeController
+public interface IGateController : IPassageController, IGateModeController, IDeviceDate
 {
     // the application is supposed to save the Demanded state. It may be possible that the device is not reachable now, but as soon as it is reachable, the command would be fulfilled.
 

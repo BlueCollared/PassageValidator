@@ -14,6 +14,7 @@ public class IerController : GateControllerBase
 
     public IerController(string url)
     {
+        // TODO: inject `IIERXmlRpc` instead
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;
         ier = new Ier_To_DomainAdapter(
@@ -26,6 +27,11 @@ public class IerController : GateControllerBase
         throw new NotImplementedException();
     }
 
+    public override Option<DateTimeOffset> GetDate()
+    {
+        return ier.GetDate().Map(x=>new DateTimeOffset(x)); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
+    }
+
     public override bool Reboot(bool bHardboot)
     {
         if (!bIsConnected)
@@ -35,6 +41,11 @@ public class IerController : GateControllerBase
             return ier.Reboot();
         else
             return ier.Restart();
+    }
+
+    public override bool SetDate(DateTimeOffset dt)
+    {
+        return ier.SetDate(dt.DateTime); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }
 
     public override bool SetEmergency()

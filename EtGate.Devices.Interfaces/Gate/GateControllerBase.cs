@@ -27,4 +27,6 @@ abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGate
     public abstract bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit);
     public abstract bool Reboot(bool bHardboot);
     public abstract bool Authorize(int nAuthorizations);
+    public abstract bool SetDate(DateTimeOffset dt);
+    public abstract Option<DateTimeOffset> GetDate();
 }

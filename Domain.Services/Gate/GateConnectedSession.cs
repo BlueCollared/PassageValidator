@@ -1,27 +1,30 @@
-﻿using EtGate.Domain.Services.Gate.Functions;
+﻿namespace EtGate.Domain.Services.Gate;
 
-namespace EtGate.Domain.Services.Gate
+public class GateConnectedSession : IDisposable
 {
-    public class GateConnectedSession : IDisposable
+    private readonly IGateController gateController;
+
+    public ClockSynchronizer dateMgr { get; private set; } // Similarly other managers (one per functionality e.g. FirmwareUpgrader)
+    public IPassageManager passageMgr { get; private set; }
+
+    public GateConnectedSession(IGateController gateController)
     {
-        private readonly IGateController gateController;
+        this.gateController = gateController;
+        
+        dateMgr = new ClockSynchronizer(gateController,
+            () => DateTimeOffset.Now,
+            null,
+            new ClockSynchronizer.Config(TimeSpan.FromSeconds(60), TimeSpan.FromMilliseconds(200), TimeSpan.MaxValue)
+            );
+    }
 
-        public DateMgr dateMgr { get; private set; } // Similarly other managers (one per functionality)
-        public IPassageManager passageMgr { get; private set; }
-
-        public GateConnectedSession(IGateController gateController)
+    public void Dispose()
+    {
+        try
         {
-            this.gateController = gateController;
-
-            DateMgr.Config config = new();
-            config.tsFrequencyToCheck = TimeSpan.FromSeconds(5 * 60);
-            dateMgr = new DateMgr(gateController, config);
-        }
-
-        public void Dispose()
-        {
-            dateMgr?.Dispose();
+            dateMgr?.Cancel();
             //passageMgr?.Dispose();
         }
+        catch { }
     }
 }
