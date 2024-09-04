@@ -1,5 +1,4 @@
-﻿using EtGate.Devices.Interfaces.Gate;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 
 namespace EtGate.Domain.Services.Gate.Functions;
 

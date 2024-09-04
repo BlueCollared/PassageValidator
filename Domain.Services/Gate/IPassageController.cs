@@ -1,11 +1,11 @@
 ﻿global using EventInNominalMode = OneOf.OneOf<
-    EtGate.Devices.Interfaces.Gate.Intrusion,
-    EtGate.Devices.Interfaces.Gate.Fraud,
-    EtGate.Devices.Interfaces.Gate.OpenDoor,
-    EtGate.Devices.Interfaces.Gate.WaitForAuthroization,
-    EtGate.Devices.Interfaces.Gate.CloseDoor>;
+    EtGate.Domain.Services.Gate.Intrusion,
+    EtGate.Domain.Services.Gate.Fraud,
+    EtGate.Domain.Services.Gate.OpenDoor,
+    EtGate.Domain.Services.Gate.WaitForAuthroization,
+    EtGate.Domain.Services.Gate.CloseDoor>;
 
-namespace EtGate.Devices.Interfaces.Gate
+namespace EtGate.Domain.Services.Gate
 {
     // It is possible that around the time authroization is submitted, intrusion gets detected.
     // It is its job to suppress raising the Intrusion (by first making sure that Intrusion has really removed)

@@ -72,7 +72,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         return Task.CompletedTask;
     }
 
-    private void PassageEvt(Intrusion x)
+    private void PassageEvt(EtGate.Domain.Passage.PassageEvts.Intrusion x)
     {
         switch (state)
         {
@@ -105,7 +105,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         }
     }
 
-    private void PassageEvt(Fraud x)
+    private void PassageEvt(EtGate.Domain.Passage.PassageEvts.Fraud x)
     { }
 
     private void PassageEvt(PassageTimeout x)
@@ -114,7 +114,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     private void PassageEvt(AuthroizedPassengerSteppedBack x)
     { }
 
-    private void PassageEvt(OpenDoor x)
+    private void PassageEvt(EtGate.Domain.Passage.PassageEvts.OpenDoor x)
     {
         switch (state)
         {
@@ -134,7 +134,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     private void PassageEvt(PassageDone x)
     { }
 
-    private void PassageEvt(OneOf<Intrusion, Fraud, OpenDoor, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone> x)
+    private void PassageEvt(OneOf<EtGate.Domain.Passage.PassageEvts.Intrusion, EtGate.Domain.Passage.PassageEvts.Fraud, EtGate.Domain.Passage.PassageEvts.OpenDoor, PassageTimeout, AuthroizedPassengerSteppedBack, PassageDone> x)
     {
         if (x.IsT0)
             PassageEvt(x.AsT0);

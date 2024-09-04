@@ -1,7 +1,5 @@
 ﻿using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
-using Domain.Services.Modes;
-using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;

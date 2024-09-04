@@ -1,5 +1,4 @@
-﻿using EtGate.Devices.Interfaces.Gate;
-using EtGate.Domain.Services.Gate.Functions;
+﻿using EtGate.Domain.Services.Gate.Functions;
 
 namespace EtGate.Domain.Services.Gate
 {

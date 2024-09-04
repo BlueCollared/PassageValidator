@@ -1,11 +1,12 @@
 ﻿global using EventInNominalMode = OneOf.OneOf<
-    EtGate.Devices.Interfaces.Gate.Intrusion,
-    EtGate.Devices.Interfaces.Gate.Fraud,
-    EtGate.Devices.Interfaces.Gate.OpenDoor,
-    EtGate.Devices.Interfaces.Gate.WaitForAuthroization,
-    EtGate.Devices.Interfaces.Gate.CloseDoor>;
+    EtGate.Domain.Services.Gate.Intrusion,
+    EtGate.Domain.Services.Gate.Fraud,
+    EtGate.Domain.Services.Gate.OpenDoor,
+    EtGate.Domain.Services.Gate.WaitForAuthroization,
+    EtGate.Domain.Services.Gate.CloseDoor>;
 
 using Domain.Peripherals.Passage;
+using EtGate.Domain.Services.Gate;
 using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using System.Reactive.Linq;

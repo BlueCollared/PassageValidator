@@ -1,23 +1,5 @@
-﻿/*
-global using ObsAuthEvents = System.IObservable<OneOf.OneOf<
-    EtGate.Domain.Passage.PassageEvts.Intrusion,
-    EtGate.Domain.Passage.PassageEvts.Fraud,
-    EtGate.Domain.Passage.PassageEvts.OpenDoor,
-    EtGate.Domain.Passage.PassageEvts.PassageTimeout,
-    EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack,
-    EtGate.Domain.Passage.PassageEvts.PassageDone>>;
+﻿namespace EtGate.Domain.Services.Gate;
 
-global using ObsIdleEvents = System.IObservable<OneOf.OneOf<
-    EtGate.Domain.Passage.IdleEvts.Intrusion,
-    EtGate.Domain.Passage.IdleEvts.Fraud,
-    EtGate.Domain.Passage.IdleEvts.PassageTimeout,
-    EtGate.Domain.Passage.IdleEvts.PassageDone>>;
-
-
-*/
-using EtGate.Domain.Services.Gate;
-
-namespace EtGate.Devices.Interfaces.Gate;
 enum eDoorNominalModes //Normal case
 {
     OPEN_DOOR, //Doors are opened

@@ -170,7 +170,7 @@ public partial class App : Avalonia.Application
 
 internal class MockPassageManager : IPassageManager
 {
-    public IObservable<OneOf<Intrusion, Fraud, PassageTimeout, PassageDone>> IdleStatusObservable => throw new NotImplementedException();
+    IObservable<OneOf<Domain.Passage.IdleEvts.Intrusion, Domain.Passage.IdleEvts.Fraud, PassageTimeout, PassageDone>> IPassageManager.IdleStatusObservable => throw new NotImplementedException();
 
     public ObsAuthEvents Authorize(string ticketId, int nAuthorizations)
     {

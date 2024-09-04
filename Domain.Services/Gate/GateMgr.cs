@@ -1,5 +1,4 @@
 ﻿using Domain.Peripherals.Passage;
-using EtGate.Devices.Interfaces.Gate;
 
 namespace EtGate.Domain.Services.Gate
 {

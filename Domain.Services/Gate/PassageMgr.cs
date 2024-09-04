@@ -1,6 +1,6 @@
 ﻿namespace EtGate.Domain.Services.Gate;
 
-using EtGate.Devices.Interfaces.Gate;
+
 using ObsAuthEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.PassageEvts.Intrusion,
     EtGate.Domain.Passage.PassageEvts.Fraud,
