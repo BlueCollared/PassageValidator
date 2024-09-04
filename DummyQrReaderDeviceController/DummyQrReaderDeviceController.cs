@@ -52,9 +52,9 @@ namespace DummyQrReaderDeviceController
             bStop = true;
         }
 
-        public override void Reboot()
-        {
-            throw new NotImplementedException();
-        }
+        //public override void Reboot()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

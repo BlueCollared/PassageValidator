@@ -2,7 +2,7 @@
 
 namespace EtGate.Devices.Interfaces.Qr
 {
-    interface IQrReaderControllerEx : IPeripheral, Domain.Services.Qr.IQrReaderController
+    interface IQrReaderControllerDeviceSpecific
     {
         void Reboot();        
     }

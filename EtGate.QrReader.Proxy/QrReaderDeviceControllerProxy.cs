@@ -46,9 +46,9 @@ namespace EtGate.QrReader.Proxy
             qrCodeInfoSubject.OnNext(x);
         }
 
-        public override void Reboot()
-        {
-            throw new NotImplementedException();
-        }
+    //    public override void Reboot()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
     }
 }

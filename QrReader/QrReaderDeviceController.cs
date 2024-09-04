@@ -1,8 +1,9 @@
 ﻿using EtGate.Devices.Interfaces.Qr;
+using EtGate.QrReader;
 
 namespace QrReader
 {
-    public class QrReaderDeviceController : QrReaderDeviceControllerBase
+    public class QrReaderDeviceController : MyQrReaderDeviceControllerBase
     {
         public override void Reboot()
         {

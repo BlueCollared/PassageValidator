@@ -1,10 +1,11 @@
 ﻿using Domain.Peripherals.Qr;
+using EtGate.Domain.Services.Qr;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace EtGate.Devices.Interfaces.Qr
 {
-    public abstract class QrReaderDeviceControllerBase : StatusStreamBase<QrReaderStatus>, IQrReaderControllerEx
+    public abstract class QrReaderDeviceControllerBase : StatusStreamBase<QrReaderStatus>, IQrReaderController
     {
         readonly protected Subject<QrCodeInfo> qrCodeInfoSubject = new();
         public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
@@ -16,8 +17,6 @@ namespace EtGate.Devices.Interfaces.Qr
         public abstract void Stop();
 
         public abstract bool StartDetecting();
-        public abstract void StopDetecting();
-
-        abstract public void Reboot();
+        public abstract void StopDetecting();        
     }
 }
