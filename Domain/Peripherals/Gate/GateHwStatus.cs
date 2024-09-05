@@ -1,4 +1,5 @@
-﻿using EtGate.Domain;
+﻿using Domain.Peripherals.Qr;
+using EtGate.Domain;
 using LanguageExt;
 
 namespace Domain.Peripherals.Passage
@@ -17,6 +18,9 @@ namespace Domain.Peripherals.Passage
     // TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
     public record GateHwStatus(bool bConnected, Option<eDoorsStatesMachine> doorState) : ModuleStatus
     {
+        public static GateHwStatus Disconnected => new GateHwStatus(bConnected: false, Option<eDoorsStatesMachine>.None);
+        public static GateHwStatus AllGood => new GateHwStatus(bConnected: true, eDoorsStatesMachine.NOMINAL);
+
         public override bool IsAvailable =>bConnected && doorState == eDoorsStatesMachine.NOMINAL;
     }
 }

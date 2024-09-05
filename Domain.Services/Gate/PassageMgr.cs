@@ -21,7 +21,7 @@ public class PassageMgr : IPassageManager
 
     public PassageMgr()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public PassageMgr(IPassageController controller)

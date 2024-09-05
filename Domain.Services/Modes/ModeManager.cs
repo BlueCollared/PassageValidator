@@ -33,11 +33,12 @@ namespace Domain.Services.Modes
             ValidationMgr validationMgr, 
             GateMgr gateMgr,
             //IGateModeController passageController,
-            IScheduler scheduler,
+            IScheduler scheduler = null,
             int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds
             //OpMode opModeDemanded = OpMode.InService
             )
         {
+            scheduler = scheduler ?? Scheduler.Default;
             //equipmentStatus = new();
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
@@ -54,7 +55,6 @@ namespace Domain.Services.Modes
             
             gateMgr.StatusStream.Subscribe(onNext: GateStatusChanged);            
         }
-
 
         public OpMode ModeDemanded
         {
@@ -150,9 +150,11 @@ namespace Domain.Services.Modes
         private bool AreAllStatusesReceived()
         {
             var e = equipmentStatus;
-            bool allStatusesReceived = e.QrEntry.IsKnown
+            bool allStatusesReceived = 
+                    e.QrEntry.IsKnown
                 && (e.ValidationAPI != null && e.ValidationAPI.Status?.offlineStatus != null)// TODO: I didn't want to use null. That's why IsKnown was introduced. But seems can't do without null easily
-                && (e.ValidationAPI != null && e.ValidationAPI.Status?.onlineStatus != null);
+                && (e.ValidationAPI != null && e.ValidationAPI.Status?.onlineStatus != null)
+                &&  e.gateStatus.IsKnown ;
             return allStatusesReceived;
         }
 

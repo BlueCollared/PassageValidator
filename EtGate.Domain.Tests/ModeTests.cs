@@ -1,4 +1,5 @@
 using Domain;
+using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using EtGate.Domain.ValidationSystem;
@@ -18,7 +19,7 @@ namespace EtGate.Domain.Tests
         public ModeTests()
         {
             s = new MockSytemBuilder().Build();            
-            modeManager = new ModeManager(s.qr, s.validation, null, testScheduler);
+            modeManager = new ModeManager(s.qr, s.validation, s.gate, testScheduler);
         }
 
         [Fact]
@@ -34,6 +35,9 @@ namespace EtGate.Domain.Tests
             Assert.Equal(Mode.AppBooting, modeManager.CurMode);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+
+            s.subjGateStatus.OnNext(GateHwStatus.Disconnected);
             Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
         }
 
@@ -49,6 +53,7 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void QrCodeNotWorking_ModeOOO()
         {
+            AppBootingPhase();
             // Act            
             s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
             
@@ -88,9 +93,11 @@ namespace EtGate.Domain.Tests
             modeManager.CurMode.ShouldBe(Mode.AppBooting);
 
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            modeManager.CurMode.ShouldBe(Mode.AppBooting);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+
+            s.subjGateStatus.OnNext(GateHwStatus.AllGood);
             modeManager.CurMode.ShouldBe(Mode.InService);            
         }
 

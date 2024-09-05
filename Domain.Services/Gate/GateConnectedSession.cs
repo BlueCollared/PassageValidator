@@ -7,15 +7,11 @@ public class GateConnectedSession : IDisposable
     public ClockSynchronizer dateMgr { get; private set; } // Similarly other managers (one per functionality e.g. FirmwareUpgrader)
     public IPassageManager passageMgr { get; private set; }
 
-    public GateConnectedSession(IGateController gateController)
+    public GateConnectedSession(IGateController gateController, Func<ClockSynchronizer> factoryClockSynch)
     {
         this.gateController = gateController;
-        
-        dateMgr = new ClockSynchronizer(gateController,
-            () => DateTimeOffset.Now,
-            null,
-            new ClockSynchronizer.Config(TimeSpan.FromSeconds(60), TimeSpan.FromMilliseconds(200), TimeSpan.MaxValue)
-            );
+
+        dateMgr = factoryClockSynch?.Invoke();
     }
 
     public void Dispose()

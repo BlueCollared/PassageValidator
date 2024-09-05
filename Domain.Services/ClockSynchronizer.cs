@@ -14,7 +14,12 @@ public class ClockSynchronizer
     IDisposable subscription;
 
     public record DateChanged(DateTimeOffset origDate, DateTimeOffset modifiedDate);
-    public record Config (TimeSpan interval, TimeSpan minThreshold, TimeSpan maxLimit);
+    public class Config
+    {
+        public TimeSpan interval { get; set; }
+        public (TimeSpan min, TimeSpan max) tolerance { get; set; } = (TimeSpan.Zero, TimeSpan.MaxValue);
+    }
+
     public ClockSynchronizer(IDeviceDate device, Func<DateTimeOffset> dtProvider, Action<DateChanged> dtChangedNotifier, Config config)
     {        
         this.device = device;
@@ -47,7 +52,7 @@ public class ClockSynchronizer
         var dtDesired = dtProvider();
 
         var diff = deviceDate > dtDesired ? deviceDate.Value() - dtDesired : dtDesired - deviceDate.Value();
-        if (diff >= config.minThreshold && diff < config.maxLimit)
+        if (diff >= config.tolerance.min && diff < config.tolerance.max)
             if (device.SetDate(dtDesired))
                 dtChangedNotifier?.Invoke(new DateChanged(deviceDate.Value(), dtDesired));
 

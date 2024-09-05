@@ -1,8 +1,6 @@
 ﻿using EtGate.Devices.Interfaces.Gate;
 using EtGate.IER;
-using Horizon.XmlRpc.Client;
 using IFS2.Equipment.DriverInterface;
-using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 
 namespace EtGate.Devices.IER;
@@ -12,13 +10,10 @@ public class IerController : GateControllerBase
     bool bIsConnected = false;
     Ier_To_DomainAdapter ier;
 
-    public IerController(string url)
+    public IerController(IIERXmlRpc xmlRpc)
     {
-        // TODO: inject `IIERXmlRpc` instead
-        var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
-        xmlRpc.Url = url;
         ier = new Ier_To_DomainAdapter(
-            new IERXmlRpc(xmlRpc)
+            xmlRpc
             );
     }
 

@@ -3,9 +3,11 @@ using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
+using EtGate.Devices.IER;
 using EtGate.Domain;
 using EtGate.Domain.Passage.IdleEvts;
 using EtGate.Domain.Services;
@@ -13,9 +15,12 @@ using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
+using EtGate.IER;
 using EtGate.UI.ViewModels;
 using EtGate.UI.Views;
 using GateApp;
+using Horizon.XmlRpc.Client;
+using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf;
 using System;
@@ -51,7 +56,10 @@ public partial class App : Avalonia.Application
         const string bPrimary = "bPrimary";
         const string bEntry = "bEntry";
 
-        
+        DoForValidation(builder);
+        DoForQr(builder);
+        DoForGate(builder);
+
         builder.RegisterType<MainWindowViewModel>()
             .WithParameter(new NamedParameter(bPrimary, true))
             .WithParameter(new NamedParameter(bEntry, true))
@@ -72,16 +80,8 @@ public partial class App : Avalonia.Application
             .WithParameter(new NamedParameter(bEntry, false))
             .Named<MainWindowViewModel>(SecondaryExit);
 
-        builder.RegisterType<OfflineValidationSystem>().AsSelf();
-        builder.RegisterType<OnlineValidationSystem>().AsSelf();
 
-        //builder.RegisterType<QrReaderDeviceControllerProxy>()
-        builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
-          .As<IQrReaderController>()
-          .As<IDeviceStatus<QrReaderStatus>>()
-          .SingleInstance();
-        //builder.RegisterType<ModeManager>().AsSelf();
-        builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
+
         builder.RegisterType<ModeService>().As<IModeService>().SingleInstance();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
@@ -101,7 +101,7 @@ public partial class App : Avalonia.Application
            )
            .WithParameter(
                 (pi, _) => pi.ParameterType == typeof(Func<Type, UserControl>),
-               (_, ctx) => 
+               (_, ctx) =>
                    ctx.Resolve<IViewFactory>()
             )
            .WithParameter(
@@ -111,24 +111,9 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
 
-        builder.RegisterType<QrReaderMgr>()
-           .WithParameter(
-               (pi, ctx) => pi.ParameterType == typeof(IQrReaderController),
-               (pi, ctx) => ctx.Resolve<IQrReaderController>())
-           .WithParameter(
-               (pi, ctx) => pi.ParameterType == typeof(IDeviceStatus<QrReaderStatus>),
-               (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>())
-           .As<IQrReaderMgr>()
-           .SingleInstance();
-
-        builder.RegisterType<DummyOfflineValidation>()
-           .As<IDeviceStatus<OfflineValidationSystemStatus>>();
-
-        builder.RegisterType<DummyOnlineValidation>()
-           .As<IDeviceStatus<OnlineValidationSystemStatus>>();
 
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
-        
+
         builder.RegisterType<ModeManager>()
         .WithParameter((pi, ctx) =>
             pi.ParameterType == typeof(IPassageManager),
@@ -143,7 +128,7 @@ public partial class App : Avalonia.Application
         //builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>().SingleInstance();
 
         Container = builder.Build();
-        
+
         // TODO: change it for entry-only/exit-only. also for reverse configuration
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -162,9 +147,62 @@ public partial class App : Avalonia.Application
         base.OnFrameworkInitializationCompleted();
     }
 
+    private static void DoForValidation(ContainerBuilder builder)
+    {
+        builder.RegisterType<DummyOfflineValidation>()
+            .As<IDeviceStatus<OfflineValidationSystemStatus>>();
+
+        builder.RegisterType<DummyOnlineValidation>()
+           .As<IDeviceStatus<OnlineValidationSystemStatus>>();
+
+        builder.RegisterType<OfflineValidationSystem>().AsSelf();
+        builder.RegisterType<OnlineValidationSystem>().AsSelf();
+        builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
+    }
+
+    private static void DoForQr(ContainerBuilder builder)
+    {
+        //builder.RegisterType<QrReaderDeviceControllerProxy>()
+        builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
+          .As<IQrReaderController>()
+          .As<IDeviceStatus<QrReaderStatus>>()
+          .SingleInstance();
+
+        builder.RegisterType<QrReaderMgr>()
+           .WithParameter(
+               (pi, ctx) => pi.ParameterType == typeof(IQrReaderController),
+               (pi, ctx) => ctx.Resolve<IQrReaderController>())
+           .WithParameter(
+               (pi, ctx) => pi.ParameterType == typeof(IDeviceStatus<QrReaderStatus>),
+               (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>())
+           .As<IQrReaderMgr>()
+           .SingleInstance();
+    }
+
+    private static void DoForGate(ContainerBuilder builder)
+    {
+        {
+            string url = ""; // TODO: load from configuration
+                             // TODO: inject `IIERXmlRpc` instead
+            var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
+            xmlRpc.Url = url;
+            var ierRpc = new IERXmlRpc(xmlRpc);
+            var ier = new IerController(ierRpc);
+
+            builder.RegisterInstance(ier)
+                .As<IGateController>()
+                .As<IDeviceStatus<GateHwStatus>>()
+                .SingleInstance();
+        }
+        builder.RegisterInstance(new GateMgr.Config { ClockSynchronizerConfig = new ClockSynchronizer.Config{interval=TimeSpan.FromMinutes(5)} })
+            .As<GateMgr.Config>()
+            .SingleInstance();
+        builder.RegisterType<GateMgr>().AsSelf().SingleInstance();
+    }
+
     private void ConfigureServices(ServiceCollection serviceCollection)
     {
-        
+
     }
 }
 

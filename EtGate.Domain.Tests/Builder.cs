@@ -44,7 +44,7 @@ namespace EtGate.Domain.Tests
             mockGateStatus.Setup(m => m.statusObservable).Returns(r.subjGateStatus);
 
             var dummyGate = new Mock<IGateController>();            
-            r.gate = new GateMgr(dummyGate.Object, mockGateStatus.Object);            
+            r.gate = new GateMgr(dummyGate.Object, mockGateStatus.Object, new GateMgr.Config());            
 
             // Valiation
             var mockOfflineStatus = new Mock<IDeviceStatus<OfflineValidationSystemStatus>>();
