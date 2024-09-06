@@ -4,7 +4,7 @@ using System;
 
 namespace EtGate.UI.ViewModels
 {
-    public class ModeViewModelFactory
+    public class ModeViewModelFactory : IModeViewModelFactory
     {
         private readonly IModeService modeService;
         private readonly INavigationService maintenanceNavigationService;
@@ -24,7 +24,7 @@ namespace EtGate.UI.ViewModels
                 Mode.OOS => new OOSViewModel(modeService),
                 Mode.Emergency => new EmergencyViewModel(modeService),
                 Mode.OOO => new OOOViewModel(modeService),
-                Mode.Maintenance => bPrimary? new MaintenanceViewModel(modeService, maintenanceNavigationService): new MaintenanceViewModelPassive(modeService),
+                Mode.Maintenance => bPrimary ? new MaintenanceViewModel(modeService, maintenanceNavigationService) : new MaintenanceViewModelPassive(modeService),
                 _ => throw new ArgumentException("Unknown mode")
             };
         }

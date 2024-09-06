@@ -10,11 +10,11 @@ namespace EtGate.UI.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     
-    private readonly ModeViewModelFactory modeViewModelFactory;
+    private readonly IModeViewModelFactory modeViewModelFactory;
     private readonly bool bEntry;
     private readonly bool bPrimary;
 
-    public MainWindowViewModel(ModeViewModelFactory modeViewModelFactory,
+    public MainWindowViewModel(IModeViewModelFactory modeViewModelFactory,
         IModeService modeService,
         bool bEntry,
         bool bPrimary)
@@ -49,8 +49,5 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private Mode? curMode = null;
+    private Mode? curMode = null;    
 }
-
-
-
