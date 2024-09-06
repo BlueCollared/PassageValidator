@@ -18,7 +18,7 @@ namespace EtGate.Domain.Tests
 
         public ModeTests()
         {
-            s = new MockSytemBuilder().Build();            
+            s = new MockSytemBuilder().Build();
             modeManager = new ModeManager(s.qr, s.validation, s.gate, testScheduler);
         }
 
@@ -53,12 +53,12 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void QrCodeNotWorking_ModeOOO()
         {
-            AppBootingPhase();
+            AllWorking_ModeInservice();
             // Act            
             s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
-            
+
             // Assert
-            Assert.Equal(Mode.OOO,                
+            Assert.Equal(Mode.OOO,
                 modeManager.CurMode
                 );
 
@@ -98,7 +98,7 @@ namespace EtGate.Domain.Tests
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
 
             s.subjGateStatus.OnNext(GateHwStatus.AllGood);
-            modeManager.CurMode.ShouldBe(Mode.InService);            
+            modeManager.CurMode.ShouldBe(Mode.InService);
         }
 
         [Fact]

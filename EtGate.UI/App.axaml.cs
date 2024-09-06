@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -37,7 +38,7 @@ public partial class App : Avalonia.Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public static Autofac.IContainer Container { get; private set; }
+    public static Autofac.IContainer? Container { get; private set; }
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -80,8 +81,6 @@ public partial class App : Avalonia.Application
             .WithParameter(new NamedParameter(bEntry, false))
             .Named<MainWindowViewModel>(SecondaryExit);
 
-
-
         builder.RegisterType<ModeService>().As<IModeService>().SingleInstance();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
@@ -92,7 +91,6 @@ public partial class App : Avalonia.Application
             return viewModelType => (MaintainenaceViewModelBase)componentContext.Resolve(viewModelType);
         });
 
-        //builder.RegisterType<ViewModelFactory>().AsSelf();
         builder.RegisterType<MaintenanceNavigationService>()
            .As<INavigationService>()
            .WithParameter(
@@ -110,26 +108,20 @@ public partial class App : Avalonia.Application
            ).SingleInstance();
 
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
-
-
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
         builder.RegisterType<ModeManager>()
-        .WithParameter((pi, ctx) =>
-            pi.ParameterType == typeof(IPassageManager),
-            (pi, ctx) => (object)null) // Inject null for IPassageManager
-        .WithParameter((pi, ctx) =>
-            pi.ParameterType == typeof(IScheduler),
-            (pi, ctx) => DefaultScheduler.Instance); // Inject default scheduler
+            .WithParameter(new ResolvedParameter(
+                (pi, ctx) => pi.ParameterType == typeof(IPassageManager),
+                (pi, ctx) => ctx.ResolveOptional<IPassageManager>()))
+            .WithParameter(new ResolvedParameter(
+                (pi, ctx) => pi.ParameterType == typeof(IScheduler),
+                (pi, ctx) => ctx.Resolve<IScheduler>()));
 
         builder.RegisterType<MockPassageManager>().As<IPassageManager>();
 
-        //builder.RegisterType<InServiceMgr>().InstancePerDependency();            
-        //builder.RegisterType<InServiceMgrFactory>().As<IInServiceMgrFactory>().SingleInstance();
-
         Container = builder.Build();
 
-        // TODO: change it for entry-only/exit-only. also for reverse configuration
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
@@ -162,7 +154,6 @@ public partial class App : Avalonia.Application
 
     private static void DoForQr(ContainerBuilder builder)
     {
-        //builder.RegisterType<QrReaderDeviceControllerProxy>()
         builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
           .As<IQrReaderController>()
           .As<IDeviceStatus<QrReaderStatus>>()
@@ -181,30 +172,29 @@ public partial class App : Avalonia.Application
 
     private static void DoForGate(ContainerBuilder builder)
     {
-        {
-            string url = ""; // TODO: load from configuration
-                             // TODO: inject `IIERXmlRpc` instead
-            var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
-            xmlRpc.Url = url;
-            var ierRpc = new IERXmlRpc(xmlRpc);
-            var ier = new IerController(ierRpc);
+        string url = ""; // TODO: load from configuration
+        var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
+        xmlRpc.Url = url;
+        var ierRpc = new IERXmlRpc(xmlRpc);
+        var ier = new IerController(ierRpc);
 
-            builder.RegisterInstance(ier)
-                .As<IGateController>()
-                .As<IDeviceStatus<GateHwStatus>>()
-                .SingleInstance();
-        }
-        builder.RegisterInstance(new GateMgr.Config { ClockSynchronizerConfig = new ClockSynchronizer.Config{interval=TimeSpan.FromMinutes(5)} })
+        builder.RegisterInstance(ier)
+            .As<IGateController>()
+            .As<IDeviceStatus<GateHwStatus>>()
+            .SingleInstance();
+
+        builder.RegisterInstance(new GateMgr.Config { ClockSynchronizerConfig = new ClockSynchronizer.Config { interval = TimeSpan.FromMinutes(5) } })
             .As<GateMgr.Config>()
             .SingleInstance();
+
         builder.RegisterType<GateMgr>().AsSelf().SingleInstance();
     }
 
     private void ConfigureServices(ServiceCollection serviceCollection)
     {
-
     }
 }
+
 
 internal class MockPassageManager : IPassageManager
 {
