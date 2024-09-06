@@ -9,21 +9,20 @@ namespace EtGate.UI.ViewModels;
 // `bEntry` and `bPrimary` are smells. But to avoid them, means making 4 new classes. I don't know better way.
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly IModeService modeService;
-    private readonly INavigationService maintenanceNavigationService; // TODO: we are using a singleton of it, while we should be creating a new instance for every session        
+    
+    private readonly ModeViewModelFactory modeViewModelFactory;
     private readonly bool bEntry;
     private readonly bool bPrimary;
 
-    public MainWindowViewModel(IModeService modeService,
-        INavigationService maintenanceNavigationService,
+    public MainWindowViewModel(ModeViewModelFactory modeViewModelFactory,
+        IModeService modeService,
         bool bEntry,
         bool bPrimary)
-    {
-        this.modeService = modeService;
-        this.maintenanceNavigationService = maintenanceNavigationService;
+    {        
+        this.modeViewModelFactory = modeViewModelFactory;
         this.bEntry = bEntry;
         this.bPrimary = bPrimary;
-        this.modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
+        modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x));
     }
 
     private void ModeChanged(Mode x)
@@ -32,31 +31,7 @@ public class MainWindowViewModel : ViewModelBase
             return;
         if (CurrentModeViewModel is IDisposable y)
             y.Dispose();
-        switch (x)
-        {
-            case Mode.AppBooting:
-                CurrentModeViewModel = new AppBootingViewModel(modeService);
-                break;
-            case Mode.OOO:
-                CurrentModeViewModel = new OOOViewModel(modeService);
-                break;
-            case Mode.Emergency:
-                CurrentModeViewModel = new EmergencyViewModel(modeService);
-                break;
-            case Mode.InService:
-                CurrentModeViewModel = new InServiceViewModel(
-                    bEntry, modeService);
-                break;
-            case Mode.OOS:
-                CurrentModeViewModel = new OOSViewModel(modeService);
-                break;
-            case Mode.Maintenance:
-                if (bPrimary)
-                    CurrentModeViewModel = new MaintenanceViewModel(modeService, maintenanceNavigationService);
-                else
-                    CurrentModeViewModel = new MaintenanceViewModelPassive(modeService);
-                break;
-        }
+        CurrentModeViewModel = modeViewModelFactory.Create(x, bPrimary, bEntry);
         curMode = x;
     }
 
