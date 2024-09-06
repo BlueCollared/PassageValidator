@@ -25,9 +25,11 @@ namespace GateApp
             if (modeMgr.CurMode == Mode.Maintenance)
                 return;
 
-            await curModeMgr.Stop();
-            curModeMgr.Dispose();
-
+            if (curModeMgr != null)
+            {
+                await curModeMgr.Stop();
+                curModeMgr.Dispose();
+            }
             modeMgr.SwitchToMaintenance();
         }
 
