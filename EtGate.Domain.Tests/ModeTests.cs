@@ -1,9 +1,11 @@
 using Domain;
 using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
+using Domain.Services.InService;
 using Domain.Services.Modes;
 using EtGate.Domain.ValidationSystem;
 using Microsoft.Reactive.Testing;
+using Moq;
 using Shouldly;
 
 namespace EtGate.Domain.Tests
@@ -15,11 +17,28 @@ namespace EtGate.Domain.Tests
 
         System s;
         ModeManager modeManager;
+        Mock<ISubModeMgr> modeMgrMock;
+
+        // Modify the existing code in the constructor of ModeTests class as follows:
 
         public ModeTests()
         {
             s = new MockSytemBuilder().Build();
-            modeManager = new ModeManager(s.qr, s.validation, s.gate, testScheduler);
+
+            var modeMgrFactoryMock = new Mock<IModeMgrFactory>();
+            //modeMgrMock = new Mock<ISubModeMgr>();
+
+            // Set up the mock to return the modeMgrMock when Create is called with any Mode value
+            //modeMgrFactoryMock.Setup(f => f.Create(It.IsAny<Mode>())).Returns(modeMgrMock.Object);
+
+            modeMgrFactoryMock
+                .Setup(f => f.Create(It.IsAny<Mode>()))
+                .Returns(() => { modeMgrMock = new Mock<ISubModeMgr>();
+                    return modeMgrMock.Object;
+                });
+
+            // Assign the mock to the modeManager
+            modeManager = new ModeManager(s.qr, s.validation, s.gate, modeMgrFactoryMock.Object, testScheduler);
         }
 
         [Fact]
@@ -105,11 +124,14 @@ namespace EtGate.Domain.Tests
         public void OldModeMgrDisposed()
         {
             AllWorking_ModeInservice();
+            
+            var modeMgrMockBak = modeMgrMock;
 
-            var subModeMgr = modeManager.curModeMgr;
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
             Assert.Equal(Mode.OOO, modeManager.CurMode);
-            subModeMgr.IsDisposed.ShouldBeTrue();
+            //
+            // 
+            modeMgrMockBak.Verify(m => m.Dispose(), Times.Once);            
         }
 
         [Fact]

@@ -153,8 +153,8 @@ namespace EtGate.UI.ViewModel.Tests
         
         private class MockModeService : IModeCommandService, IModeQueryService
         {
-            Subject<Mode> subjMode = new();
-            public IObservable<Mode> EquipmentModeObservable => subjMode.AsObservable();
+            Subject<(Mode, ISubModeMgr)> subjMode = new();
+            public IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable => subjMode.AsObservable();
 
             public ISubModeMgr curModeMgr => throw new NotImplementedException();
 
@@ -165,13 +165,13 @@ namespace EtGate.UI.ViewModel.Tests
 
             public Task SwitchOutMaintenance()
             {
-                subjMode.OnNext(Mode.OOO);
+                subjMode.OnNext(DoNothingModeMgr.Create(Mode.OOO));
                 return Task.CompletedTask;
             }
 
             public Task SwitchToMaintenance()
             {
-                subjMode.OnNext(Mode.Maintenance);
+                subjMode.OnNext(DoNothingModeMgr.Create(Mode.Maintenance));
                 return Task.CompletedTask;
             }
         }

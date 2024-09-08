@@ -39,50 +39,69 @@ namespace EtGate.UI.ViewModel.Tests
         }
 
         MainWindowViewModel vm;
-        Subject<Mode> subjMode = new();
+        Subject<(Mode, ISubModeMgr)> subjMode = new();
 
         [Fact]
         public void AppBootingPhase()
         {
             Assert.Null(vm.CurrentModeViewModel);
 
-            subjMode.OnNext(Mode.AppBooting);
+            subjMode.OnNext(DoNothingModeMgr.Create(Mode.AppBooting));
             Assert.IsType<AppBootingViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOO()
         {
-            subjMode.OnNext(Mode.OOO);
+            subjMode.OnNext(DoNothingModeMgr.Create(Mode.OOO));
             Assert.IsType<OOOViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Emergency()
         {
-            subjMode.OnNext(Mode.Emergency);
+            subjMode.OnNext(DoNothingModeMgr.Create(Mode.Emergency));
             Assert.IsType<EmergencyViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOS()
         {
-            subjMode.OnNext(Mode.OOS);
+            subjMode.OnNext(DoNothingModeMgr.Create(Mode.OOS));
             Assert.IsType<OOSViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Maintenance()
         {
-            subjMode.OnNext(Mode.Maintenance);
+            subjMode.OnNext(DoNothingModeMgr.Create(Mode.Maintenance));
             Assert.IsType<MaintenanceViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void InService()
         {
-            subjMode.OnNext(Mode.InService);
+            subjMode.OnNext((Mode.InService, new DummyIInServiceMgr()));
             Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
+        }
+    }
+    class DummyIInServiceMgr : IInServiceMgr
+    {
+        public IObservable<InServiceMgr.State> StateObservable => Observable.Empty<InServiceMgr.State>();
+
+        public void Dispose()
+        {
+
+        }
+
+        public Task HaltFurtherValidations()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task Stop()
+        {
+            return Task.CompletedTask;
         }
     }
 }

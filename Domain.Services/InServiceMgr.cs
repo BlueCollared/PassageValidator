@@ -21,6 +21,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
 
     IDisposable qrCodeSubscription;
     IDisposable passageStatusSubscription;
+    private bool IsDisposed;
 
     public enum State
     {
@@ -162,12 +163,12 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         { }
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
         IsDisposed = true;
     }
 
-    public override Task Stop()
+    public Task Stop()
     {
         throw new NotImplementedException();
     }

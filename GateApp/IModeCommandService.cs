@@ -12,6 +12,6 @@ namespace GateApp
         bool ChangeMode(OpMode mode, TimeSpan timeout);
         Task SwitchOutMaintenance();
         Task SwitchToMaintenance();
-        ISubModeMgr curModeMgr { get; }
+        //ISubModeMgr curModeMgr { get; }
     }
 }

@@ -13,7 +13,7 @@ namespace Domain.Services.Modes
 {
     public interface IModeQueryService
     {
-        IObservable<Mode> EquipmentModeObservable { get; }
+        IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable { get; }
     }
 
     public class ModeManager : IModeQueryService
@@ -29,28 +29,32 @@ namespace Domain.Services.Modes
         private readonly IQrReaderMgr qrReaderMgr;
         private readonly ValidationMgr validationMgr;
         private readonly GateMgr gateMgr;
+        private readonly IModeMgrFactory modeMgrFactory;
         private readonly IDisposable timerAppBootTimeoutSubscr;
         private bool bMaintenacneRequested = false;
         private OpMode opModeDemanded;
-        public ISubModeMgr curModeMgr { get; private set; }
+        public ISubModeMgr curModeMgr { get; private set; } = new DoNothingModeMgr(Mode.AppBooting);
 
-        private readonly BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
-        public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject
+        private readonly BehaviorSubject<(Mode, ISubModeMgr)> EquipmentModeSubject;
+        public IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable => EquipmentModeSubject
             .DistinctUntilChanged()
             .AsObservable();
-        public Mode CurMode => EquipmentModeSubject.Value;
+        public Mode CurMode => EquipmentModeSubject.Value.Item1;
 
         // Private constructor that includes the scheduler parameter
         public ModeManager(IQrReaderMgr qrReaderMgr,
                                ValidationMgr validationMgr,
                                GateMgr gateMgr,
+                               IModeMgrFactory modeMgrFactory,
                                IScheduler scheduler,
                                int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
         {
+            curModeMgr = modeMgrFactory.Create(Mode.AppBooting);
+            EquipmentModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, curModeMgr));
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
             this.gateMgr = gateMgr;
-
+            this.modeMgrFactory = modeMgrFactory;
             timerAppBootTimeoutSubscr = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
                                            .Subscribe(_ => DoModeRelatedX());
 
@@ -134,9 +138,9 @@ namespace Domain.Services.Modes
             {
                 if (curModeMgr != null)
                     curModeMgr.Dispose();
-                SwitchTo(modeAfter);
+                curModeMgr = modeMgrFactory.Create(modeAfter);                
             }
-            EquipmentModeSubject.OnNext(modeAfter);
+            EquipmentModeSubject.OnNext((modeAfter, curModeMgr));
         }
 
         private static Mode CalculateMode(EquipmentStatus e)
@@ -146,19 +150,6 @@ namespace Domain.Services.Modes
             bool bGateAvailable = e.gateStatus?.Status?.IsAvailable ?? false;
 
             return (bQrAvailable && bValidationAPIAvailable && bGateAvailable) ? Mode.InService : Mode.OOO;
-        }
-
-        private void SwitchTo(Mode modeAfter)
-        {
-            switch (modeAfter)
-            {
-                case Mode.InService:
-                    curModeMgr = new InServiceMgr(validationMgr, new PassageMgr(), qrReaderMgr);
-                    break;
-                    //case Mode.OOO:
-                    //    curModeMgr = new OOOMgr(mmi);
-                    //    break;
-            }
         }
 
         private bool AreAllStatusesReceived()
