@@ -109,6 +109,8 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
+        builder.RegisterType<ModeMgrFactory>().As<IModeMgrFactory>().SingleInstance();
+
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
