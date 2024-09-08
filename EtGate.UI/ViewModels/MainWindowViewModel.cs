@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Services.Modes;
 using GateApp;
 using ReactiveUI;
 using System;
@@ -15,7 +16,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly bool bPrimary;
 
     public MainWindowViewModel(IModeViewModelFactory modeViewModelFactory,
-        IModeService modeService,
+        IModeQueryService modeService,
         bool bEntry,
         bool bPrimary)
     {        

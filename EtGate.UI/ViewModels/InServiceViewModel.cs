@@ -32,7 +32,7 @@ namespace EtGate.UI.ViewModels
         IDisposable subscription;
 
         public InServiceViewModel(            
-            bool isEntry, IModeService modeService) : base(modeService)
+            bool isEntry, IModeCommandService modeService) : base(modeService)
         {            
             _isEntry = isEntry;
             InServiceMgr inServiceMgr = (InServiceMgr)modeService.curModeMgr;

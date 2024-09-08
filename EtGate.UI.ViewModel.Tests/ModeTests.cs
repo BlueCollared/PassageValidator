@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Services.InService;
+using Domain.Services.Modes;
 using EtGate.UI.ViewModels;
 using GateApp;
 using Moq;
@@ -17,9 +18,9 @@ namespace EtGate.UI.ViewModel.Tests
         public RightViewModelsCreated()
         {
             // Arrange
-            var mockModeService = new Mock<IModeService>();
-            
-            mockModeService.Setup(service => service.EquipmentModeObservable).Returns(subjMode);
+            var mockModeService = new Mock<IModeCommandService>();
+            var mockModeQueryService = new Mock<IModeQueryService>();
+            mockModeQueryService.Setup(service => service.EquipmentModeObservable).Returns(subjMode);
 
             var InServiceMgrStub = new Mock<IInServiceMgr>();
             InServiceMgrStub.Setup(x => x.StateObservable).Returns(
@@ -34,7 +35,7 @@ namespace EtGate.UI.ViewModel.Tests
 
             //vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
             vm = new MainWindowViewModel(new ModeViewModelFactory(mockModeService.Object,
-                new Mock<INavigationService>().Object), mockModeService.Object, true, true);
+                new Mock<INavigationService>().Object), mockModeQueryService.Object, true, true);
         }
 
         MainWindowViewModel vm;

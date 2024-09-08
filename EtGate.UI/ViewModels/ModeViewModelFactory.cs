@@ -6,10 +6,10 @@ namespace EtGate.UI.ViewModels
 {
     public class ModeViewModelFactory : IModeViewModelFactory
     {
-        private readonly IModeService modeService;
+        private readonly IModeCommandService modeService;
         private readonly INavigationService maintenanceNavigationService;
 
-        public ModeViewModelFactory(IModeService modeService, INavigationService maintenanceNavigationService)
+        public ModeViewModelFactory(IModeCommandService modeService, INavigationService maintenanceNavigationService)
         {
             this.modeService = modeService;
             this.maintenanceNavigationService = maintenanceNavigationService;

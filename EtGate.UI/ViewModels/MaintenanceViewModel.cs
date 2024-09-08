@@ -8,7 +8,7 @@ public class MaintenanceViewModel : ModeViewModel
 {
     private readonly INavigationService _navigationService;
 
-    public MaintenanceViewModel(IModeService modeService, INavigationService navigationService) : base(modeService)
+    public MaintenanceViewModel(IModeCommandService modeService, INavigationService navigationService) : base(modeService)
     {
         _navigationService = navigationService;
     }   

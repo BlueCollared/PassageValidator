@@ -5,7 +5,7 @@ namespace EtGate.UI.ViewModels
 {
     public class AppBootingViewModel : ModeViewModel, IDisposable
     {
-        public AppBootingViewModel(IModeService modeService) : base(modeService)
+        public AppBootingViewModel(IModeCommandService modeService) : base(modeService)
         {
         }
 

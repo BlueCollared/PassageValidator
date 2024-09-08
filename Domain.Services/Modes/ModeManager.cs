@@ -11,7 +11,12 @@ using System.Reactive.Subjects;
 
 namespace Domain.Services.Modes
 {
-    public class ModeManager
+    public interface IModeQueryService
+    {
+        IObservable<Mode> EquipmentModeObservable { get; }
+    }
+
+    public class ModeManager : IModeQueryService
     {
         public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
 
@@ -24,13 +29,15 @@ namespace Domain.Services.Modes
         private readonly IQrReaderMgr qrReaderMgr;
         private readonly ValidationMgr validationMgr;
         private readonly GateMgr gateMgr;
-        private readonly IDisposable _timerSubscription;
+        private readonly IDisposable timerAppBootTimeoutSubscr;
         private bool bMaintenacneRequested = false;
         private OpMode opModeDemanded;
         public ISubModeMgr curModeMgr { get; private set; }
 
         private readonly BehaviorSubject<Mode> EquipmentModeSubject = new BehaviorSubject<Mode>(Mode.AppBooting);
-        public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject.DistinctUntilChanged().AsObservable();
+        public IObservable<Mode> EquipmentModeObservable => EquipmentModeSubject
+            .DistinctUntilChanged()
+            .AsObservable();
         public Mode CurMode => EquipmentModeSubject.Value;
 
         // Private constructor that includes the scheduler parameter
@@ -44,7 +51,7 @@ namespace Domain.Services.Modes
             this.validationMgr = validationMgr;
             this.gateMgr = gateMgr;
 
-            _timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
+            timerAppBootTimeoutSubscr = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
                                            .Subscribe(_ => DoModeRelatedX());
 
             qrReaderMgr.StatusStream.Subscribe(onNext: QrRdrStatusChanged);

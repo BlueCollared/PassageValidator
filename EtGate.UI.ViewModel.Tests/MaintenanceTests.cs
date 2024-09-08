@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Services.InService;
+using Domain.Services.Modes;
 using EtGate.Domain;
 using EtGate.Domain.Services;
 using EtGate.UI.ViewModels;
@@ -19,8 +20,8 @@ namespace EtGate.UI.ViewModel.Tests
         MaintenanceNavigationService nav;
         
         Dummy dummy = new();
-        
-        IModeService mockModeService = new MockModeService();
+
+        MockModeService mockModeService = new MockModeService();
         public MaintenanceTests()
         {
             nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
@@ -149,8 +150,8 @@ namespace EtGate.UI.ViewModel.Tests
 
         
         Subject<Mode> subj = new();
-
-        private class MockModeService : IModeService
+        
+        private class MockModeService : IModeCommandService, IModeQueryService
         {
             Subject<Mode> subjMode = new();
             public IObservable<Mode> EquipmentModeObservable => subjMode.AsObservable();

@@ -26,9 +26,9 @@ namespace EtGate.UI.ViewModels
 
     public class ModeViewModel : ViewModelBase
     {
-        private readonly IModeService modeService;
+        private readonly IModeCommandService modeService;
 
-        public ModeViewModel(IModeService modeService)
+        public ModeViewModel(IModeCommandService modeService)
         {
             this.modeService = modeService;
         }

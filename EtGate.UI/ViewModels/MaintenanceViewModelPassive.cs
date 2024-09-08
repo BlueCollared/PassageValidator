@@ -4,6 +4,6 @@ namespace EtGate.UI.ViewModels;
 
 public class MaintenanceViewModelPassive : ModeViewModel
 {
-    public MaintenanceViewModelPassive(IModeService modeService) : base(modeService)
+    public MaintenanceViewModelPassive(IModeCommandService modeService) : base(modeService)
     {}
 }

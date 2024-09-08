@@ -20,7 +20,7 @@ public class MaintenanceNavigationService : INavigationService
     public MaintenanceNavigationService(        
         Func<Type, MaintainenaceViewModelBase> viewModelFactory,
         IViewFactory viewFactory,
-        IModeService modeService
+        IModeCommandService modeService
         )
     {
         this.viewModelFactory = viewModelFactory;
@@ -104,5 +104,5 @@ public class MaintenanceNavigationService : INavigationService
     private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
     private readonly IViewFactory viewFactory;
-    private readonly IModeService modeService;    
+    private readonly IModeCommandService modeService;    
 }

@@ -4,11 +4,10 @@ using Domain.Services.Modes;
 
 namespace GateApp
 {
-    public class ModeService : IModeService
+    public class ModeService : IModeCommandService
     {
         private readonly ModeManager modeMgr;
-        private readonly IContextRepository contextRepo;
-        public IObservable<Mode> EquipmentModeObservable => modeMgr.EquipmentModeObservable;
+        private readonly IContextRepository contextRepo;        
 
         public ModeService(ModeManager modeMgr, IContextRepository contextRepo)
         {

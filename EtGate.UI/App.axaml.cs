@@ -81,7 +81,7 @@ public partial class App : Avalonia.Application
             .WithParameter(new NamedParameter(bEntry, false))
             .Named<MainWindowViewModel>(SecondaryExit);
 
-        builder.RegisterType<ModeService>().As<IModeService>().SingleInstance();
+        builder.RegisterType<ModeService>().As<IModeCommandService>().SingleInstance();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
@@ -103,8 +103,8 @@ public partial class App : Avalonia.Application
                    ctx.Resolve<IViewFactory>()
             )
            .WithParameter(
-               (pi, ctx) => pi.ParameterType == typeof(IModeService),
-               (pi, ctx) => ctx.Resolve<IModeService>()
+               (pi, ctx) => pi.ParameterType == typeof(IModeCommandService),
+               (pi, ctx) => ctx.Resolve<IModeCommandService>()
            ).SingleInstance();
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
@@ -118,7 +118,10 @@ public partial class App : Avalonia.Application
                 (pi, ctx) => ctx.ResolveOptional<IPassageManager>()))
             .WithParameter(new ResolvedParameter(
                 (pi, ctx) => pi.ParameterType == typeof(IScheduler),
-                (pi, ctx) => ctx.Resolve<IScheduler>()));
+                (pi, ctx) => ctx.Resolve<IScheduler>()))
+            .As<IModeQueryService>()
+            .SingleInstance()
+            .AsSelf();
 
         builder.RegisterType<MockPassageManager>().As<IPassageManager>();
 
@@ -144,13 +147,17 @@ public partial class App : Avalonia.Application
     private static void DoForValidation(ContainerBuilder builder)
     {
         builder.RegisterType<DummyOfflineValidation>()
-            .As<IDeviceStatus<OfflineValidationSystemStatus>>();
+            .As<IDeviceStatus<OfflineValidationSystemStatus>>()
+            .SingleInstance();
 
         builder.RegisterType<DummyOnlineValidation>()
-           .As<IDeviceStatus<OnlineValidationSystemStatus>>();
+           .As<IDeviceStatus<OnlineValidationSystemStatus>>()
+           .SingleInstance();
 
-        builder.RegisterType<OfflineValidationSystem>().AsSelf();
-        builder.RegisterType<OnlineValidationSystem>().AsSelf();
+        builder.RegisterType<OfflineValidationSystem>().AsSelf()
+            .SingleInstance();
+        builder.RegisterType<OnlineValidationSystem>().AsSelf()
+            .SingleInstance();
         builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
     }
 
