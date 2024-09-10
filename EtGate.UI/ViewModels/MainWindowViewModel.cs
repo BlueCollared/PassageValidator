@@ -41,7 +41,7 @@ public class MainWindowViewModel : ViewModelBase
     public ModeViewModel CurrentModeViewModel
     {
         get => _currentModeViewModel;
-        set
+        private set
         {
             if (_currentModeViewModel != value)
             {
