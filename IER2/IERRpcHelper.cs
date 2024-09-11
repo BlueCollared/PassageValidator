@@ -169,17 +169,6 @@ public partial class CIERRpcHelper
         return xmlRpcRaw.SetCredentials(param);
     }    
 
-    public bool GetSetTempoFlow(TempoFlowConf conf)
-    {
-        int[] param2 = new int[2];
-        param2[0] = conf.FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
-        param2[1] = conf.FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
-
-        return xmlRpcRaw.GetSetTempoFlow(param2).Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                ); ;
-    }
     public Option<object[]> GetCurrentPassage()
     {
         throw new NotImplementedException(); // TODO: not done in SGP
@@ -200,33 +189,6 @@ public partial class CIERRpcHelper
         throw new NotImplementedException(); // TODO: not done in SGP
     }
 
-    public class MotorSpeed
-    {
-        public int StandardOpeningSpeed = 100;
-        public int StandardClosingSpeed = 100;
-        public int SecurityOpeningSpeed = 20;
-        public int DisappearanceSpeed = 20;
-        public int FraudClosingSpeed = 100;
-        public int SecurityFraudClosingSpeed = 20;
-    }
-
-    public bool SetMotorSpeed(MotorSpeed conf)
-    {
-        object[] param3 = new object[7];
-        param3[0] = "Entry";    // TODO: for now, copied from SGP
-        param3[1] = conf.StandardOpeningSpeed;
-        param3[2] = conf.StandardClosingSpeed;
-        param3[3] = conf.SecurityOpeningSpeed;
-        param3[4] = conf.DisappearanceSpeed;
-        param3[5] = conf.FraudClosingSpeed;
-        param3[6] = conf.SecurityFraudClosingSpeed;
-
-        return xmlRpcRaw.SetMotorSpeed(param3).Match(
-                Some: o => firstElementIsOne(o),
-                None: () => false
-                );
-    }
-        
 
     public bool SetBuzzerMode(int ModeBuzzer)
     {

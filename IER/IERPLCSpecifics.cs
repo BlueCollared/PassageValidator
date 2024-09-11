@@ -1,13 +1,5 @@
 ﻿namespace IFS2.Equipment.HardwareInterface.IERPLCManager
 {
-    public class IERSWVersion
-    {
-        public string LaneType { get; set; } = "";
-        public string SWVersion { get; set; } = "";
-        public string CompilationDate { get; set; } = "";
-        public string GITVersion { get; set; } = "";
-        public string GITDate { get; set; } = "";
-    }
 
     public enum eIERDoorModes
     {

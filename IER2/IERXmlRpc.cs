@@ -3,7 +3,6 @@ using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 using System.Net;
-
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
 
 
@@ -205,17 +204,14 @@ public class IERXmlRpc : IIERXmlRpc
         }
     }
 
-    public Option<object[]> GetSetTempoFlow(int[] param)
+    public Either<IERApiError, Success> GetSetTempoFlow(TempoFlowConf conf)
     {
-        try
-        { 
-        return worker.GetSetTempoFlow();
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        int[] param2 = new int[2];
+        param2[0] = conf.FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
+        param2[1] = conf.FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
+
+        throw new NotImplementedException();
+
     }
 
     public Either<IERApiError, IERSWVersion> GetVersion()
@@ -372,16 +368,19 @@ public class IERXmlRpc : IIERXmlRpc
             .Bind(TristateChecker);        
     }
 
-    public Option<object[]> SetMotorSpeed(object[] param)
+    public Either<IERApiError, Success> SetMotorSpeed(MotorSpeed conf)
     {
-        try { 
-        return worker.SetMotorSpeed(param);
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return none;
+        object[] param3 = new object[7];
+        param3[0] = "Entry";    // TODO: for now, copied from SGP
+        param3[1] = conf.StandardOpeningSpeed;
+        param3[2] = conf.StandardClosingSpeed;
+        param3[3] = conf.SecurityOpeningSpeed;
+        param3[4] = conf.DisappearanceSpeed;
+        param3[5] = conf.FraudClosingSpeed;
+        param3[6] = conf.SecurityFraudClosingSpeed;
+
+        return MakeCall(() => worker.SetMotorSpeed(param3))
+            .Bind(TristateChecker);
     }
 
     public Option<object[]> SetOutputClient(int[] param)

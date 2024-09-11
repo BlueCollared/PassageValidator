@@ -25,23 +25,6 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
         WAIT_FOR_AUTHORIZATION //The gate is ready to accept a new authorisation to start a boarding (or for a person to enter the gate)
     }
 
-    public class TempoConf
-    {
-        public int FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
-        public int TimeToEnterAfterAuthorisation;              //Time allotted to enter in the lane after an authorisation is granted    public Option<object[]> GetSetTempo(int[] param) 
-        public int TimeToValidateAfterDetection;                  //Time allotted to badge after a user is detected in the lane (in Controlled Mode only)        return xmlRpcRaw.GetSetTempo(param);
-
-        public int TimeToCrossAfterDetection; //Time allotted to completely cross the lane after a person is detected.    public Option<object[]> GetSetTempoFlow(int[] param)
-        public int TimeAllowedToExitSafetyZone;             //Time allotted to exit the safety zone.    {
-        public int TimeAllowedToCrossLaneAfterAuthorisation;         //Time allotted to completely cross the lane after an authorisation is granted        return xmlRpcRaw.GetSetTempoFlow(param);
-    }
-
-    public class TempoFlowConf
-    {
-        // NOTE: it is there in both TempoConf and TempoFlowConf
-        public int FlapRemainOpenPostFreePasses; //Time the obstacles remain open after a user leaves the lane(in Free Mode).
-        public int FlapRemainOpenPostControlledPasses;  //Time the obstacles remain open after a user leaves the lane(Controlled Mode).
-    }
 
 
     internal static class IERRHelper
