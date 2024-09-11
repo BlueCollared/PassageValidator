@@ -17,10 +17,10 @@ namespace EtGate.Devices.Interfaces.Gate;
 abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGateController
 {
     readonly protected ReplaySubject<GateHwStatus> GateStatusSubject = new();
-    public IObservable<GateHwStatus> GateStatusObservable => GateStatusSubject.AsObservable();
+    virtual public IObservable<GateHwStatus> GateStatusObservable => GateStatusSubject.AsObservable();
 
     readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
-    public IObservable<EventInNominalMode> PassageStatusObservable => EventsInNominalModeSubject.AsObservable();
+    virtual public IObservable<EventInNominalMode> PassageStatusObservable => EventsInNominalModeSubject.AsObservable();
     
     public abstract bool SetEmergency();
     public abstract bool SetMaintenance();

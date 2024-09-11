@@ -1,6 +1,8 @@
 ﻿using Domain.Peripherals.Passage;
+using EtGate.IER;
 using IFS2.Common;
 using IFS2.Equipment.DriverInterface;
+using LanguageExt;
 using System.Collections;
 using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
 using GlobalEquipmentDirection = IFS2.Equipment.DriverInterface.GlobalEquipmentDirection;
@@ -29,6 +31,140 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
 
     internal static class IERRHelper
     {
+        public enum GetStatusResponseRawError
+        {
+            InvalidLength,
+            F0,
+            F1,
+            F2,
+            F3,
+            F4,
+            F5,
+            F6,
+            F7,
+            F8,
+            F9,
+            F10,
+            F11,
+            F12,
+            F13,
+            F14,
+            F15,            
+        }
+
+        static public Either<GetStatusResponseRawError, GetStatusResponseRaw> Parse(object[] o)
+        {
+            GetStatusResponseRaw res = new();
+
+            if (o.Length != 15)
+                return GetStatusResponseRawError.InvalidLength;
+
+            if (!(o[0] is string s))
+                return GetStatusResponseRawError.F0;
+            else if (s.Length != 8)
+                return GetStatusResponseRawError.F0;
+            else
+                res.status = s;
+
+            if (o[1] is int nAuthorizationsFromEntrance)
+                res.nAuthorizationsFromEntrance = nAuthorizationsFromEntrance;
+            else
+                return GetStatusResponseRawError.F1;
+
+            if (o[2] is int nAuthorizationsFromExit)
+                res.nAuthorizationsFromExit = nAuthorizationsFromExit;
+            else
+                return GetStatusResponseRawError.F2;
+
+            if (o[3] is string doorOperationgMode)
+                res.doorOperationgMode = doorOperationgMode;
+            else
+                return GetStatusResponseRawError.F3;
+
+            if (o[4] is string operatingModeEntrySide)
+                res.operatingModeEntrySide = operatingModeEntrySide;
+            else
+                return GetStatusResponseRawError.F4;
+
+            if (o[5] is string operatingModeExitSide)
+                res.operatingModeExitSide = operatingModeExitSide;
+            else
+                return GetStatusResponseRawError.F5;
+
+            if (o[6] is int nInfractions)                
+                res.nInfractions = nInfractions;            
+            else
+                return GetStatusResponseRawError.F6;
+
+            if (o[7] is int nTimeouts)
+                res.nTimeouts = nTimeouts;
+            else
+                return GetStatusResponseRawError.F7;
+
+            if (o[8] is int nErrors)
+                res.nErrors = nErrors;
+            else
+                return GetStatusResponseRawError.F8;
+
+            if (o[9] is object[] infractions && nInfractions > 0)
+                {
+                res.infractions = new string[infractions.Length];
+                for (int i = 0; i < infractions.Length; i++)
+                {
+                    if (infractions[i] is string sInfraction)
+                        res.infractions[i] = sInfraction;
+                    else
+                        return GetStatusResponseRawError.F9;
+                }
+            }
+            else
+                return GetStatusResponseRawError.F9;
+
+            if (o[10] is object[] timeouts && nTimeouts > 0)
+            {
+                res.timeouts = new string[timeouts.Length];
+                for (int i = 0; i < timeouts.Length; i++)
+                {
+                    if (timeouts[i] is string sTimeout)
+                        res.timeouts[i] = sTimeout;
+                    else
+                        return GetStatusResponseRawError.F10;
+                }
+            }
+            else
+                return GetStatusResponseRawError.F10;
+
+            if (o[11] is object[] errors && nErrors > 0)
+            {
+                res.errors = new DictionaryXmlString[errors.Length];
+                for (int i = 0; i < errors.Length; i++)
+                {
+                    if (errors[i] is DictionaryXmlString dict)
+                        res.errors[i] = dict;
+                    else
+                        return GetStatusResponseRawError.F11;
+                }
+            }
+            else
+                return GetStatusResponseRawError.F11;
+
+            if (o[12] is string OperatorId)
+                res.OperatorId = OperatorId;
+            else
+                return GetStatusResponseRawError.F12;
+
+            if (o[13] is int nPassengersFromEntracePerpetual)
+                res.nPassengersFromEntracePerpetual = nPassengersFromEntracePerpetual;
+            else
+                return GetStatusResponseRawError.F13;
+
+            if (o[14] is int nPassengersFromExitPerpetual)
+                res.nPassengersFromExitPerpetual = nPassengersFromExitPerpetual;
+            else
+                return GetStatusResponseRawError.F14;
+            
+            return res;
+        }
 
         public static Dictionary<string, object> ResponseParser(object obj)
         {

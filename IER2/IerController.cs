@@ -1,7 +1,11 @@
-﻿using EtGate.Devices.Interfaces.Gate;
+﻿using Domain.Peripherals.Passage;
+using EtGate.Devices.Interfaces.Gate;
+using EtGate.Domain.Services.Gate;
 using EtGate.IER;
 using IFS2.Equipment.DriverInterface;
 using LanguageExt;
+using OneOf;
+using System.Reactive.Linq;
 
 namespace EtGate.Devices.IER;
 
@@ -10,12 +14,19 @@ public class IerController : GateControllerBase
     bool bIsConnected = false;
     Ier_To_DomainAdapter ier;
 
-    public IerController(IIERXmlRpc xmlRpc)
+    public IerController(IIerStatusMonitor xmlRpc, IIerXmlRpc xmlRpc2)
     {
         ier = new Ier_To_DomainAdapter(
-            xmlRpc
+            xmlRpc2
             );
     }
+
+    public override IObservable<GateHwStatus> GateStatusObservable => 
+        base.GateStatusObservable.Select(x=>new GateHwStatus(x.bConnected, x.doorState));
+
+    // TODO:
+    public override IObservable<OneOf<Intrusion, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> PassageStatusObservable 
+        => base.PassageStatusObservable;
 
     public override bool Authorize(int nAuthorizations)
     {

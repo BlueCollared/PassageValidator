@@ -3,7 +3,8 @@ using System.Collections.Immutable;
 
 namespace EtGate.IER
 {
-    public record struct IERStatus(        
+    // TODO: necessary implementation to avoid the use of heap-allocated memory
+    public record struct IERStatus(
         bool bUserProcessing = false,
         bool bIsEmergency = false,
         bool bIsFraudOrIntrusion = false,

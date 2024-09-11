@@ -5,9 +5,9 @@ namespace EtGate.IER
 {
     public class Ier_To_DomainAdapter
     {
-        IIERXmlRpc worker;
+        IIerXmlRpc worker;
 
-        public Ier_To_DomainAdapter(IIERXmlRpc worker)
+        public Ier_To_DomainAdapter(IIerXmlRpc worker)
         {
             this.worker = worker;
         }

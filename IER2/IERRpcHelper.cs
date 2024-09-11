@@ -15,7 +15,7 @@ public partial class CIERRpcHelper
         this.xmlRpcRaw = _iERXmlRpcInterface;
     }
 
-    private IIERXmlRpc xmlRpcRaw;
+    private IIerXmlRpc xmlRpcRaw;
 
     readonly Func<object[], bool> firstElementIsOne = (object[] op) =>
     op.Length > 1
@@ -33,8 +33,9 @@ public partial class CIERRpcHelper
             conf.Mode = FileTransfertMode.SftpWinscp;
             conf.Root = "update";
             conf.ServerUrl = "192.168.0.200";
-            WinSCP_FileTransfert fileTransfert = new WinSCP_FileTransfert(conf);
-            fileTransfert.PutFile(fileName);
+            // TODO: see why its counterpart in SGP too is not compiling because of lack of WinSCP_FileTransfert
+            //WinSCP_FileTransfert fileTransfert = new WinSCP_FileTransfert(conf);
+            //fileTransfert.PutFile(fileName);
         }
         catch
         {

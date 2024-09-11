@@ -9,7 +9,7 @@ using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
 namespace EtGate.IER;
 
 // TODO: this API is bad. It should return parsed structures rather than object[].
-public class IERXmlRpc : IIERXmlRpc
+public class IERXmlRpc : IIerXmlRpc
 {
     private readonly IIERXmlRpcInterface worker;
     readonly Option<object[]> none = Option<object[]>.None;

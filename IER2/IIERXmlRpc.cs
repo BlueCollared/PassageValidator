@@ -14,7 +14,7 @@ namespace EtGate.IER
         UnexpectedException
     };
     public record Success;
-    public interface IIERXmlRpc
+    public interface IIerXmlRpc
     {
         RetTypOfCommand SetAuthorisation(int nbpassage, int direction);
         //Option<object[]> ResetAuthorisation(int[] param);
@@ -42,6 +42,12 @@ namespace EtGate.IER
         RetTypOfCommand SetBuzzerIntrusion(int volume, int note);
         // SetBuzzerIntrusion is not mentioned in the document. Imlies that it must be old        
         Option<object[]> SetBuzzerMode(int[] param);
+    }
+
+    public interface IIerStatusMonitor
+    {
+        void Start();
+        IObservable<Either<IERApiError, IERStatus>> StatusObservable { get; }
     }
 
     public class IERSWVersion
