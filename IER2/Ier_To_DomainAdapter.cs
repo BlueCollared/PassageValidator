@@ -29,7 +29,7 @@ namespace EtGate.IER
 
         public bool SetOOO()
         {
-            return worker.SetMode(DoorsMode.BlockClosed, Option<SideOperatingModes>.None, Option<SideOperatingModes>.None).IsRight;
+            return worker.SetMode(DoorsMode.LockClosed, Option<SideOperatingModes>.None, Option<SideOperatingModes>.None).IsRight;
         }
 
         public bool SetMaintenance()

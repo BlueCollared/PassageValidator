@@ -82,27 +82,6 @@ public partial class CIERRpcHelper
         }
     }
 
-    public Option<CPLCStatus> GetStatusEx()
-    {
-        var extractor = (object result) => {
-            try
-            {
-                CPLCStatus cPLCStatus = new();
-                cPLCStatus.Reset();
-
-                cPLCStatus.rawData = IERRHelper.ResponseParser(result);
-                if (cPLCStatus.rawData.Count > 0)
-                    IERRHelper.DecodeStatusData(cPLCStatus);
-                return cPLCStatus;
-            }
-            catch
-            {
-                return Option<CPLCStatus>.None;
-            }
-        };
-        return xmlRpcRaw.GetStatusFull().Bind(extractor);
-    }
-
     public Option<Dictionary<int, int>> GetCounter()
     {
         var countersExtract = (object[] result) =>

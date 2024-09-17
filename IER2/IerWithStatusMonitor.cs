@@ -43,7 +43,7 @@ namespace EtGate.IER
             })
             .Where(status => status != Nothing.Nothing) // Filter out unsuccessful attempts        
             .Select(x => x.Value())
-            .DistinctUntilChanged(); // TODO: see how is it different from Distinct?
+            .DistinctUntilChanged();
 
         IIerXmlRpc worker;
 

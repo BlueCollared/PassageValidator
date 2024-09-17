@@ -346,10 +346,10 @@ public class IERXmlRpc : IIerXmlRpc
     };
 
     static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
-        {DoorsMode.BlockClosed, "BlockClosed" },
-        {DoorsMode.Nc, "Nc" },
-        {DoorsMode.Noa, "Noa" },
-        {DoorsMode.Nob, "Nob" },
+        {DoorsMode.LockClosed, "BlockClosed" },
+        {DoorsMode.NormallyClosed, "Nc" },
+        {DoorsMode.NormallyOpenedA, "Noa" },
+        {DoorsMode.NormallyOpenedB, "Nob" },
         {DoorsMode.OpticalA, "OpticalA" },
         {DoorsMode.OpticalB, "OpticalB" },
         {DoorsMode.LockedOpenA, "LockedOpenA" },
