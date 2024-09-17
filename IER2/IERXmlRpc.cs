@@ -4,6 +4,7 @@ using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 using System.Net;
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
+using IERApiResult2 = LanguageExt.Either<EtGate.IER.IERApiError, object>;
 
 
 namespace EtGate.IER;
@@ -22,23 +23,23 @@ public class IERXmlRpc : IIerXmlRpc
     #region Helper
     static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) =>
                   result.Length == 1
-                && result[0] is int
-                && (int)result[0] == 0 ? IERApiError.InvalidNumberOfParameters : result;
+                && result[0] is int xy
+                && xy == 0 ? IERApiError.InvalidNumberOfParameters : result;
 
     static readonly Func<object[], IERApiResult> CheckZeroethParam_Minus1 = (result) =>
               result.Length == 1
-            && result[0] is int
-            && (int)result[0] == -1 ? IERApiError.DeviceRefused : result;
+            && result[0] is int xy
+            && xy == -1 ? IERApiError.DeviceRefused : result;
 
     static readonly Func<object[], IERApiResult> CheckZeroethParam_0 = (result) =>
               result.Length == 1
-            && result[0] is int
-            && (int)result[0] == 0 ? IERApiError.DeviceRefused : result;
+            && result[0] is int xy
+            && xy == 0 ? IERApiError.DeviceRefused : result;
 
     static readonly Func<object[], Either<IERApiError, Success>> CheckZeroethParam_1_MeansSuccess = (result) =>
-              (result.Length == 1
-            && result[0] is int
-            && (int)result[0] == 1) ? new Success() : IERApiError.UnexpectedAnswer;
+              result.Length == 1
+            && result[0] is int xy
+            && xy == 1 ? new Success() : IERApiError.UnexpectedAnswer;
 
     static readonly Func<object[], Either<IERApiError, Success>> TristateChecker = (result) =>
     {
@@ -149,6 +150,21 @@ public class IERXmlRpc : IIerXmlRpc
         return none;
     }
 
+    IERApiResult2 MakeCall(Func<object> act)
+    {
+        try
+        {
+            return act();
+        }
+        catch (WebException exp)
+        {
+            return IERApiError.DeviceInaccessible;
+        }
+        catch (Exception exp)
+        {
+            return IERApiError.UnexpectedException;
+        }
+    }
     IERApiResult MakeCall(Func<object[]> act)
     {
         try
@@ -243,7 +259,7 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Either<IERApiError, Success> Reboot()
     {
-        return MakeCall(() => worker.SendReboot())
+        return MakeCall(() => worker.SendReboot())            
             .Bind(CheckZeroethParam_Minus1)
             .Bind(CheckZeroethParam_1_MeansSuccess);
     }
@@ -346,10 +362,10 @@ public class IERXmlRpc : IIerXmlRpc
     };
 
     static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
-        {DoorsMode.BlockClosed, "BlockClosed" },
-        {DoorsMode.Nc, "Nc" },
-        {DoorsMode.Noa, "Noa" },
-        {DoorsMode.Nob, "Nob" },
+        {DoorsMode.LockClosed, "BlockClosed" },
+        {DoorsMode.NormallyClosed, "Nc" },
+        {DoorsMode.NormallyOpenedA, "Noa" },
+        {DoorsMode.NormallyOpenedB, "Nob" },
         {DoorsMode.OpticalA, "OpticalA" },
         {DoorsMode.OpticalB, "OpticalB" },
         {DoorsMode.LockedOpenA, "LockedOpenA" },
@@ -395,18 +411,12 @@ public class IERXmlRpc : IIerXmlRpc
         return none;
     }
 
-    public Option<object> GetStatusFull()
-    {
-        try
-        {
-            return worker.GetStatusStd(); // TODO: there are two versions GetStatusStd and GetStatus
-        }
-        catch (WebException)
-        {
-            MarkDisconnected();
-        }
-        return Option<object>.None;
-
+    public Either<IERApiError, GetStatusStdRaw> GetStatusStd()
+    {        
+        return MakeCall(() => worker.GetStatusStd())
+            .Bind(result =>
+            IERRHelper.ProcessGetStatusStd(result)
+                .MapLeft(x => IERApiError.UnexpectedAnswer));            
     }
 
     public Either<IERApiError, IERStatus> GetStatus()

@@ -9,14 +9,14 @@ namespace EtGate.IER
     public class IerWithStatusMonitor : IIerStatusMonitor, IIerXmlRpc
     {
         public IObservable<Either<IERApiError, IERStatus>> StatusObservable =>
-            // TODO: is it fundamentally good? are we sure that if the processing inside `Select` takes more that the 
+            // Q: is it fundamentally good? are we sure that if the processing inside `Select` takes more that the 
             // timespan mentioned in .Interval, it would not cause the processing of next element?
+            // Ans: yes, checked in sample program
             Observable.Interval(TimeSpan.FromMilliseconds(50))
-            .Select<long, Either<Nothing, Either<IERApiError, IERStatus>>>(_ =>
+            .Select(_ =>
             {
                 // double-check locking for efficiency
-                while(true)
-                //for (int i = 1; i <= 100; i++)
+                while(true)                
                 {
                     bool lockTaken = false;
                     try
@@ -35,15 +35,12 @@ namespace EtGate.IER
                     {
                         if (lockTaken)
                         {
-                            Monitor.Exit(lck);
+                            Monitor.Exit(lck);                    
                         }
-                    }                    
-                }
-                //return Nothing.Nothing;
+                    }
+                }                
             })
-            .Where(status => status != Nothing.Nothing) // Filter out unsuccessful attempts        
-            .Select(x => x.Value())
-            .DistinctUntilChanged(); // TODO: see how is it different from Distinct?
+            .DistinctUntilChanged();
 
         IIerXmlRpc worker;
 
@@ -110,11 +107,11 @@ namespace EtGate.IER
             }
         }
 
-        public Option<object> GetStatusFull()
+        public Either<IERApiError, GetStatusStdRaw> GetStatusStd()
         {
             lock (lck)
             {
-                return worker.GetStatusFull();
+                return worker.GetStatusStd();
             }
         }
 

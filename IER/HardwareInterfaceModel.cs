@@ -597,14 +597,14 @@ namespace IFS2.Equipment.DriverInterface
     }
     public enum DoorsMode
     {       
-        BlockClosed, /*Locked CLosed*/
-        Nc,  /*Normally Closed*/
-        Noa, /*Normally Opened A*/
-        Nob, /*Normally Opened B*/
-        OpticalA, /*Optical Mode A*/
-        OpticalB, /*Optical Mode B*/
-        LockedOpenA, /*Blocked Open entry */
-        LockedOpenB /*Blocked Open exit */   
+        LockClosed,
+        NormallyClosed,
+        NormallyOpenedA,
+        NormallyOpenedB,
+        OpticalA,
+        OpticalB,
+        LockedOpenA,
+        LockedOpenB
     };
 
     public enum eDoorCurrentState //Flaps current state

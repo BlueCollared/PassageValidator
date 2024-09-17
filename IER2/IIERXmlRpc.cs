@@ -25,7 +25,7 @@ namespace EtGate.IER
         Option<object[]> ApplyUpdate();
         RetTypOfCommand SetDate(DateTime dt, string timezone = "");
         Either<IERApiError, DateTime> GetDate();
-        Option<object> GetStatusFull();
+        Either<IERApiError, GetStatusStdRaw> GetStatusStd();
         Either<IERApiError, IERStatus> GetStatus();
         Either<IERApiError, IERSWVersion> GetVersion();
         Option<object[]> GetCounter();

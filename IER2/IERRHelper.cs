@@ -3,8 +3,21 @@ using EtGate.IER;
 using IFS2.Common;
 using IFS2.Equipment.DriverInterface;
 using LanguageExt;
+using LanguageExt.ClassInstances;
+using LanguageExt.Common;
+using LanguageExt.Pipes;
+using LanguageExt.TypeClasses;
+using LanguageExt.UnitsOfMeasure;
+using OneOf.Types;
+using System;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using GlobalEquipmentDirection = IFS2.Equipment.DriverInterface.GlobalEquipmentDirection;
 using GlobalEquipmentEntryMode = IFS2.Equipment.DriverInterface.GlobalEquipmentEntryMode;
 using GlobalEquipmentExitMode = IFS2.Equipment.DriverInterface.GlobalEquipmentExitMode;
@@ -49,7 +62,692 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             F12,
             F13,
             F14,
-            F15,            
+            F15,
+        }
+
+        static readonly Dictionary<string, DoorsMode> doorsModeDi = new(){
+            { "00318", DoorsMode.LockClosed },
+            { "00320", DoorsMode.OpticalA },
+            { "00321", DoorsMode.OpticalB },
+            { "00323", DoorsMode.NormallyClosed },
+            { "00325", DoorsMode.NormallyOpenedA },
+            { "00326", DoorsMode.NormallyOpenedB },
+            { "00327", DoorsMode.LockedOpenA },
+            { "00328", DoorsMode.LockedOpenB }
+        };
+
+        static readonly Dictionary<string, DoorsMode> doorsModeDi2 = new(){
+            { "OP_MODE_BLOCK_CLOSED'", DoorsMode.LockClosed },
+            { "OP_MODE_OPTICAL_A", DoorsMode.OpticalA },
+            { "OP_MODE_OPTICAL_B", DoorsMode.OpticalB },
+            { "OP_MODE_NC", DoorsMode.NormallyClosed },
+            { "OP_MODE_NOA", DoorsMode.NormallyOpenedA },
+            { "OP_MODE_NOB", DoorsMode.NormallyOpenedB },
+            { "OP_MODE_LOCKED_OPEN_A'", DoorsMode.LockedOpenA },
+            { "OP_MODE_LOCKED_OPEN_B", DoorsMode.LockedOpenB }
+        };
+
+        static readonly Dictionary<string, SideOperatingModes> sideOpModeDi = new() {
+            {"00315", SideOperatingModes.Controlled },
+            {"00316", SideOperatingModes.Free },
+            {"00317", SideOperatingModes.Closed },
+        };
+
+        static readonly Dictionary<string, eInfractions> infractionsDi = new(){
+            { "01005", eInfractions.LANG_INTRUSION_A },
+            { "01006", eInfractions.LANG_INTRUSION_B },
+            { "01007", eInfractions.LANG_OPPOSITE_INTRUSION_A },
+            { "01008", eInfractions.LANG_OPPOSITE_INTRUSION_B },
+            { "01012", eInfractions.LANG_FRAUD_A },
+            { "01013", eInfractions.LANG_FRAUD_B },
+            { "01047", eInfractions.LANG_FRAUD_DISAPPEARANCE },
+            { "01048", eInfractions.LANG_FRAUD_RAMPING },
+            { "01052", eInfractions.LANG_FRAUD_JUMP },
+            { "01055", eInfractions.LANG_FRAUD_HOLDING },
+            { "01056", eInfractions.LANG_PREALARM_A },
+            { "01057", eInfractions.LANG_PREALARM_B },
+            { "01063", eInfractions.LANG_FRAUD_MANTRAP },
+            { "01066", eInfractions.LANG_FRAUD_UNEXPECTED_MOTION }
+        };
+
+        static readonly Dictionary<string, eInfractions> infractionsDi2 = new()
+        {
+            { "LANG_FRAUD_A", eInfractions.LANG_FRAUD_A },
+            { "LANG_FRAUD_B", eInfractions.LANG_FRAUD_B },
+            { "LANG_FRAUD_DISAPPEARANCE", eInfractions.LANG_FRAUD_DISAPPEARANCE },
+            { "LANG_FRAUD_HOLDING", eInfractions.LANG_FRAUD_HOLDING },
+            { "LANG_FRAUD_JUMP", eInfractions.LANG_FRAUD_JUMP },
+            { "LANG_FRAUD_RAMPING", eInfractions.LANG_FRAUD_RAMPING },
+            { "LANG_FRAUD_UNEXPECTED_MOTION", eInfractions.LANG_FRAUD_UNEXPECTED_MOTION },
+            { "LANG_INTRUSION_A", eInfractions.LANG_INTRUSION_A },
+            { "LANG_INTRUSION_B", eInfractions.LANG_INTRUSION_B },
+            { "LANG_OPPOSITE_INTRUSION_A", eInfractions.LANG_OPPOSITE_INTRUSION_A },
+            { "LANG_OPPOSITE_INTRUSION_B", eInfractions.LANG_OPPOSITE_INTRUSION_B },
+            { "LANG_PREALARM_A", eInfractions.LANG_PREALARM_A },
+            { "LANG_PREALARM_B", eInfractions.LANG_PREALARM_B },
+            { "LANG_FRAUD_MANTRAP", eInfractions.LANG_FRAUD_MANTRAP }
+        };
+
+        static readonly Dictionary<string, ePassageTimeouts> timeoutsDi = new()
+        {
+            { "01009", ePassageTimeouts.LANG_ENTRY_TIMEOUT_A },
+            { "01010", ePassageTimeouts.LANG_ENTRY_TIMEOUT_B },
+            { "01011", ePassageTimeouts.LANG_EXIT_TIMEOUT },
+            { "01045", ePassageTimeouts.LANG_NO_ENTRY_TIMEOUT },
+            { "01046", ePassageTimeouts.LANG_NO_CROSSING_TIMEOUT },
+            { "01054", ePassageTimeouts.LANG_SECURITY_TIMEOUT },
+            { "01059", ePassageTimeouts.LANG_VALIDATION_TIMEOUT }
+        };
+
+        static readonly Dictionary<string, ePassageTimeouts> timeoutsDi2 = new()
+        {
+            { "LANG_ENTRY_TIMEOUT_A", ePassageTimeouts.LANG_ENTRY_TIMEOUT_A },
+            { "LANG_ENTRY_TIMEOUT_B", ePassageTimeouts.LANG_ENTRY_TIMEOUT_B },
+            { "LANG_EXIT_TIMEOUT", ePassageTimeouts.LANG_EXIT_TIMEOUT },
+            { "LANG_NO_ENTRY_TIMEOUT", ePassageTimeouts.LANG_NO_ENTRY_TIMEOUT },
+            { "LANG_NO_CROSSING_TIMEOUT", ePassageTimeouts.LANG_NO_CROSSING_TIMEOUT },
+            { "LANG_SECURITY_TIMEOUT", ePassageTimeouts.LANG_SECURITY_TIMEOUT },
+            { "LANG_VALIDATION_TIMEOUT", ePassageTimeouts.LANG_VALIDATION_TIMEOUT }
+        };
+
+        static readonly Dictionary<string, eDoorsStatesMachine> exceptionModeDi = new()
+        {
+            {"EGRESS", eDoorsStatesMachine.EGRESS },
+            {"EMERGENCY", eDoorsStatesMachine.EMERGENCY },
+            {"LOCKED_OPEN", eDoorsStatesMachine.LOCKED_OPEN },
+            {"MAINTENANCE", eDoorsStatesMachine.MAINTENANCE },
+            {"NOMINAL", eDoorsStatesMachine.NOMINAL },
+            {"POWER_DOWN", eDoorsStatesMachine.POWER_DOWN },
+            {"TECHNICAL_FAILURE", eDoorsStatesMachine.TECHNICAL_FAILURE }
+        };
+
+        static readonly Dictionary<string, eDoorNominalModes> doorsModeDi3 = new()
+        {
+            { "OPEN_DOOR", eDoorNominalModes.OPEN_DOOR },
+            { "CLOSE_DOOR", eDoorNominalModes.CLOSE_DOOR },
+            { "FRAUD", eDoorNominalModes.FRAUD },
+            { "INTRUSION", eDoorNominalModes.INTRUSION },
+            { "WAIT_FOR_AUTHORIZATION", eDoorNominalModes.WAIT_FOR_AUTHORIZATION }
+        };
+
+        static readonly Dictionary<string, eIERPLCErrors> plcErrors = new()
+        {
+            {"ERRORS_BLOCKED_MOTOR", eIERPLCErrors.ERRORS_BLOCKED_MOTOR },
+            {"ERRORS_CAMERA_HEIGHT", eIERPLCErrors.ERRORS_CAMERA_HEIGHT },
+            {"ERRORS_CAMERA_NG", eIERPLCErrors.ERRORS_CAMERA_NG },
+            {"ERRORS_CAMERA_VERSION", eIERPLCErrors.ERRORS_CAMERA_VERSION },
+            {"ERRORS_CAN", eIERPLCErrors.ERRORS_CAN },
+            {"ERRORS_CAN_HEARTBEAT", eIERPLCErrors.ERRORS_CAN_HEARTBEAT },
+            {"ERRORS_CAN_OVERFLOW", eIERPLCErrors.ERRORS_CAN_OVERFLOW },
+            {"ERRORS_CAN_PRODUCT_CODE", eIERPLCErrors.ERRORS_CAN_PRODUCT_CODE },
+            {"ERRORS_CAN_SW_VERSION", eIERPLCErrors.ERRORS_CAN_SW_VERSION },
+            {"ERRORS_CELL_IR", eIERPLCErrors.ERRORS_CELL_IR },
+            {"ERRORS_CPU", eIERPLCErrors.ERRORS_CPU },
+            {"ERRORS_CUSTOMER", eIERPLCErrors.ERRORS_CUSTOMER },
+            {"ERRORS_CUSTOMER_FAILURE", eIERPLCErrors.ERRORS_CUSTOMER_FAILURE },
+            {"ERRORS_DETECTION", eIERPLCErrors.ERRORS_DETECTION },
+            {"ERRORS_DIRAS_EMITTER", eIERPLCErrors.ERRORS_DIRAS_EMITTER },
+            {"ERRORS_DIRAS_RECEIVER", eIERPLCErrors.ERRORS_DIRAS_RECEIVER },
+            {"ERRORS_EGRESS", eIERPLCErrors.ERRORS_EGRESS },
+            {"ERRORS_EXT", eIERPLCErrors.ERRORS_EXT },
+            {"ERRORS_FRONTAL_DETECTION", eIERPLCErrors.ERRORS_FRONTAL_DETECTION },
+            {"ERRORS_FRONTAL_OCCULTED", eIERPLCErrors.ERRORS_FRONTAL_OCCULTED },
+            {"ERRORS_FTP", eIERPLCErrors.ERRORS_FTP },
+            {"ERRORS_HALL_EFFECT_FAILURE", eIERPLCErrors.ERRORS_HALL_EFFECT_FAILURE },
+            {"ERRORS_INSTALLATION", eIERPLCErrors.ERRORS_INSTALLATION },
+            {"ERRORS_LATERAL_DETECTION", eIERPLCErrors.ERRORS_LATERAL_DETECTION },
+            {"ERRORS_LCD", eIERPLCErrors.ERRORS_LCD },
+            {"ERRORS_MODBUS_SERIAL_FAILURE", eIERPLCErrors.ERRORS_MODBUS_SERIAL_FAILURE },
+            {"ERRORS_MODBUS_TCP_FAILURE", eIERPLCErrors.ERRORS_MODBUS_TCP_FAILURE },
+            {"ERRORS_MOTOR_BRAKE", eIERPLCErrors.ERRORS_MOTOR_BRAKE },
+            {"ERRORS_MOTOR_BRAKE_FAILURE", eIERPLCErrors.ERRORS_MOTOR_BRAKE_FAILURE },
+            {"ERRORS_MOTOR_CARD", eIERPLCErrors.ERRORS_MOTOR_CARD },
+            {"ERRORS_MOTOR_CARD_CONFIG", eIERPLCErrors.ERRORS_MOTOR_CARD_CONFIG },
+            {"ERRORS_MOTOR_INIT", eIERPLCErrors.ERRORS_MOTOR_INIT },
+            {"ERRORS_MOTOR_PEAK_CURRENT", eIERPLCErrors.ERRORS_MOTOR_PEAK_CURRENT },
+            {"ERRORS_OBSTRUCTED_CELLS", eIERPLCErrors.ERRORS_OBSTRUCTED_CELLS },
+            {"ERRORS_OPENED_SERVICE_DOOR", eIERPLCErrors.ERRORS_OPENED_SERVICE_DOOR },
+            {"ERRORS_READER", eIERPLCErrors.ERRORS_READER },
+            {"ERRORS_SOUNDPLAYER", eIERPLCErrors.ERRORS_SOUNDPLAYER },
+            {"ERRORS_SYSTEMD_FAILURE", eIERPLCErrors.ERRORS_SYSTEMD_FAILURE },
+            {"ERRORS_TEMPERATURE", eIERPLCErrors.ERRORS_TEMPERATURE },
+            {"ERRORS_THERMOPILE", eIERPLCErrors.ERRORS_THERMOPILE },
+            {"ERRORS_USINE_TEST_WARNING", eIERPLCErrors.ERRORS_USINE_TEST_WARNING }
+        };
+
+        static public Either<List<string> , GetStatusStdRaw> ProcessGetStatusStd(object ip)
+        {
+            if (ip == null)
+                return (new List<string> { "null input" });
+            if (!(ip is IDictionary<string, object> idict))
+                return (new List<string> { "input not a dictionary" });
+            
+            ConcurrentBag<string> errors = new();
+            ConcurrentBag<string> warnings = new();
+
+            GetStatusStdRaw res = new();
+
+            // TODO: see if AsParallel() is really needed, specially when gate is in nominal mode. In fact, it could be harming the performance
+            idict.AsParallel().ForAll(kvp =>
+            {
+                switch (kvp.Key)
+                {
+                    case "AuthorizationA":
+                        {
+                            if (kvp.Value is int i)
+                                res.AuthorizationA = i;
+                            else
+                                errors.Add("AuthorizationA");
+                            break;
+                        }
+                    case "AuthorizationB":
+                        {
+                            if (kvp.Value is int i)
+                                res.AuthorizationB = i;
+                            else
+                                errors.Add("AuthorizationB");
+                            break;
+                        }
+                    case "PassageA":
+                        {
+                            if (kvp.Value is int i)
+                                res.PassageA = i;
+                            else
+                                errors.Add("PassageA");
+                            break;
+                        }
+                    case "PassageB":
+                        {
+                            if (kvp.Value is int i)
+                                res.PassageB = i;
+                            else
+                                errors.Add("PassageB");
+                            break;
+                        }
+                    case "alarms":
+                        {
+                            int alarms = 0;
+                            if (kvp.Value is object[] a)
+                            {
+                                foreach (var o in a)
+                                {
+                                    if (o is string s)
+                                    {
+                                        if (infractionsDi2.TryGetValue(s, out eInfractions v))
+                                            alarms |= (int)v;
+                                    }
+                                    else
+                                        errors.Add("alarms value is not string");
+                                }
+
+                                res.alarms = alarms;
+                            }
+                            else
+                                errors.Add("alarms");
+                            break;
+                        }
+                    case "door_mode":
+                        {
+                            if (kvp.Value is string s)
+                            {
+                                if (doorsModeDi2.TryGetValue(s, out DoorsMode v))
+                                    res.door_mode = v;
+                                else
+                                    errors.Add("door_mode value " + s);
+                            }
+                            else
+                                errors.Add("door_mode");
+                            break;
+                        }
+                    case "doors":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("doors is not list");
+                                break;
+                            }
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "brake":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.brakeEnabled = i == 1;
+                                            else
+                                                errors.Add("brake");
+                                            break;
+                                        }
+                                    case "error":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.doorFailure = i == 1;
+                                            else
+                                                errors.Add("error");
+                                            break;
+                                        }
+                                    case "initialized":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.doorinitialized = i == 1;
+                                            else
+                                                errors.Add("initialized");
+                                            break;
+                                        }
+                                    case "safety_zone":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.safety_zone = i == 1;
+                                            else
+                                                errors.Add("safety_zone");
+                                            break;
+                                        }
+                                    case "safety_zone_A":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.safety_zone_A = i == 1;
+                                            else
+                                                errors.Add("safety_zone_A");
+                                            break;
+                                        }
+                                    case "safety_zone_B":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.safety_zone_B = i == 1;
+                                            else
+                                                errors.Add("safety_zone_B");
+                                            break;
+                                        }
+                                    case "state":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.doorCurrentMovementOfObstacle = i;
+                                            else
+                                                errors.Add("state");
+                                            break;
+                                        }
+                                    case "unexpected_motion":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.door_unexpected_motion = i == 1;
+                                            else
+                                                errors.Add("unexpected_motion");
+                                            break;
+                                        }
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    case "failures":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("failures is not dictionary");
+                                break;
+                            }
+                            {
+                                di.TryGetValue("major", out object major);
+
+                                if (!(major is IList a))
+                                {
+                                    errors.Add("failures.major");
+                                    break;
+                                }
+
+                                res.majorTechnicalFailures = new();
+                                foreach (object o in a)
+                                {
+                                    if (o is string s)
+                                        if (plcErrors.TryGetValue(s, out eIERPLCErrors v))
+                                            res.majorTechnicalFailures.Add(v);
+                                        else
+                                        {
+                                            warnings.Add("failures.major " + s);
+                                            //break;
+                                        }
+                                    else
+                                    {
+                                        errors.Add("unexpected failure isn't string");
+                                        break;
+                                    }
+                                }
+                            }
+
+                            {
+                                di.TryGetValue("minor", out object minor);
+
+                                if (!(minor is IList a))
+                                {
+                                    errors.Add("failures.minor");
+                                    break;
+                                }
+
+                                res.minorTechnicalFailures = new();
+                                foreach (object o in a)
+                                {
+                                    if (o is string s)
+                                        if (plcErrors.TryGetValue(s, out eIERPLCErrors v))
+                                            res.minorTechnicalFailures.Add(v);
+                                        else
+                                        {
+                                            warnings.Add("failures.minor " + s);
+                                            //break;
+                                        }
+                                    else
+                                    {
+                                        errors.Add("unexpected failure isn't string");
+                                        break;
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    case "inputs":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("inputs is not dictionary");
+                                break;
+                            }
+
+                            int customersActive = 0;
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "customer_1":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 1;
+                                            else
+                                                errors.Add("customer_1");
+                                            break;
+                                        }
+                                        case "customer_2":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 2;
+                                            else
+                                                errors.Add("customer_2");
+                                            break;
+                                        }
+                                        case "customer_3":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 4;
+                                            else
+                                                errors.Add("customer_3");
+                                            break;
+                                        }
+                                        case "customer_4":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 8;
+                                            else
+                                                errors.Add("customer_4");
+                                            break;
+                                        }
+                                        case "customer_5":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 16;
+                                            else
+                                                errors.Add("customer_5");
+                                            break;
+                                        }
+                                        case "customer_6":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                customersActive = i |= 32;
+                                            else
+                                                errors.Add("customer_6");
+                                            break;
+                                        }
+                                    case "emergency":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.emergency = i == 1;
+                                            else
+                                                errors.Add("emergency");
+                                            break;
+                                        }
+                                    case "entry_lock_open":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.entryLockOpen = i == 1;
+                                            else
+                                                errors.Add("entry_lock_open");
+                                            break;
+                                        }
+                                    case "ups":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.systemPoweredByUPS = i == 1;
+                                            else
+                                                errors.Add("ups");
+                                            break;
+                                        }
+                                }
+                                res.customersActive = customersActive;
+                            }
+                            break;
+                        }
+                    case "people":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("people is not dictionary");
+                                break;
+                            }
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "A":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.peopleDetectedInsideA = i;
+                                            else
+                                                errors.Add("people.A");
+                                            break;
+                                        }
+                                    case "B":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.peopleDetectedInsideB = i;
+                                            else
+                                                errors.Add("people.B");
+                                            break;
+                                        }
+                                    default:
+                                        warnings.Add("people bad key" + kvp1.Key);
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+                    case "presence":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("presence is not dictionary");
+                                break;
+                            }
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "A":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.presencesDetectedInsideA = i;
+                                            else
+                                                errors.Add("presence.A");
+                                            break;
+                                        }
+                                    case "B":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.presencesDetectedInsideB = i;
+                                            else
+                                                errors.Add("presence.B");
+                                            break;
+                                        }
+                                    default:
+                                        warnings.Add("presence bad key" + kvp1.Key);
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+                    case "reader_lock":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("reader_lock is not dictionary");
+                                break;
+                            }
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "A":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.readerLockedSideA = i;
+                                            else
+                                                errors.Add("reader_lock.A");
+                                            break;
+                                        }
+                                    case "B":
+                                        {
+                                            if (kvp1.Value is int i)
+                                                res.readerLockedSideB = i;
+                                            else
+                                                errors.Add("reader_lock.B");
+                                            break;
+                                        }
+                                    default:
+                                        warnings.Add("reader_lock bad key" + kvp1.Key);
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+                    case "state_machine":
+                        {
+                            var di = kvp.Value as IDictionary<string, object>;
+                            if (di == null)
+                            {
+                                errors.Add("state_machine is not dictionary");
+                                break;
+                            }
+                            foreach (var kvp1 in di)
+                            {
+                                switch (kvp1.Key)
+                                {
+                                    case "exception_mode":
+                                        {
+                                            if (kvp1.Value is string s)
+                                            {
+                                                if (exceptionModeDi.TryGetValue(s, out eDoorsStatesMachine v))
+                                                    res.exceptionMode = v;
+                                                else
+                                                    errors.Add("exception_mode value " + s);
+                                            }
+                                            else
+                                                errors.Add("exception_mode");
+                                            break;
+                                        }
+                                    case "state_if_in_nominal":
+                                        {
+                                            if (kvp1.Value is string s)
+                                            {
+                                                if (doorsModeDi3.TryGetValue(s, out eDoorNominalModes v))
+                                                    res.stateIfInNominal = v;
+                                                else
+                                                    errors.Add("state_if_in_nominal value " + s);
+                                            }
+                                            else
+                                                errors.Add("state_if_in_nominal");
+                                            break;
+                                        }
+                                    default:
+                                        warnings.Add("state_machine bad key" + kvp1.Key);
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+                    case "timeouts":
+                        {
+                            var idict1 = kvp.Value as IList;
+                            if (idict1 == null)
+                            {
+                                errors.Add("timeouts is not list");
+                                break;
+                            }
+
+                            if (kvp.Value is object[] a)
+                            {
+                                int timeouts = 0;
+                                foreach (var o in a)
+                                {
+                                    if (o is string s)
+                                    {
+                                        if (timeoutsDi2.TryGetValue(s, out ePassageTimeouts v))
+                                            timeouts |= (int)v;
+                                        else
+                                            errors.Add("timeouts value " + s);
+                                    }
+                                    else
+                                        errors.Add("timeouts value is not string");
+                                }
+                                res.timeouts = timeouts;
+                            }
+                            else
+                                errors.Add("timeouts");
+                            break;
+                        }
+                }
+            });
+            return errors.Count > 0 ? errors.ToList() : res;
+        }
+
+        static public GetStatusResponseLittleProcessed Process(GetStatusResponseRaw raw)
+        {
+            GetStatusResponseLittleProcessed res = new();
+            res.doorMode = doorsModeDi[raw.doorOperationgMode];
+            res.opModeEntry = sideOpModeDi[raw.operatingModeEntrySide];
+            res.opModeExit = sideOpModeDi[raw.operatingModeExitSide];
+            res.infractions = raw.infractions.Select(s => infractionsDi[s]).ToArr();
+            res.timeouts = raw.timeouts.Select(s => timeoutsDi[s]).ToArr();
+            res.nAuthorizationsFromEntrance = raw.nAuthorizationsFromEntrance;
+            res.nAuthorizationsFromExit = raw.nAuthorizationsFromExit;
+            res.OperatorId = raw.OperatorId;
+            res.nPassengersFromEntracePerpetual = raw.nPassengersFromEntracePerpetual;
+            res.nPassengersFromExitPerpetual = raw.nPassengersFromExitPerpetual;
+
+
+            string s = raw.status;
+            res.bUserProcessing = s[0] == '1';
+            res.bDoorOpen = s[1] == '1';
+            res.bFraudOrIntrusion = s[2] == '1';
+            res.bTimeout = s[3] == '1';
+            res.bTechnicalDefect = s[4] == '1';
+            res.bEmergency = s[5] == '1';
+            res.bMaintenance = s[6] == '1';
+            res.bSideModesForced = s[7] == '1';
+
+            return res;
         }
 
         static public Either<GetStatusResponseRawError, GetStatusResponseRaw> Parse(object[] o)
@@ -91,8 +789,8 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             else
                 return GetStatusResponseRawError.F5;
 
-            if (o[6] is int nInfractions)                
-                res.nInfractions = nInfractions;            
+            if (o[6] is int nInfractions)
+                res.nInfractions = nInfractions;
             else
                 return GetStatusResponseRawError.F6;
 
@@ -107,7 +805,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                 return GetStatusResponseRawError.F8;
 
             if (o[9] is object[] infractions && nInfractions > 0)
-                {
+            {
                 res.infractions = new string[infractions.Length];
                 for (int i = 0; i < infractions.Length; i++)
                 {
@@ -162,746 +860,8 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                 res.nPassengersFromExitPerpetual = nPassengersFromExitPerpetual;
             else
                 return GetStatusResponseRawError.F14;
-            
+
             return res;
-        }
-
-        public static Dictionary<string, object> ResponseParser(object obj)
-        {
-            Dictionary<string, object> dict = new();
-
-            if (typeof(IDictionary).IsAssignableFrom(obj.GetType()))
-            {
-                IDictionary idict = (IDictionary)obj;
-
-                foreach (object key in idict.Keys)
-                {
-                    if (typeof(IDictionary).IsAssignableFrom(idict[key].GetType()))
-                    {
-                        var di = ResponseParser(idict[key]);
-                        if (di.Count > 0)
-                            dict.Add(objToString(key), di);
-                    }
-                    else
-                        dict.Add(objToString(key), idict[key]);
-                }
-            }
-
-            return dict;
-        }
-        public static DoorsMode TransformFromChangeModeDoorsMode(ChangeEquipmentMode EM, DoorModeConf conf)
-        {
-            DoorsMode _doorsMode = DoorsMode.BlockClosed;
-            if (EM.Mode == GlobalEquipmentMode.InService)
-            {
-                if (EM.Aisle == GlobalEquipmentAisle.NormallyClosed)
-                {
-                    _doorsMode = DoorsMode.Nc;
-                }
-                else if (EM.Aisle == GlobalEquipmentAisle.NormallyOpen)
-                {
-                    switch (EM.Direction)
-                    {
-                        case GlobalEquipmentDirection.Entry:
-                            {
-                                switch (EM.EntryMode)
-                                {
-                                    case GlobalEquipmentEntryMode.Controlled:
-                                        _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
-                                        break;
-                                    case GlobalEquipmentEntryMode.Free:
-                                    case GlobalEquipmentEntryMode.FreeControlled:
-                                        _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
-                                        break;
-                                }
-                                break;
-                            }
-                        case GlobalEquipmentDirection.Exit:
-                            {
-                                switch (EM.ExitMode)
-                                {
-                                    case GlobalEquipmentExitMode.Controlled:
-                                        _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
-                                        break;
-                                    case GlobalEquipmentExitMode.Free:
-                                    case GlobalEquipmentExitMode.FreeControlled:
-                                        _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
-                                        break;
-                                }
-                                break;
-                            }
-                        case GlobalEquipmentDirection.BiDirectional:
-                            {
-                                switch (EM.EntryMode)
-                                {
-                                    case GlobalEquipmentEntryMode.Controlled:
-                                        switch (EM.ExitMode)
-                                        {
-                                            case GlobalEquipmentExitMode.Controlled:
-                                                _doorsMode = conf.ForceDoorinEntrySide ? DoorsMode.Noa : DoorsMode.Nob;
-                                                break;
-                                            case GlobalEquipmentExitMode.Free:
-                                            case GlobalEquipmentExitMode.FreeControlled:
-                                                _doorsMode = conf.ForceDoorinFreeSide ? DoorsMode.Nob : DoorsMode.Noa;
-                                                break;
-                                            case GlobalEquipmentExitMode.Closed:
-                                                _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
-                                                break;
-                                        }
-                                        break;
-                                    case GlobalEquipmentEntryMode.Free:
-                                    case GlobalEquipmentEntryMode.FreeControlled:
-                                        switch (EM.ExitMode)
-                                        {
-                                            case GlobalEquipmentExitMode.Controlled:
-                                                _doorsMode = conf.ForceDoorinFreeSide ? DoorsMode.Noa : DoorsMode.Nob;
-                                                break;
-                                            case GlobalEquipmentExitMode.Free:
-                                            case GlobalEquipmentExitMode.FreeControlled:
-                                                _doorsMode = conf.ForceDoorinEntrySide ? DoorsMode.OpticalA : DoorsMode.OpticalB;
-                                                break;
-                                            case GlobalEquipmentExitMode.Closed:
-                                                _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Nob : DoorsMode.Noa;
-                                                break;
-                                        }
-                                        break;
-                                    case GlobalEquipmentEntryMode.Closed:
-                                        switch (EM.ExitMode)
-                                        {
-                                            case GlobalEquipmentExitMode.Controlled:
-                                                _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
-                                                break;
-                                            case GlobalEquipmentExitMode.Free:
-                                            case GlobalEquipmentExitMode.FreeControlled:
-                                                _doorsMode = conf.ForceDoorinReverseSide ? DoorsMode.Noa : DoorsMode.Nob;
-                                                break;
-                                        }
-                                        break;
-                                }
-                                break;
-                            }
-                    }
-                }
-            }
-            return _doorsMode;
-        }
-
-        public static void TransformFromIER(eDoorsStatesMachine mode, eSideOperatingModeGate entryMode, eSideOperatingModeGate exitMode, eIERDoorModes doorMode, CPLCStatus EM)
-        {
-            switch (mode)
-            {
-                case eDoorsStatesMachine.NOMINAL:
-                    if (doorMode == eIERDoorModes.OP_MODE_BLOCK_CLOSED)
-                    {
-                        EM.Mode = GlobalEquipmentMode.OutOfService;
-                        EM.Aisle = GlobalEquipmentAisle.NormallyClosed;
-                        EM.EntryMode = GlobalEquipmentEntryMode.Closed;
-                        EM.ExitMode = GlobalEquipmentExitMode.Closed;
-
-                    }
-                    else
-                    {
-                        EM.Mode = GlobalEquipmentMode.InService;
-                        switch (entryMode)
-                        {
-                            case eSideOperatingModeGate.OP_MODE_SIDE_FREE:
-                                EM.EntryMode = GlobalEquipmentEntryMode.Free;
-                                break;
-                            case eSideOperatingModeGate.OP_MODE_SIDE_CONTROLLED:
-                                EM.EntryMode = GlobalEquipmentEntryMode.Controlled;
-                                break;
-                            case eSideOperatingModeGate.OP_MODE_SIDE_CLOSED:
-                                EM.EntryMode = GlobalEquipmentEntryMode.Closed;
-                                break;
-                        }
-                        switch (exitMode)
-                        {
-                            case eSideOperatingModeGate.OP_MODE_SIDE_FREE:
-                                EM.ExitMode = GlobalEquipmentExitMode.Free;
-                                break;
-                            case eSideOperatingModeGate.OP_MODE_SIDE_CONTROLLED:
-                                EM.ExitMode = GlobalEquipmentExitMode.Controlled;
-                                break;
-                            case eSideOperatingModeGate.OP_MODE_SIDE_CLOSED:
-                                EM.ExitMode = GlobalEquipmentExitMode.Closed;
-                                break;
-                        }
-                        switch (doorMode)
-                        {
-                            case eIERDoorModes.OP_MODE_BLOCK_CLOSED:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyClosed;
-                                break;
-                            case eIERDoorModes.OP_MODE_OPTICAL_B:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                                break;
-                            case eIERDoorModes.OP_MODE_NOB:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                                break;
-                            case eIERDoorModes.OP_MODE_NC:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyClosed;
-                                break;
-                            case eIERDoorModes.OP_MODE_OPTICAL_A:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                                break;
-                            case eIERDoorModes.OP_MODE_NOA:
-                                EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                                break;
-                        }
-                    }
-                    if (EM.EntryMode == GlobalEquipmentEntryMode.Closed && EM.ExitMode == GlobalEquipmentExitMode.Closed)
-                    {
-                        EM.Mode = GlobalEquipmentMode.OutOfService;
-                        EM.Direction = GlobalEquipmentDirection.None;
-                        EM.Aisle = GlobalEquipmentAisle.NormallyClosed;
-                    }
-                    else if (EM.EntryMode == GlobalEquipmentEntryMode.Free || EM.EntryMode == GlobalEquipmentEntryMode.Controlled)
-                    {
-                        if (EM.ExitMode == GlobalEquipmentExitMode.Free || EM.ExitMode == GlobalEquipmentExitMode.Controlled)
-                        {
-                            EM.Direction = GlobalEquipmentDirection.BiDirectional;
-                        }
-                        else
-                        {
-                            EM.Direction = GlobalEquipmentDirection.Entry;
-                        }
-                    }
-                    else
-                    {
-                        EM.Direction = GlobalEquipmentDirection.Exit;
-                    }
-                    break;
-                case eDoorsStatesMachine.LOCKED_OPEN:
-                    EM.Mode = GlobalEquipmentMode.OutOfService;
-                    EM.Direction = DriverInterface.GlobalEquipmentDirection.None;
-                    EM.EntryMode = GlobalEquipmentEntryMode.Closed;
-                    EM.ExitMode = GlobalEquipmentExitMode.Closed;
-                    EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                    break;
-                case eDoorsStatesMachine.EMERGENCY:
-                    EM.Mode = GlobalEquipmentMode.Emergency;
-                    EM.Direction = GlobalEquipmentDirection.BiDirectional;
-                    EM.EntryMode = GlobalEquipmentEntryMode.Free;
-                    EM.ExitMode = GlobalEquipmentExitMode.Free;
-                    EM.Aisle = GlobalEquipmentAisle.NormallyOpen;
-                    break;
-                case eDoorsStatesMachine.MAINTENANCE:
-                    EM.Mode = GlobalEquipmentMode.Maintenance;
-                    break;
-                case eDoorsStatesMachine.TECHNICAL_FAILURE:
-                //To verify what to do in case of POWER_DOWN. Certainly not OK.
-                case eDoorsStatesMachine.POWER_DOWN:
-                    EM.Mode = GlobalEquipmentMode.OutOfOrder;
-                    EM.Direction = GlobalEquipmentDirection.None;
-                    EM.EntryMode = GlobalEquipmentEntryMode.Closed;
-                    EM.ExitMode = GlobalEquipmentExitMode.Closed;
-                    EM.Aisle = GlobalEquipmentAisle.NormallyClosed;
-                    break;
-                    //EGRESS mode not treated. To see what is usage of this.
-            }
-        }
-        private static void AnalyseAlarmsList(GetStatusStdAnswer status, CPLCStatus cPLCStatus)
-        {
-            cPLCStatus.bWWIntrusionExit = false;
-            cPLCStatus.bWWIntrusionEntry = false;
-            cPLCStatus.bFraudEntry = false;
-            cPLCStatus.bFraudExit = false;
-            cPLCStatus.bFraud = false;
-            cPLCStatus.bFraudRamp = false;
-            cPLCStatus.bFraudOthers = false;
-            cPLCStatus.bWWIntrusion = false;
-            cPLCStatus.bPreIntrusionEntry = false;
-            cPLCStatus.bPreIntrusionExit = false;
-            cPLCStatus.bPreIntrusion = false;
-
-            if (status.alarms.Count > 0)
-            {
-                foreach (string str in status.alarms)
-                {
-                    switch (str)
-                    {
-                        case "LANG_FRAUD_A":
-                            //A person has cross the entry without authorisation. => need to display to go back.
-                            //On next side prohibited if authorised. If one validation result let it.
-                            cPLCStatus.bFraudEntry = true;
-                            break;
-                        case "LANG_FRAUD_B":
-                            //A person has cross the exit without authorisation
-                            cPLCStatus.bFraudExit = true;
-                            break;
-                        case "LANG_FRAUD_HOLDING":
-                        case "LANG_FRAUD_MANTRAP":
-                        case "LANG_FRAUD_UNEXPECTED_MOTION":
-                            cPLCStatus.bFraudOthers = true;
-                            break;
-                        case "LANG_FRAUD_JUMP":
-                            cPLCStatus.bFraudJump = true;
-                            break;
-                        case "LANG_FRAUD_RAMPING":
-                            cPLCStatus.bFraudRamp = true;
-                            break;
-                        case "LANG_INTRUSION_A":
-                        case "LANG_OPPOSITE_INTRUSION_B":
-                            //A person stays in the entry. => ask to exit. next side shall be prohibited
-                            cPLCStatus.bWWIntrusionEntry = true;
-                            break;
-                        case "LANG_INTRUSION_B":
-                        case "LANG_OPPOSITE_INTRUSION_A":
-                            cPLCStatus.bWWIntrusionExit = true;
-                            break;
-                        case "LANG_PREALARM_A":
-                            cPLCStatus.bPreIntrusionEntry = true;
-                            break;
-                        case "LANG_PREALARM_B":
-                            cPLCStatus.bPreIntrusionExit = true;
-                            break;
-                        case "LANG_FRAUD_DISAPPEARANCE":
-                            break;
-                    }
-                }
-            }
-            cPLCStatus.bFraud = cPLCStatus.bFraudJump || cPLCStatus.bFraudRamp || cPLCStatus.bFraudExit || cPLCStatus.bFraudEntry || cPLCStatus.bFraudOthers;
-            cPLCStatus.bWWIntrusion = cPLCStatus.bWWIntrusionEntry || cPLCStatus.bWWIntrusionExit;
-            cPLCStatus.bPreIntrusion = cPLCStatus.bPreIntrusionEntry || cPLCStatus.bPreIntrusionExit;
-        }
-
-        private static void AnalyseFailureList(List<string> list, EventAlarmLevel level, CPLCStatus status)
-        {
-
-
-            foreach (string failure in list)
-            {
-                switch (failure.ToUpper())
-                {
-                    case "ERRORS_CAMERA_HEIGHT":
-                    case "ERRORS_CAMERA_NG":
-                    case "ERRORS_CAMERA_VERSION":
-                    case "ERRORS_FRONTAL_DETECTION":
-                    case "ERRORS_FRONTAL_OCCULTED":
-                        status.Camera = level;
-                        status.CameraDetail += (status.CameraDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_CAN":
-                    case "ERRORS_CAN_HEARTBEAT":
-                    case "ERRORS_CAN_OVERFLOW":
-                    case "ERRORS_CAN_PRODUCT_CODE":
-                    case "ERRORS_CAN_SW_VERSION":
-                        status.CanBus = level;
-                        status.CanBusDetail += (status.CanBusDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_CELL_IR":
-                    case "ERRORS_DETECTION":
-                    case "ERRORS_DIRAS_EMITTER":
-                    case "ERRORS_DIRAS_RECEIVER":
-                    case "ERRORS_OBSTRUCTED_CELLS":
-                    case "ERRORS_LATERAL_DETECTION":
-                        status.Sensors = level;
-                        status.SensorsDetail += (status.SensorsDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_BLOCKED_MOTOR":
-                    case "ERRORS_MOTOR_CARD":
-                    case "ERRORS_MOTOR_CARD_CONFIG":
-                    case "ERRORS_MOTOR_INIT":
-                    case "ERRORS_MOTOR_PEAK_CURRENT":
-                    case "ERRORS_HALL_EFFECT_FAILURE":
-                        status.Motor = level;
-                        status.MotorDetail += (status.MotorDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_MOTOR_BRAKE":
-                    case "ERRORS_MOTOR_BRAKE_FAILURE":
-                        status.Brake = level;
-                        status.BrakeDetail += (status.BrakeDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_INSTALLATION":
-                    case "ERRORS_CPU":
-                    case "ERRORS_EXT":
-                        status.GCUElectronic = level;
-                        status.GCUElectronicDetail += (status.GCUElectronicDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_SYSTEMD_FAILURE":
-                    case "ERRORS_USINE_TEST_WARNING":
-                        status.GCUSystem = level;
-                        status.GCUSystemDetail += (status.GCUSystemDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_CUSTOMER":
-                    case "ERRORS_CUSTOMER_FAILURE":
-                        status.AFCCommunication = level;
-                        status.AFCCommunicationDetail += (status.AFCCommunicationDetail != "" ? ";" : "") + failure;
-                        break;
-                    case "ERRORS_TEMPERATURE":
-                    case "ERRORS_THERMOPILE":
-                        status.GCUTemperature = level;
-                        status.GCUTemperatureDetail += (status.GCUTemperatureDetail != "" ? ";" : "") + failure;
-                        break;
-                    //Following are not used
-                    case "ERRORS_EGRESS":
-                    case "ERRORS_OPENED_SERVICE_DOOR":
-                    case "ERRORS_FTP":
-                    case "ERRORS_MODBUS_SERIAL_FAILURE":
-                    case "ERRORS_MODBUS_TCP_FAILURE":
-                    case "ERRORS_LCD":
-                    case "ERRORS_READER":
-                    case "ERRORS_SOUNDPLAYER":
-                        break;
-                }
-            }
-        }
-        public static void DecodeStatusData(CPLCStatus cPLCStatus)
-        {
-            cPLCStatus.Clear();
-            GetStatusStdAnswer status = new(cPLCStatus.rawData);
-
-            bool PasageError = false;
-            //Number of authorisations in direction A (in entry)
-            int AuthorizationA = (int)cPLCStatus.rawData["AuthorizationA"];
-            //Number of authorisations in direction B (exit)
-            int AuthorizationB = (int)cPLCStatus.rawData["AuthorizationB"];
-            //Current movement of obstacle.
-            //'DOOR_CLOSED' string The door is closed
-            //'DOOR_CLOSING_FROM_A'string The door is currently closing from the A side
-            //'DOOR_CLOSING_FROM_B'string The door is currently closing from the B side
-            //'DOOR_OPENING_A' string The door is opening towards the A side
-            //'DOOR_OPENING_B' string The door is opening towards the B side
-            //'DOOR_OPEN_A' string The door is open towards the A side
-            //'DOOR_OPEN_B' string The door is open towards the B side
-            //TOSEE what is usage because seems not used ?
-            string Doors = (string)((IDictionary)cPLCStatus.rawData["doors"])["state"];
-            cPLCStatus.Authorizations[0] = AuthorizationA;
-            cPLCStatus.Authorizations[1] = AuthorizationB;
-            //Indication of error on obstable 0 or 1
-            int val = (int)((IDictionary)cPLCStatus.rawData["doors"])["error"];
-            if (val == 0) cPLCStatus.bDoorFailure = false;
-            else cPLCStatus.bDoorFailure = true;
-            //Initialized --skipping at the moment  //Door is initialised (1-0)
-            //int val=(int) ((IDictionary)cPLCStatus.rawData["doors"])["initialized"];
-            //TOSEE could we have authorisations in the 2 sides.
-            //_NoOfAuthorization = 0; //JL : Added Initialisation of value
-            //if (AuthorizationA > 0)
-            //    _NoOfAuthorization = AuthorizationA;
-            //else if (AuthorizationB > 0)
-            //    _NoOfAuthorization = AuthorizationB;
-            int _NoOfAuthorization = AuthorizationA > 0 ? AuthorizationA : (AuthorizationB > 0 ? AuthorizationB : 0);
-            //bSafetyZoneActivated
-            val = (int)((IDictionary)cPLCStatus.rawData["doors"])["safety_zone"];
-            if (val == 0) cPLCStatus.bSafetyZoneActivated = false;
-            else cPLCStatus.bSafetyZoneActivated = true;
-            //TOSEE Not clear in IER doc usage of 2 following. But at the end somebody is in safety zone.
-            //safety_zoneA (entry side)
-            val = (int)((IDictionary)cPLCStatus.rawData["doors"])["safety_zone_A"];
-            cPLCStatus.bSafetyZoneActivated |= val == 1;
-            //safety_zoneA (exit side)
-            val = (int)((IDictionary)cPLCStatus.rawData["doors"])["safety_zone_B"];
-            cPLCStatus.bSafetyZoneActivated |= val == 1;
-
-            TreatFailuresPart(status, cPLCStatus);
-
-            AnalyseAlarmsList(status, cPLCStatus);
-
-            TreatInputPart(status, cPLCStatus);
-
-            {
-                /// State_machine
-                //EGRESS' string Egress
-                //'EMERGENCY' string Emergency mode
-                //'LOCKED_OPEN' string Doors forced by external command
-                //'MAINTENANCE' string Maintenance mode
-                //'NOMINAL' string Nominal mode
-                //'POWER_DOWN' string Power down
-                //'TECHNICAL_FAILURE' string Technical failure
-                string state_machine_mode = (string)((IDictionary)cPLCStatus.rawData["state_machine"])["mode"];
-
-                Domain.Peripherals.Passage.eDoorsStatesMachine eDoorsStatesMachine = (Domain.Peripherals.Passage.eDoorsStatesMachine)Enum.Parse(typeof(Domain.Peripherals.Passage.eDoorsStatesMachine), state_machine_mode);
-                switch (eDoorsStatesMachine)
-                {
-                    case Domain.Peripherals.Passage.eDoorsStatesMachine.NOMINAL:
-                        #region Nominal
-                        {
-                            //cPLCStatus.eplcState = ePLCState.INSERVICE;
-                            //check for doors nominal modes 
-                            //'CLOSE_DOOR' string The passenger has crossed the obstacles or a timeout has occured : closing the doors
-                            //'FRAUD' string A fraud has occured
-                            //'INTRUSION' string An intrusion has occured
-                            //'OPEN_DOOR' string Boarding started: the door is open
-                            //'WAIT_FOR_AUTHORIZATION'string The gate is ready to accept a new authorisation to start a boarding(or for a person to enter the gate)
-                            string machine_state = (string)((IDictionary)cPLCStatus.rawData["state_machine"])["state"];
-                            eDoorNominalModes nomMode = (eDoorNominalModes)Enum.Parse(typeof(eDoorNominalModes), machine_state);
-                            //Console.WriteLine("machine_state:" + machine_state);
-                            #region " Doors Nominal Modes" 
-                            //What append if eDoorState is not set ??. Like during intrusion. TOSEE
-                            switch (nomMode)
-                            {
-                                case eDoorNominalModes.OPEN_DOOR:
-                                    cPLCStatus.eDoorState = eDoorCurrentState.DOOR_OPENED;
-                                    break;
-                                case eDoorNominalModes.CLOSE_DOOR:
-                                    cPLCStatus.eDoorState = eDoorCurrentState.DOOR_CLOSED;
-                                    break;
-                                case eDoorNominalModes.INTRUSION:
-                                    cPLCStatus.bIntrusion = true;
-                                    break;
-                                case eDoorNominalModes.FRAUD:
-                                    //check for Infractions now eInfractions
-                                    cPLCStatus.eDoorState = eDoorCurrentState.FRAUD;
-                                    cPLCStatus.bFraud = true;
-                                    break;
-                                case eDoorNominalModes.WAIT_FOR_AUTHORIZATION:
-                                    break;
-
-                            }//switch (nomMode)
-                            #endregion
-                            //infractions
-                            cPLCStatus.bPassageClearTimeout = false;
-                            cPLCStatus.bPasageCancelled = false;
-                            cPLCStatus.infractions = 0x00;
-
-                            object[] objinfracs = (object[])cPLCStatus.rawData["alarms"];
-                            foreach (object obj in objinfracs)
-                            {
-                                PasageError = true;
-                                _NoOfAuthorization = 0;
-                                string inf = (string)(obj);
-                                cPLCStatus.infractions |= (short)((eInfractions)Enum.Parse(typeof(eInfractions), inf));
-
-                                // intrusion
-                                //if ((eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_INTRUSION_A || (eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_INTRUSION_B
-                                //    || (eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_OPPOSITE_INTRUSION_A || (eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_OPPOSITE_INTRUSION_B)
-                                //    cPLCStatus.bWWIntrusion = true;
-
-                                // new changes for intrusion / fraud
-                                //switch (cPLCStatus.infractions)
-                                //{
-                                //    case (short)eInfractions.LANG_INTRUSION_A:
-                                //    case (short)eInfractions.LANG_OPPOSITE_INTRUSION_A:
-                                //        cPLCStatus.bInfractionsDirection = 1;// intrusion in exit side
-                                //        break;
-                                //    case (short)eInfractions.LANG_INTRUSION_B:
-                                //    case (short)eInfractions.LANG_OPPOSITE_INTRUSION_B:
-                                //        cPLCStatus.bInfractionsDirection = 0;// intrusion in entry side
-                                //        break;
-                                //    case (short)eInfractions.LANG_FRAUD_A:
-                                //        cPLCStatus.bInfractionsDirection = 1;  // fraud exit side
-                                //        break;
-                                //    case (short)eInfractions.LANG_FRAUD_B:
-                                //        cPLCStatus.bInfractionsDirection= 0; // fraud  entry side
-                                //        break;
-                                //}
-
-                                // these 2 receiving at time of intusion when gate is idle need to check where to add this
-                                //LANG_PREALARM_B
-                                //LANG_PREALARM_A
-                                //if ((eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_FRAUD_A || (eInfractions)Enum.Parse(typeof(eInfractions), inf) == eInfractions.LANG_FRAUD_B)
-                                //    cPLCStatus.bUnAuthrizedPassage = true;
-                                //Console.WriteLine("========================================================\nAlarms:" + inf);
-                                //Logging.Information(LogContext, "IERPLCMAIN.DecodeStatus.Alarms: " + inf);
-                            }
-
-                            if (status.alarms.Count > 0)
-                            {
-                                PasageError = true;
-                                _NoOfAuthorization = 0;
-                            }
-
-                            //check for timeouts
-                            //
-                            object[] objtimeouts = (object[])cPLCStatus.rawData["timeouts"];
-                            if (objtimeouts.Length > 0)
-                            {
-                                PasageError = true;
-                                _NoOfAuthorization = 0;
-                                foreach (object objtimeout in objtimeouts)
-                                {
-                                    string timeout = (string)(objtimeout);
-                                    ePassageTimeouts passageTimeouts = (ePassageTimeouts)Enum.Parse(typeof(ePassageTimeouts), timeout);
-                                    switch (passageTimeouts)
-                                    {
-                                        case ePassageTimeouts.LANG_ENTRY_TIMEOUT_A:
-                                        case ePassageTimeouts.LANG_ENTRY_TIMEOUT_B:
-                                        case ePassageTimeouts.LANG_EXIT_TIMEOUT:
-                                        case ePassageTimeouts.LANG_NO_CROSSING_TIMEOUT:
-                                            cPLCStatus.bPassageClearTimeout = true;
-                                            break;
-                                        case ePassageTimeouts.LANG_NO_ENTRY_TIMEOUT:
-                                            cPLCStatus.bPassageClearTimeout = true;
-                                            break;
-                                    }// switch(passageTimeouts)
-                                    Console.WriteLine("========================================================\nTimeout:" + timeout);
-                                }
-                            }
-                            else
-                            {
-                                //TOSEE tests of _NoAuthorisation. Has been set previously to A or B. and now testing it is different.
-                                //doubtful of result which will be always same.
-                                if (!PasageError && ((AuthorizationA + AuthorizationB) != _NoOfAuthorization) && machine_state.ToUpper() != "OPEN_DOOR")
-                                {
-                                    _NoOfAuthorization = AuthorizationA > 0 ? AuthorizationA : (AuthorizationB > 0 ? AuthorizationA : 0);
-                                    cPLCStatus.bPasageSuccess = true;
-                                    Console.WriteLine("========================================================\nPasageSuccess:Success");
-
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    case Domain.Peripherals.Passage.eDoorsStatesMachine.MAINTENANCE:
-                        //Mode calculated after.
-                        //cPLCStatus.eplcState = ePLCState.MAINTENANCE;
-                        break;
-                    case Domain.Peripherals.Passage.eDoorsStatesMachine.EMERGENCY:
-                        //Mode calculated after.
-                        //cPLCStatus.eplcState = ePLCState.EMERGENCY;
-                        break;
-                    case Domain.Peripherals.Passage.eDoorsStatesMachine.TECHNICAL_FAILURE:
-                        break;
-                    case Domain.Peripherals.Passage.eDoorsStatesMachine.LOCKED_OPEN: //doors forced
-                                                                                     //cPLCStatus.eplcState = ePLCState.OUTOFSERVICE;
-                                                                                     //JL : Not clear. Should been seen precisely on Gate.
-                        cPLCStatus.bDoorForced = true; //Initialised to false in constructor.
-                        break;
-                    default:
-                        //JL
-                        //EGRESS mode is not treated. But what is it ?
-                        //POWER_DOWN is not treated. But what to do ?
-                        break;
-
-                }
-                //if (_gateOldStatus != (int)cPLCStatus.eplcState)
-                //{
-                //    _gateOldStatus = (int)cPLCStatus.eplcState;
-                //}
-                string operating_modeA = (string)((IDictionary)cPLCStatus.rawData["operating_mode"])["A"];
-                string operating_modeB = (string)((IDictionary)cPLCStatus.rawData["operating_mode"])["B"];
-                var door_mode = cPLCStatus.rawData["door_mode"];
-                //Console.WriteLine("door_mode:"+ door_mode);
-                eSideOperatingModeGate EntrySide = (eSideOperatingModeGate)Enum.Parse(typeof(eSideOperatingModeGate), operating_modeA);
-                eSideOperatingModeGate ExitSide = (eSideOperatingModeGate)Enum.Parse(typeof(eSideOperatingModeGate), operating_modeB);
-                eIERDoorModes _doorsMode = (eIERDoorModes)Enum.Parse(typeof(eIERDoorModes), door_mode.ToString());
-                //Following function is calculting Mode, EntryMode, ExitMode, Aisle, Direction according to values in parameter.
-                TransformFromIER(eDoorsStatesMachine, EntrySide, ExitSide, _doorsMode, cPLCStatus);
-
-                cPLCStatus.bDoorsBlockedClosed = false;
-                if (_doorsMode == eIERDoorModes.OP_MODE_BLOCK_CLOSED)
-                {
-                    cPLCStatus.bDoorsBlockedClosed = true;
-                    //cPLCStatus.eplcState = ePLCState.OUTOFSERVICE;
-                }
-                //cPLCStatus.sideOperatingModeA = EntrySide;
-                //cPLCStatus.sideOperatingModeA = ExitSide;
-                if (eDoorsStatesMachine != Domain.Peripherals.Passage.eDoorsStatesMachine.NOMINAL)
-                //if (cPLCStatus.eplcState != ePLCState.INSERVICE)
-                {
-                    _NoOfAuthorization = 0;
-                }
-            }
-            //Fetch the alrams/ infractions 
-
-        }
-
-        private static string objToString(object obj)
-        {
-            string str = "";
-            string type = obj.GetType().FullName;
-            if (obj.GetType().FullName == "System.String")
-            {
-                str = (string)obj;
-            }
-            /*  else if (obj.GetType().FullName == "test.Testclass")
-               {
-                   TestClass c = (TestClass)obj;
-                   str = c.Info;
-               }*/
-            return str;
-        }
-        public static SideOperatingModes TransformFromChangeModeSideA(ChangeEquipmentMode EM)
-        {
-            SideOperatingModes _SideOperationModeA = SideOperatingModes.Closed;
-            if (EM.Mode == GlobalEquipmentMode.InService)
-            {
-                switch (EM.EntryMode)
-                {
-                    case GlobalEquipmentEntryMode.Controlled:
-                        if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Entry || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
-                            _SideOperationModeA = SideOperatingModes.Controlled;
-                        break;
-                    case GlobalEquipmentEntryMode.Free:
-                    case GlobalEquipmentEntryMode.FreeControlled:
-                        if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Entry || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
-                            _SideOperationModeA = SideOperatingModes.Free;
-                        break;
-                }
-            }
-            return _SideOperationModeA;
-        }
-        public static SideOperatingModes TransformFromChangeModeSideB(ChangeEquipmentMode EM)
-        {
-            SideOperatingModes _SideOperationModeB = SideOperatingModes.Closed;
-            if (EM.Mode == GlobalEquipmentMode.InService)
-            {
-                switch (EM.ExitMode)
-                {
-                    case GlobalEquipmentExitMode.Controlled:
-                        if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Exit || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
-                            _SideOperationModeB = SideOperatingModes.Controlled;
-                        break;
-                    case GlobalEquipmentExitMode.Free:
-                    case GlobalEquipmentExitMode.FreeControlled:
-                        if (EM.Direction == DriverInterface.GlobalEquipmentDirection.Exit || EM.Direction == DriverInterface.GlobalEquipmentDirection.BiDirectional)
-                            _SideOperationModeB = SideOperatingModes.Free;
-                        break;
-                }
-            }
-            return _SideOperationModeB;
-        }
-
-        private static void TreatFailuresPart(GetStatusStdAnswer status, CPLCStatus cPLCStatus)
-        {
-            cPLCStatus.Camera = EventAlarmLevel.Normal;
-            cPLCStatus.CameraDetail = "";
-            cPLCStatus.CanBus = EventAlarmLevel.Normal;
-            cPLCStatus.CanBusDetail = "";
-            cPLCStatus.Sensors = EventAlarmLevel.Normal;
-            cPLCStatus.SensorsDetail = "";
-            cPLCStatus.Motor = EventAlarmLevel.Normal;
-            cPLCStatus.MotorDetail = "";
-            cPLCStatus.Brake = EventAlarmLevel.Normal;
-            cPLCStatus.BrakeDetail = "";
-            cPLCStatus.GCUElectronic = EventAlarmLevel.Normal;
-            cPLCStatus.GCUElectronicDetail = "";
-            cPLCStatus.GCUSystem = EventAlarmLevel.Normal;
-            cPLCStatus.GCUSystemDetail = "";
-            cPLCStatus.AFCCommunication = EventAlarmLevel.Normal;
-            cPLCStatus.AFCCommunicationDetail = "";
-            cPLCStatus.GCUTemperature = EventAlarmLevel.Normal;
-            cPLCStatus.GCUTemperatureDetail = "";
-            if (status.failures.Count > 0)
-            {
-                ForFailure failures = status.failures.Find(x => x.key == "minor");
-                if (failures != null)
-                {
-                    IERRHelper.AnalyseFailureList(failures.list, EventAlarmLevel.Warning, cPLCStatus);
-                }
-                failures = status.failures.Find(x => x.key == "major");
-                if (failures != null)
-                {
-                    IERRHelper.AnalyseFailureList(failures.list, EventAlarmLevel.Alarm, cPLCStatus);
-                }
-            }
-        }
-        private static void TreatInputPart(GetStatusStdAnswer status, CPLCStatus cPLCStatus)
-        {
-            cPLCStatus.bPoweredOnUPS = false;
-            cPLCStatus.bEntryMaintenanceSwitch = false;
-            cPLCStatus.bExitMaintenanceSwitch = false;
-            cPLCStatus.bEmergencyButton = false;
-            DictionaryXmlInt dico = status.inputs.Find(x => x.key == "emergency");
-            if ((dico != null) && (dico.value == 1)) cPLCStatus.bEmergencyButton = true;
-            dico = status.inputs.Find(x => x.key == "entry_locked_open");
-            if ((dico != null) && (dico.value == 1)) cPLCStatus.bEntryMaintenanceSwitch = true;
-            dico = status.inputs.Find(x => x.key == "ups");
-            if ((dico != null) && (dico.value == 1)) cPLCStatus.bPoweredOnUPS = true;
         }
     }
 }

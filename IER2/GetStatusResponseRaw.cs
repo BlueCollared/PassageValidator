@@ -1,4 +1,7 @@
-﻿using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
+﻿using IFS2.Equipment.DriverInterface;
+using IFS2.Equipment.HardwareInterface.IERPLCManager;
+using LanguageExt;
+using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
 
 namespace EtGate.IER
 {
@@ -34,4 +37,29 @@ namespace EtGate.IER
         public int nPassengersFromEntracePerpetual;
         public int nPassengersFromExitPerpetual;
     }
+
+    internal struct GetStatusResponseLittleProcessed
+    {
+        internal DoorsMode doorMode;
+        internal SideOperatingModes opModeEntry;
+        internal SideOperatingModes opModeExit;
+        internal Arr<eInfractions> infractions;
+        internal Arr<ePassageTimeouts> timeouts;
+        internal int nAuthorizationsFromEntrance;
+        internal int nAuthorizationsFromExit;
+        internal bool bUserProcessing;
+        internal bool bDoorOpen;
+        internal bool bFraudOrIntrusion;
+        internal bool bEmergency;
+        internal bool bMaintenance;
+        internal bool bOutOfService;
+        internal bool bInService;
+        internal bool bTechnicalDefect;
+        internal bool bTimeout;
+        internal bool bSideModesForced;
+        internal string OperatorId;
+        internal int nPassengersFromEntracePerpetual;
+        internal int nPassengersFromExitPerpetual;
+    }
+
 }
