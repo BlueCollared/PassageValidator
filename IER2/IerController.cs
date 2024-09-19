@@ -13,16 +13,20 @@ public class IerController : GateControllerBase
 {
     bool bIsConnected = false;
     Ier_To_DomainAdapter ier;
+    private readonly IIerStatusMonitor ier2;
 
     public IerController(IIerStatusMonitor xmlRpc, IIerXmlRpc xmlRpc2)
     {
         ier = new Ier_To_DomainAdapter(
             xmlRpc2
             );
+        ier2 = xmlRpc;
     }
 
-    public override IObservable<GateHwStatus> GateStatusObservable => 
-        base.GateStatusObservable.Select(x=>new GateHwStatus(x.bConnected, x.doorState));
+    //public override IObservable<GateHwStatus> GateStatusObservable => 
+    //    //base.GateStatusObservable.Select(x=>new GateHwStatus(x.bConnected, x.doorState));
+    //    ier2.StatusObservable.Select(x=>new GateHwStatus(x.IsRight, x.Match(r=>r
+    //    ).IsRight && x.Right.));
 
     // TODO:
     public override IObservable<OneOf<Intrusion, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> PassageStatusObservable 

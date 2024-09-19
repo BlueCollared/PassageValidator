@@ -1,8 +1,10 @@
 ﻿
+using EtGate.Domain.Services;
 using IFS2.Equipment.DriverInterface;
 using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using LanguageExt;
 using System.Net;
+using System.Runtime.CompilerServices;
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
 using IERApiResult2 = LanguageExt.Either<EtGate.IER.IERApiError, object>;
 
@@ -15,12 +17,30 @@ public class IERXmlRpc : IIerXmlRpc
     private readonly IIERXmlRpcInterface worker;
     readonly Option<object[]> none = Option<object[]>.None;
 
-    public IERXmlRpc(IIERXmlRpcInterface worker)
+    public IERXmlRpc(IIERXmlRpcInterface worker, ILogger logger)
     {
+        this.logger = logger;
         this.worker = worker;
     }
 
     #region Helper
+    static readonly Dictionary<SideOperatingModes, string> diSideOperatingMode = new Dictionary<SideOperatingModes, string>{
+        { SideOperatingModes.Closed, "Closed"},
+        { SideOperatingModes.Controlled, "Controlled"},
+        { SideOperatingModes.Free, "Free"}
+    };
+
+    static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
+        {DoorsMode.LockClosed, "BlockClosed" },
+        {DoorsMode.NormallyClosed, "Nc" },
+        {DoorsMode.NormallyOpenedA, "Noa" },
+        {DoorsMode.NormallyOpenedB, "Nob" },
+        {DoorsMode.OpticalA, "OpticalA" },
+        {DoorsMode.OpticalB, "OpticalB" },
+        {DoorsMode.LockedOpenA, "LockedOpenA" },
+        {DoorsMode.LockedOpenB, "LockedOpenB" }
+     };
+
     static readonly Func<object[], IERApiResult> CheckNumberOfIpParams = (result) =>
                   result.Length == 1
                 && result[0] is int xy
@@ -133,9 +153,10 @@ public class IERXmlRpc : IIerXmlRpc
                 return IERApiError.UnexpectedAnswer;
             }
         };
-
+                
         return MakeCall(() => worker.GetDate())
-            .Bind(dateExtract);        
+            .Log(logger)
+            .Bind(dateExtract);
     }
 
     public Option<object[]> GetMotorSpeed()
@@ -355,22 +376,7 @@ public class IERXmlRpc : IIerXmlRpc
             .Bind(TristateChecker);
     }    
 
-    static readonly Dictionary<SideOperatingModes, string> diSideOperatingMode = new Dictionary<SideOperatingModes, string>{
-        { SideOperatingModes.Closed, "Closed"},
-        { SideOperatingModes.Controlled, "Controlled"},
-        { SideOperatingModes.Free, "Free"}
-    };
-
-    static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
-        {DoorsMode.LockClosed, "BlockClosed" },
-        {DoorsMode.NormallyClosed, "Nc" },
-        {DoorsMode.NormallyOpenedA, "Noa" },
-        {DoorsMode.NormallyOpenedB, "Nob" },
-        {DoorsMode.OpticalA, "OpticalA" },
-        {DoorsMode.OpticalB, "OpticalB" },
-        {DoorsMode.LockedOpenA, "LockedOpenA" },
-        {DoorsMode.LockedOpenB, "LockedOpenB" }
-     };
+    private ILogger logger;
 
     public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
     {
@@ -416,7 +422,7 @@ public class IERXmlRpc : IIerXmlRpc
         return MakeCall(() => worker.GetStatusStd())
             .Bind(result =>
             IERRHelper.ProcessGetStatusStd(result)
-                .MapLeft(x => IERApiError.UnexpectedAnswer));            
+                .MapLeft(x => IERApiError.UnexpectedAnswer));
     }
 
     public Either<IERApiError, IERStatus> GetStatus()
@@ -434,5 +440,22 @@ public class IERXmlRpc : IIerXmlRpc
         };
         return MakeCall(() => worker.GetStatus())
             .Bind(statusExtract);            
+    }
+}
+
+static class Helper
+{
+    public static IERApiResult Log (this IERApiResult either, ILogger logger, [CallerMemberName] string caller = null)
+    {
+        either.Match(
+            Right: r =>
+            {
+                Console.WriteLine($"Right: {r}");
+            },
+            Left: l =>
+            {
+                Console.WriteLine($"Left: {l}");                
+            });
+        return either;
     }
 }

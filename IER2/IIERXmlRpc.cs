@@ -47,7 +47,7 @@ namespace EtGate.IER
     public interface IIerStatusMonitor
     {
         void Start();
-        IObservable<Either<IERApiError, IERStatus>> StatusObservable { get; }
+        IObservable<Either<IERApiError, GetStatusStdRaw>> StatusObservable { get; }
     }
 
     public class IERSWVersion

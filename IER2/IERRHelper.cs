@@ -282,7 +282,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                         errors.Add("alarms value is not string");
                                 }
 
-                                res.alarms = alarms;
+                                res.infractions = alarms;
                             }
                             else
                                 errors.Add("alarms");
@@ -513,7 +513,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                     case "emergency":
                                         {
                                             if (kvp1.Value is int i)
-                                                res.emergency = i == 1;
+                                                res.emergencyButton = i == 1;
                                             else
                                                 errors.Add("emergency");
                                             break;
@@ -737,7 +737,6 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             res.OperatorId = raw.OperatorId;
             res.nPassengersFromEntracePerpetual = raw.nPassengersFromEntracePerpetual;
             res.nPassengersFromExitPerpetual = raw.nPassengersFromExitPerpetual;
-
 
             string s = raw.status;
             res.bUserProcessing = s[0] == '1';

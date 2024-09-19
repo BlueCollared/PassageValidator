@@ -1,15 +1,13 @@
 ﻿using IFS2.Equipment.DriverInterface;
 using LanguageExt;
-using LanguageExt.UnsafeValueAccess;
-using System;
 using System.Reactive.Linq;
 
 namespace EtGate.IER
 {
     enum Nothing { Nothing };
-    public class IerWithStatusMonitor : IIerStatusMonitor, IIerXmlRpc
+    public class IerActive : IIerStatusMonitor, IIerXmlRpc
     {
-        public IObservable<Either<IERApiError, IERStatus>> StatusObservable =>
+        public IObservable<Either<IERApiError, GetStatusStdRaw>> StatusObservable =>
             // Q: is it fundamentally good? are we sure that if the processing inside `Select` takes more that the 
             // timespan mentioned in .Interval, it would not cause the processing of next element?
             // Ans: yes, checked in sample program
@@ -25,7 +23,7 @@ namespace EtGate.IER
                         Monitor.TryEnter(lck, ref lockTaken);
                         if (lockTaken)
                         {
-                            return worker.GetStatus();
+                            return worker.GetStatusStd();
                         }
                         else
                         {
@@ -45,7 +43,7 @@ namespace EtGate.IER
 
         IIerXmlRpc worker;
 
-        public IerWithStatusMonitor(IIerXmlRpc worker)
+        public IerActive(IIerXmlRpc worker)
         {
             this.worker = worker;
         }

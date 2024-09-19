@@ -186,7 +186,7 @@ public partial class App : Avalonia.Application
         string url = ""; // TODO: load from configuration
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;
-        var ierRpc = new IerWithStatusMonitor(new IERXmlRpc(xmlRpc));
+        var ierRpc = new IerActive(new IERXmlRpc(xmlRpc, null));
         var ier = new IerController(ierRpc, ierRpc);
 
         builder.RegisterInstance(ier)

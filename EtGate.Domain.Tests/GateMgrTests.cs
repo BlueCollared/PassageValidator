@@ -25,7 +25,7 @@ namespace EtGate.Domain.Tests
             
             GateMgr gateMgr = new GateMgr(mockGateController.Object, gateSatatusMgrMock, 
                 new GateMgr.Config {  ClockSynchronizerConfig = new() { interval = TimeSpan.FromSeconds(60) } });
-            gateSatatusMgrMock.statusSubject.OnNext(new GateHwStatus(true, eDoorsStatesMachine.NOMINAL));
+            gateSatatusMgrMock.statusSubject.OnNext(GateHwStatus.AllGood);
             mockGateController.Verify(x => x.GetDate(), Times.Once);
 
 
