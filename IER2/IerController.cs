@@ -1,11 +1,8 @@
-﻿using Domain.Peripherals.Passage;
-using EtGate.Devices.Interfaces.Gate;
+﻿using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
 using EtGate.IER;
-using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using OneOf;
-using System.Reactive.Linq;
 
 namespace EtGate.Devices.IER;
 
@@ -72,7 +69,7 @@ public class IerController : GateControllerBase
         return ier.SetMaintenance();
     }
 
-    public override bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
+    public override bool SetNormalMode(Option<global::Domain.Peripherals.Passage.SideOperatingMode> entry, Option<global::Domain.Peripherals.Passage.SideOperatingMode> exit)
     {
         throw new NotImplementedException();
     }

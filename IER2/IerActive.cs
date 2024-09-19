@@ -210,7 +210,7 @@ namespace EtGate.IER
             }
         }
 
-        public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
+        public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingMode> entry, Option<SideOperatingMode> exit)
         {
             lock (lck)
             {

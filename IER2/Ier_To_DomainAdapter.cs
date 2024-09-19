@@ -1,5 +1,5 @@
-﻿using IFS2.Equipment.DriverInterface;
-using LanguageExt;
+﻿using LanguageExt;
+using SideOperatingMode = EtGate.IER.SideOperatingMode;
 
 namespace EtGate.IER
 {
@@ -29,7 +29,7 @@ namespace EtGate.IER
 
         public bool SetOOO()
         {
-            return worker.SetMode(DoorsMode.LockClosed, Option<SideOperatingModes>.None, Option<SideOperatingModes>.None).IsRight;
+            return worker.SetMode(DoorsMode.LockClosed, Option<SideOperatingMode>.None, Option<SideOperatingMode>.None).IsRight;
         }
 
         public bool SetMaintenance()
@@ -42,7 +42,7 @@ namespace EtGate.IER
             return worker.SetEmergency(true).IsRight;
         }
 
-        public bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
+        public bool SetNormalMode(Option<SideOperatingMode> entry, Option<SideOperatingMode> exit)
         {
             if (entry.IsNone && exit.IsNone)
                 return true;

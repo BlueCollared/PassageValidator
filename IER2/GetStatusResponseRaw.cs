@@ -37,7 +37,7 @@ namespace EtGate.IER
         public int nPassengersFromEntracePerpetual;
         public int nPassengersFromExitPerpetual;
     }
-
+    /*
     internal struct GetStatusResponseLittleProcessed
     {
         internal DoorsMode doorMode;
@@ -61,5 +61,6 @@ namespace EtGate.IER
         internal int nPassengersFromEntracePerpetual;
         internal int nPassengersFromExitPerpetual;
     }
+    */
 
 }

@@ -1,6 +1,4 @@
-﻿using IFS2.Equipment.HardwareInterface.IERPLCManager;
-
-namespace EtGate.Domain.Passage.PassageEvts;
+﻿namespace EtGate.Domain.Passage.PassageEvts;
 
 public record SubTicket (int ticketId, int seqNumInThisTicket);
 
@@ -25,8 +23,8 @@ public record AuthroizedPassengerSteppedBack(
 
 public record PassageTimeout(
     SubTicket ticket,
-    bool bEntry,
-    ePassageTimeouts timeout
+    bool bEntry
+    //ePassageTimeouts timeout
     // by the understanding so far, a timeout in the passage causes all the auhroizations to be nullified
     //List<SubTicket> remainingQueue 
     );

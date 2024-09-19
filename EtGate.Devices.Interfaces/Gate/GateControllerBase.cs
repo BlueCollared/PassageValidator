@@ -7,7 +7,6 @@
 
 using Domain.Peripherals.Passage;
 using EtGate.Domain.Services.Gate;
-using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -24,7 +23,7 @@ abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGate
     
     public abstract bool SetEmergency();
     public abstract bool SetMaintenance();
-    public abstract bool SetNormalMode(Option<SideOperatingModes> entry, Option<SideOperatingModes> exit);
+    public abstract bool SetNormalMode(Option<SideOperatingMode> entry, Option<SideOperatingMode> exit);
     public abstract bool Reboot(bool bHardboot);
     public abstract bool Authorize(int nAuthorizations);
     public abstract bool SetDate(DateTimeOffset dt);

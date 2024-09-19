@@ -1,8 +1,4 @@
-﻿
-using EtGate.Domain.Services;
-using IFS2.Equipment.DriverInterface;
-using IFS2.Equipment.HardwareInterface.IERPLCManager;
-using LanguageExt;
+﻿using LanguageExt;
 using System.Net;
 using System.Runtime.CompilerServices;
 using IERApiResult = LanguageExt.Either<EtGate.IER.IERApiError, object[]>;
@@ -17,17 +13,17 @@ public class IERXmlRpc : IIerXmlRpc
     private readonly IIERXmlRpcInterface worker;
     readonly Option<object[]> none = Option<object[]>.None;
 
-    public IERXmlRpc(IIERXmlRpcInterface worker, ILogger logger)
+    public IERXmlRpc(IIERXmlRpcInterface worker, Domain.Services.ILogger logger)
     {
         this.logger = logger;
         this.worker = worker;
     }
 
     #region Helper
-    static readonly Dictionary<SideOperatingModes, string> diSideOperatingMode = new Dictionary<SideOperatingModes, string>{
-        { SideOperatingModes.Closed, "Closed"},
-        { SideOperatingModes.Controlled, "Controlled"},
-        { SideOperatingModes.Free, "Free"}
+    static readonly Dictionary<SideOperatingMode, string> diSideOperatingMode = new Dictionary<SideOperatingMode, string>{
+        { SideOperatingMode.Closed, "Closed"},
+        { SideOperatingMode.Controlled, "Controlled"},
+        { SideOperatingMode.Free, "Free"}
     };
 
     static readonly Dictionary<DoorsMode, string> diDoorsMode = new Dictionary<DoorsMode, string> {
@@ -376,9 +372,9 @@ public class IERXmlRpc : IIerXmlRpc
             .Bind(TristateChecker);
     }    
 
-    private ILogger logger;
+    private Domain.Services.ILogger logger;
 
-    public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingModes> entry, Option<SideOperatingModes> exit)
+    public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingMode> entry, Option<SideOperatingMode> exit)
     {
         
         string[] param = { "", "", "" };
@@ -445,7 +441,7 @@ public class IERXmlRpc : IIerXmlRpc
 
 static class Helper
 {
-    public static IERApiResult Log (this IERApiResult either, ILogger logger, [CallerMemberName] string caller = null)
+    public static IERApiResult Log (this IERApiResult either, Domain.Services.ILogger logger, [CallerMemberName] string caller = null)
     {
         either.Match(
             Right: r =>

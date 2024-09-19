@@ -16,8 +16,4 @@
     <Folder Include="InService\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\IER\IER.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,4 @@
-﻿using IFS2.Equipment.DriverInterface;
-using LanguageExt;
+﻿using LanguageExt;
 using RetTypOfCommand = LanguageExt.Either<EtGate.IER.IERApiError, EtGate.IER.Success>;
 
 namespace EtGate.IER
@@ -29,7 +28,7 @@ namespace EtGate.IER
         Either<IERApiError, IERStatus> GetStatus();
         Either<IERApiError, IERSWVersion> GetVersion();
         Option<object[]> GetCounter();
-        RetTypOfCommand SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingModes> entry, Option<SideOperatingModes> exit);
+        RetTypOfCommand SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingMode> entry, Option<SideOperatingMode> exit);
         Option<object[]> SetCredentials(string[] param);
         RetTypOfCommand SetTempo(TempoConf conf);
         Either<IERApiError, TempoConf> GetTempo();

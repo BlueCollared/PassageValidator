@@ -4,106 +4,9 @@ using System.Xml.Serialization;
 
 namespace IFS2.Equipment.DriverInterface
 {
-    public enum GlobalEquipmentPaidReader
-    {
-        Unknown = -1,
-        None,
-        CSCOnly,
-        All,
-        QRCodeOnly
-    }
 
-    public enum GlobalEquipmentUnpaidReader
-    {
-        Unknown = -1,
-        None,
-        CSCOnly,
-        All,
-        QRCodeOnly
-    }
+    
 
-    //public enum GlobalEquipmentAisle
-    //{
-    //    Unknown = -1,
-    //    NormallyClosed,
-    //    NormallyOpen
-    //}
-
-    public enum ExitTTType
-    {
-        Unknown = -1,
-        None,
-        ExitRER,
-        ExitMetro,
-        MetroToRER,
-        RERToMetro,
-        MetroToPublic,
-        RERToPublic
-    }
-    public enum EntryTTType
-    {
-        Unknown = -1,
-        None,
-        EntryRER,
-        EntryMetro,
-        MetroToRER,
-        RERToMetro,
-        PublicToMetro,
-        PublicToRER
-    }
-
-    public enum GlobalEquipmentDirection
-    {
-        Unknown = -1,
-        None,
-        Entry,
-        Exit,
-        BiDirectional
-    }
-    public enum EventAlarmLevel
-    {
-        /// <summary>
-        /// Value when level of alarm is unknwn, generally initialisation is missing in this case
-        /// </summary>
-        Unknown = 99,
-        /// <summary>
-        /// Status of event is normal. When event is an alarm it means that there is no alarm.
-        /// </summary>
-        Normal = 0,
-        /// <summary>
-        /// There is a warning but element is not out of service and can continue to work.
-        /// </summary>
-        Warning = 2,
-        /// <summary>
-        /// There is an alarm and element is out of service.
-        /// </summary>
-        Alarm = 3,
-        /// <summary>
-        /// Concerned element is not conected
-        /// </summary>
-        NotConnected = 98
-    }
-
-    public enum GlobalEquipmentExitMode
-    {
-        Unknown = -1,
-        None,
-        Controlled,
-        Free,
-        Closed,
-        Simulated,
-        FreeControlled
-    }
-    public enum GlobalEquipmentEntryMode
-    {
-        Unknown = -1,
-        None,
-        Controlled,
-        Free,
-        Closed,
-        Simulated,
-        FreeControlled
-    }
     //public enum GlobalEquipmentMode
     //{
     //    Unknown = -1,
@@ -451,24 +354,6 @@ namespace IFS2.Equipment.DriverInterface
         public bool bEmergencyButton = false;
 
         //Failures
-        public EventAlarmLevel CanBus=EventAlarmLevel.Alarm;
-        public string CanBusDetail = "";
-        public EventAlarmLevel Camera=EventAlarmLevel.Alarm;
-        public string CameraDetail = "";
-        public EventAlarmLevel Motor = EventAlarmLevel.Alarm;
-        public string MotorDetail = "";
-        public EventAlarmLevel Sensors = EventAlarmLevel.Alarm;
-        public string SensorsDetail = "";
-        public EventAlarmLevel Brake = EventAlarmLevel.Alarm;
-        public string BrakeDetail = "";
-        public EventAlarmLevel GCUTemperature = EventAlarmLevel.Alarm;
-        public string GCUTemperatureDetail = "";
-        public EventAlarmLevel GCUElectronic = EventAlarmLevel.Alarm;
-        public string GCUElectronicDetail = "";
-        public EventAlarmLevel AFCCommunication = EventAlarmLevel.Alarm;
-        public string AFCCommunicationDetail = "";
-        public EventAlarmLevel GCUSystem = EventAlarmLevel.Alarm;
-        public string GCUSystemDetail = "";
         /*
          * infractions/Alarm currently in the gates its stored in bits 
          * b[0] = An unauthorised person has crossed the gate from the entrance (A side)
@@ -519,37 +404,6 @@ namespace IFS2.Equipment.DriverInterface
             //Indicators from failure part
 
         }
-        public void Reset()
-        {            
-            //this.door_mode = DoorsMode.NONE;
-            this.eDoorState = eDoorCurrentState.NONE;
-            //this.eplcState = ePLCState.ERROR_INIT;
-            Mode = GlobalEquipmentMode.OutOfService;
-            EntryMode = GlobalEquipmentEntryMode.Closed;
-            ExitMode = GlobalEquipmentExitMode.Closed;
-            Direction = GlobalEquipmentDirection.None;
-            Aisle = GlobalEquipmentAisle.NormallyClosed;
-            this.bDoorFailure = false;
-            this.bSafetyZoneActivated = false;
-            this.bIntrusion = false;
-
-            this.bDoorsBlocked = false;
-            this.bDoorForced = false;
-            this.bDoorsBlockedClosed = false;
-            //bInfractionsDirection = -1;
-        }
-
-        public void Clear()
-        {
-            bDoorFailure = false;
-            bSafetyZoneActivated = false;
-            bIntrusion = false;
-
-            bDoorsBlocked = false;
-            bDoorForced = false;
-            bDoorsBlockedClosed = false;
-            //bInfractionsDirection = -1;
-        }
     }
 
     //public class CPLCConfig
@@ -582,30 +436,6 @@ namespace IFS2.Equipment.DriverInterface
         GCU_NOT_INIT = -4
     }
     //Side Operating Modes
-    public enum SideOperatingModes
-    {
-        Closed,
-        Controlled,
-        Free        
-    }
-    public enum eSideOperatingModeGate
-    {
-        OP_MODE_SIDE_CLOSED,
-        OP_MODE_SIDE_CONTROLLED,
-        OP_MODE_SIDE_FREE,
-        //OP_MODE_SIDE_FREECONTROLLED
-    }
-    public enum DoorsMode
-    {       
-        LockClosed,
-        NormallyClosed,
-        NormallyOpenedA,
-        NormallyOpenedB,
-        OpticalA,
-        OpticalB,
-        LockedOpenA,
-        LockedOpenB
-    };
 
     public enum eDoorCurrentState //Flaps current state
     {

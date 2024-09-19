@@ -1,7 +1,7 @@
 ﻿using Horizon.XmlRpc.Client;
 using Horizon.XmlRpc.Core;
 
-namespace IFS2.Equipment.HardwareInterface.IERPLCManager
+namespace EtGate.IER
 {
 
     public interface IIERXmlRpcInterface : IXmlRpcProxy
