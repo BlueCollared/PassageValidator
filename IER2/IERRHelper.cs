@@ -12,7 +12,9 @@ using OneOf.Types;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -215,13 +217,13 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
             {"ERRORS_USINE_TEST_WARNING", eIERPLCErrors.ERRORS_USINE_TEST_WARNING }
         };
 
-        static public Either<List<string> , GetStatusStdRaw> ProcessGetStatusStd(object ip)
+        static public Either<List<string>, GetStatusStdRaw> ProcessGetStatusStd(object ip)
         {
             if (ip == null)
                 return (new List<string> { "null input" });
             if (!(ip is IDictionary<string, object> idict))
                 return (new List<string> { "input not a dictionary" });
-            
+
             ConcurrentBag<string> errors = new();
             ConcurrentBag<string> warnings = new();
 
@@ -468,7 +470,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                                 errors.Add("customer_1");
                                             break;
                                         }
-                                        case "customer_2":
+                                    case "customer_2":
                                         {
                                             if (kvp1.Value is int i)
                                                 customersActive = i |= 2;
@@ -476,7 +478,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                                 errors.Add("customer_2");
                                             break;
                                         }
-                                        case "customer_3":
+                                    case "customer_3":
                                         {
                                             if (kvp1.Value is int i)
                                                 customersActive = i |= 4;
@@ -484,7 +486,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                                 errors.Add("customer_3");
                                             break;
                                         }
-                                        case "customer_4":
+                                    case "customer_4":
                                         {
                                             if (kvp1.Value is int i)
                                                 customersActive = i |= 8;
@@ -492,7 +494,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                                 errors.Add("customer_4");
                                             break;
                                         }
-                                        case "customer_5":
+                                    case "customer_5":
                                         {
                                             if (kvp1.Value is int i)
                                                 customersActive = i |= 16;
@@ -500,7 +502,7 @@ namespace IFS2.Equipment.HardwareInterface.IERPLCManager
                                                 errors.Add("customer_5");
                                             break;
                                         }
-                                        case "customer_6":
+                                    case "customer_6":
                                         {
                                             if (kvp1.Value is int i)
                                                 customersActive = i |= 32;

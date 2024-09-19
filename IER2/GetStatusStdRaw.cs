@@ -42,5 +42,6 @@ namespace EtGate.IER
         public Option<bool> safety_zone_B;
         public Option<int> doorCurrentMovementOfObstacle;
         public Option<bool> door_unexpected_motion;
+
     }
 }

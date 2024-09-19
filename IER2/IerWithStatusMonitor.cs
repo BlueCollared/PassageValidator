@@ -1,11 +1,12 @@
 ﻿using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using LanguageExt.UnsafeValueAccess;
+using System;
 using System.Reactive.Linq;
 
 namespace EtGate.IER
 {
-    enum Nothing { Nothing};
+    enum Nothing { Nothing };
     public class IerWithStatusMonitor : IIerStatusMonitor, IIerXmlRpc
     {
         public IObservable<Either<IERApiError, IERStatus>> StatusObservable =>
@@ -16,7 +17,7 @@ namespace EtGate.IER
             .Select(_ =>
             {
                 // double-check locking for efficiency
-                while(true)                
+                while (true)
                 {
                     bool lockTaken = false;
                     try
@@ -35,10 +36,10 @@ namespace EtGate.IER
                     {
                         if (lockTaken)
                         {
-                            Monitor.Exit(lck);                    
+                            Monitor.Exit(lck);
                         }
                     }
-                }                
+                }
             })
             .DistinctUntilChanged();
 
@@ -101,7 +102,7 @@ namespace EtGate.IER
 
         public Either<IERApiError, IERStatus> GetStatus()
         {
-            lock(lck)
+            lock (lck)
             {
                 return worker.GetStatus();
             }
