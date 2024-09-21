@@ -13,6 +13,7 @@ using EtGate.Domain;
 using EtGate.Domain.Passage.IdleEvts;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
+using EtGate.Domain.Services.Gate.Functions;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;

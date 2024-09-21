@@ -1,4 +1,6 @@
-﻿namespace EtGate.Domain.Services.Gate;
+﻿using EtGate.Domain.Services.Gate.Functions;
+
+namespace EtGate.Domain.Services.Gate;
 
 public class GateConnectedSession : IDisposable
 {

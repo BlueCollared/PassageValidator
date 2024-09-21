@@ -1,9 +1,8 @@
-﻿using IFS2.Equipment.HardwareInterface.IERPLCManager;
-using LanguageExt;
+﻿using LanguageExt;
 
 namespace EtGate.IER;
 
-public enum eDoorsStatesMachine
+public enum OverallState
 {
     EGRESS,
     NOMINAL, //Normal mode .. if set then check for doors Nominal Mode 
@@ -48,7 +47,7 @@ public struct GetStatusStdRaw
     public Option<int> presencesDetectedInsideB;
     public Option<int> readerLockedSideA;
     public Option<int> readerLockedSideB;
-    public Option<eDoorsStatesMachine> exceptionMode;
+    public Option<OverallState> exceptionMode;
     public Option<eDoorNominalModes> stateIfInNominal;
     public Option<int> customersActive;
     public bool IsCustomerActive(int id) // id starts from 1
@@ -56,8 +55,8 @@ public struct GetStatusStdRaw
     public Option<bool> emergencyButton;
     public Option<bool> entryLockOpen;
     public Option<bool> systemPoweredByUPS;
-    public List<eIERPLCErrors> majorTechnicalFailures;
-    public List<eIERPLCErrors> minorTechnicalFailures;
+    public List<eIERPLCError> majorTechnicalFailures;
+    public List<eIERPLCError> minorTechnicalFailures;
 
     public Option<int> timeouts;
     public Option<int> infractions;
@@ -72,45 +71,84 @@ public struct GetStatusStdRaw
     public Option<bool> door_unexpected_motion;
 }
 
+// TODO: This unnecessary structure is because I am not 100% sure that GetStatusStdRaw returns all the fields.
+// If it does, then we can remove GetStatusStdRaw with this structure
+public struct GetStatusStdRawComplete
+{
+    public int AuthorizationA;
+    public int AuthorizationB;
+    public int PassageA;
+    public int PassageB;
+    public DoorsMode door_mode;
+    public SideOperatingMode operatingModeSideA;
+    public SideOperatingMode operatingModeSideB;
+    public int peopleDetectedInsideA;
+    public int peopleDetectedInsideB;
+    public int presencesDetectedInsideA;
+    public int presencesDetectedInsideB;
+    public int readerLockedSideA;
+    public int readerLockedSideB;
+    public OverallState exceptionMode;
+    public eDoorNominalModes stateIfInNominal;
+    public int customersActive;
+    public bool IsCustomerActive(int id) // id starts from 1
+    { return (customersActive & (1 << (id - 1))) != 0; }
+    public bool emergencyButton;
+    public bool entryLockOpen;
+    public bool systemPoweredByUPS;
+    public List<eIERPLCError> majorTechnicalFailures;
+    public List<eIERPLCError> minorTechnicalFailures;
+    public int timeouts;
+    public int infractions;
+    public bool brakeEnabled;
+    public bool doorFailure;
+    public bool doorinitialized;
+    public bool safety_zone;
+    public bool safety_zone_A;
+    public bool safety_zone_B;
+    public int doorCurrentMovementOfObstacle;
+    public bool door_unexpected_motion;
+    }
+
 
 public struct IerErrors
 {
-    public List<eIERPLCErrors> majorTechnicalFailures;
-    public List<eIERPLCErrors> minorTechnicalFailures;
+    public List<eIERPLCError> majorTechnicalFailures;
+    public List<eIERPLCError> minorTechnicalFailures;
 }
 
 public struct IerNominalMode
 {
-    public Option<int> AuthorizationA;
-    public Option<int> AuthorizationB;
-    public Option<int> PassageA;
-    public Option<int> PassageB;
-    public Option<int> peopleDetectedInsideA;
-    public Option<int> peopleDetectedInsideB;
-    public Option<int> presencesDetectedInsideA;
-    public Option<int> presencesDetectedInsideB;
-    public Option<int> readerLockedSideA;
-    public Option<int> readerLockedSideB;
-    public Option<bool> safety_zone;
-    public Option<bool> safety_zone_A;
-    public Option<bool> safety_zone_B;
-    public Option<eDoorNominalModes> stateIfInNominal;
-    public Option<int> customersActive;
+    public int AuthorizationA;
+    public int AuthorizationB;
+    public int PassageA;
+    public int PassageB;
+    public int peopleDetectedInsideA;
+    public int peopleDetectedInsideB;
+    public int presencesDetectedInsideA;
+    public int presencesDetectedInsideB;
+    public int readerLockedSideA;
+    public int readerLockedSideB;
+    public bool safety_zone;
+    public bool safety_zone_A;
+    public bool safety_zone_B;
+    public eDoorNominalModes stateIfInNominal;
+    public int customersActive;
     public bool IsCustomerActive(int id) // id starts from 1
-    { return customersActive.Match(x => (x & (1 << (id - 1))) != 0, () => false); }
-    public Option<int> timeouts;
-    public Option<int> infractions;
+        => (customersActive & (1 << (id - 1))) != 0;
+    public int timeouts;
+    public int infractions;
 }
 
 // TODO: doubtful where to keep these fields. may be they are applicable to the nominal mode also
 public struct IerDoors
 {
-    public Option<bool> brakeEnabled;
-    public Option<bool> doorFailure;
-    public Option<bool> doorinitialized;
+    public bool brakeEnabled;
+    public bool doorFailure;
+    public bool doorinitialized;
 
-    public Option<int> doorCurrentMovementOfObstacle;
-    public Option<bool> door_unexpected_motion;
+    public int doorCurrentMovementOfObstacle;
+    public bool door_unexpected_motion;
 }
 
 

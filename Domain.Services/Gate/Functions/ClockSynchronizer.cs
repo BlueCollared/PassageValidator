@@ -2,15 +2,15 @@
 using LanguageExt.UnsafeValueAccess;
 using System.Reactive.Linq;
 
-namespace EtGate.Domain.Services;
+namespace EtGate.Domain.Services.Gate.Functions;
 // TODO: it may happen that because of locking, there comes a gap between GetDate() and SetDate() thus causing incorrect time be set.
 public class ClockSynchronizer
-{    
+{
     private readonly IDeviceDate device;
     private readonly Func<DateTimeOffset> dtProvider;
     private readonly Action<DateChanged>? dtChangedNotifier = null;
     private readonly Config config;
-    
+
     IDisposable subscription;
 
     public record DateChanged(DateTimeOffset origDate, DateTimeOffset modifiedDate);
@@ -21,7 +21,7 @@ public class ClockSynchronizer
     }
 
     public ClockSynchronizer(IDeviceDate device, Func<DateTimeOffset> dtProvider, Action<DateChanged> dtChangedNotifier, Config config)
-    {        
+    {
         this.device = device;
         this.dtProvider = dtProvider;
         this.dtChangedNotifier = dtChangedNotifier;
@@ -30,7 +30,7 @@ public class ClockSynchronizer
         subscription = Observable.Start(() => Synchronize())
                                    .Concat(Observable.Interval(config.interval)
                                                      .Select(_ => Synchronize()))
-                                   .Subscribe(); // to trigger the observable to emit as it is a cold observable
+                                   .Subscribe(); // to trigger the observable to emit, because it is a cold observable
     }
 
     public void Cancel()

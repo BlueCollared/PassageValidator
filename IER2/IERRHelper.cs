@@ -15,7 +15,7 @@ public enum ePassageTimeouts
     LANG_SECURITY_TIMEOUT = 16, //A passenger took too much time to exit the safety zone and prevents the closure of the doorsa
     LANG_VALIDATION_TIMEOUT = 32
 }
-public enum eInfractions
+public enum eInfraction
 {
     LANG_FRAUD_A = 0x01,
     LANG_FRAUD_B = 0x02,
@@ -32,7 +32,7 @@ public enum eInfractions
     LANG_PREALARM_B = 0x1000,
     LANG_FRAUD_MANTRAP = 0x2000
 }
-public enum eIERPLCErrors
+public enum eIERPLCError
 {
     ERRORS_BLOCKED_MOTOR,
     ERRORS_CAMERA_HEIGHT,
@@ -149,39 +149,39 @@ internal static class IERRHelper
         {"OP_MODE_SIDE_CLOSED", SideOperatingMode.Closed },
     };
 
-    static readonly Dictionary<string, eInfractions> infractionsDi = new(){
-        { "01005", eInfractions.LANG_INTRUSION_A },
-        { "01006", eInfractions.LANG_INTRUSION_B },
-        { "01007", eInfractions.LANG_OPPOSITE_INTRUSION_A },
-        { "01008", eInfractions.LANG_OPPOSITE_INTRUSION_B },
-        { "01012", eInfractions.LANG_FRAUD_A },
-        { "01013", eInfractions.LANG_FRAUD_B },
-        { "01047", eInfractions.LANG_FRAUD_DISAPPEARANCE },
-        { "01048", eInfractions.LANG_FRAUD_RAMPING },
-        { "01052", eInfractions.LANG_FRAUD_JUMP },
-        { "01055", eInfractions.LANG_FRAUD_HOLDING },
-        { "01056", eInfractions.LANG_PREALARM_A },
-        { "01057", eInfractions.LANG_PREALARM_B },
-        { "01063", eInfractions.LANG_FRAUD_MANTRAP },
-        { "01066", eInfractions.LANG_FRAUD_UNEXPECTED_MOTION }
+    static readonly Dictionary<string, eInfraction> infractionsDi = new(){
+        { "01005", eInfraction.LANG_INTRUSION_A },
+        { "01006", eInfraction.LANG_INTRUSION_B },
+        { "01007", eInfraction.LANG_OPPOSITE_INTRUSION_A },
+        { "01008", eInfraction.LANG_OPPOSITE_INTRUSION_B },
+        { "01012", eInfraction.LANG_FRAUD_A },
+        { "01013", eInfraction.LANG_FRAUD_B },
+        { "01047", eInfraction.LANG_FRAUD_DISAPPEARANCE },
+        { "01048", eInfraction.LANG_FRAUD_RAMPING },
+        { "01052", eInfraction.LANG_FRAUD_JUMP },
+        { "01055", eInfraction.LANG_FRAUD_HOLDING },
+        { "01056", eInfraction.LANG_PREALARM_A },
+        { "01057", eInfraction.LANG_PREALARM_B },
+        { "01063", eInfraction.LANG_FRAUD_MANTRAP },
+        { "01066", eInfraction.LANG_FRAUD_UNEXPECTED_MOTION }
     };
 
-    static readonly Dictionary<string, eInfractions> infractionsDi2 = new()
+    static readonly Dictionary<string, eInfraction> infractionsDi2 = new()
     {
-        { "LANG_FRAUD_A", eInfractions.LANG_FRAUD_A },
-        { "LANG_FRAUD_B", eInfractions.LANG_FRAUD_B },
-        { "LANG_FRAUD_DISAPPEARANCE", eInfractions.LANG_FRAUD_DISAPPEARANCE },
-        { "LANG_FRAUD_HOLDING", eInfractions.LANG_FRAUD_HOLDING },
-        { "LANG_FRAUD_JUMP", eInfractions.LANG_FRAUD_JUMP },
-        { "LANG_FRAUD_RAMPING", eInfractions.LANG_FRAUD_RAMPING },
-        { "LANG_FRAUD_UNEXPECTED_MOTION", eInfractions.LANG_FRAUD_UNEXPECTED_MOTION },
-        { "LANG_INTRUSION_A", eInfractions.LANG_INTRUSION_A },
-        { "LANG_INTRUSION_B", eInfractions.LANG_INTRUSION_B },
-        { "LANG_OPPOSITE_INTRUSION_A", eInfractions.LANG_OPPOSITE_INTRUSION_A },
-        { "LANG_OPPOSITE_INTRUSION_B", eInfractions.LANG_OPPOSITE_INTRUSION_B },
-        { "LANG_PREALARM_A", eInfractions.LANG_PREALARM_A },
-        { "LANG_PREALARM_B", eInfractions.LANG_PREALARM_B },
-        { "LANG_FRAUD_MANTRAP", eInfractions.LANG_FRAUD_MANTRAP }
+        { "LANG_FRAUD_A", eInfraction.LANG_FRAUD_A },
+        { "LANG_FRAUD_B", eInfraction.LANG_FRAUD_B },
+        { "LANG_FRAUD_DISAPPEARANCE", eInfraction.LANG_FRAUD_DISAPPEARANCE },
+        { "LANG_FRAUD_HOLDING", eInfraction.LANG_FRAUD_HOLDING },
+        { "LANG_FRAUD_JUMP", eInfraction.LANG_FRAUD_JUMP },
+        { "LANG_FRAUD_RAMPING", eInfraction.LANG_FRAUD_RAMPING },
+        { "LANG_FRAUD_UNEXPECTED_MOTION", eInfraction.LANG_FRAUD_UNEXPECTED_MOTION },
+        { "LANG_INTRUSION_A", eInfraction.LANG_INTRUSION_A },
+        { "LANG_INTRUSION_B", eInfraction.LANG_INTRUSION_B },
+        { "LANG_OPPOSITE_INTRUSION_A", eInfraction.LANG_OPPOSITE_INTRUSION_A },
+        { "LANG_OPPOSITE_INTRUSION_B", eInfraction.LANG_OPPOSITE_INTRUSION_B },
+        { "LANG_PREALARM_A", eInfraction.LANG_PREALARM_A },
+        { "LANG_PREALARM_B", eInfraction.LANG_PREALARM_B },
+        { "LANG_FRAUD_MANTRAP", eInfraction.LANG_FRAUD_MANTRAP }
     };
 
     static readonly Dictionary<string, ePassageTimeouts> timeoutsDi = new()
@@ -206,15 +206,15 @@ internal static class IERRHelper
         { "LANG_VALIDATION_TIMEOUT", ePassageTimeouts.LANG_VALIDATION_TIMEOUT }
     };
 
-    static readonly Dictionary<string, eDoorsStatesMachine> exceptionModeDi = new()
+    static readonly Dictionary<string, OverallState> exceptionModeDi = new()
     {
-        {"EGRESS", eDoorsStatesMachine.EGRESS },
-        {"EMERGENCY", eDoorsStatesMachine.EMERGENCY },
-        {"LOCKED_OPEN", eDoorsStatesMachine.LOCKED_OPEN },
-        {"MAINTENANCE", eDoorsStatesMachine.MAINTENANCE },
-        {"NOMINAL", eDoorsStatesMachine.NOMINAL },
-        {"POWER_DOWN", eDoorsStatesMachine.POWER_DOWN },
-        {"TECHNICAL_FAILURE", eDoorsStatesMachine.TECHNICAL_FAILURE }
+        {"EGRESS", OverallState.EGRESS },
+        {"EMERGENCY", OverallState.EMERGENCY },
+        {"LOCKED_OPEN", OverallState.LOCKED_OPEN },
+        {"MAINTENANCE", OverallState.MAINTENANCE },
+        {"NOMINAL", OverallState.NOMINAL },
+        {"POWER_DOWN", OverallState.POWER_DOWN },
+        {"TECHNICAL_FAILURE", OverallState.TECHNICAL_FAILURE }
     };
 
     static readonly Dictionary<string, eDoorNominalModes> doorsModeDi3 = new()
@@ -226,49 +226,49 @@ internal static class IERRHelper
         { "WAIT_FOR_AUTHORIZATION", eDoorNominalModes.WAIT_FOR_AUTHORIZATION }
     };
 
-    static readonly Dictionary<string, eIERPLCErrors> plcErrors = new()
+    static readonly Dictionary<string, eIERPLCError> plcErrors = new()
     {
-        {"ERRORS_BLOCKED_MOTOR", eIERPLCErrors.ERRORS_BLOCKED_MOTOR },
-        {"ERRORS_CAMERA_HEIGHT", eIERPLCErrors.ERRORS_CAMERA_HEIGHT },
-        {"ERRORS_CAMERA_NG", eIERPLCErrors.ERRORS_CAMERA_NG },
-        {"ERRORS_CAMERA_VERSION", eIERPLCErrors.ERRORS_CAMERA_VERSION },
-        {"ERRORS_CAN", eIERPLCErrors.ERRORS_CAN },
-        {"ERRORS_CAN_HEARTBEAT", eIERPLCErrors.ERRORS_CAN_HEARTBEAT },
-        {"ERRORS_CAN_OVERFLOW", eIERPLCErrors.ERRORS_CAN_OVERFLOW },
-        {"ERRORS_CAN_PRODUCT_CODE", eIERPLCErrors.ERRORS_CAN_PRODUCT_CODE },
-        {"ERRORS_CAN_SW_VERSION", eIERPLCErrors.ERRORS_CAN_SW_VERSION },
-        {"ERRORS_CELL_IR", eIERPLCErrors.ERRORS_CELL_IR },
-        {"ERRORS_CPU", eIERPLCErrors.ERRORS_CPU },
-        {"ERRORS_CUSTOMER", eIERPLCErrors.ERRORS_CUSTOMER },
-        {"ERRORS_CUSTOMER_FAILURE", eIERPLCErrors.ERRORS_CUSTOMER_FAILURE },
-        {"ERRORS_DETECTION", eIERPLCErrors.ERRORS_DETECTION },
-        {"ERRORS_DIRAS_EMITTER", eIERPLCErrors.ERRORS_DIRAS_EMITTER },
-        {"ERRORS_DIRAS_RECEIVER", eIERPLCErrors.ERRORS_DIRAS_RECEIVER },
-        {"ERRORS_EGRESS", eIERPLCErrors.ERRORS_EGRESS },
-        {"ERRORS_EXT", eIERPLCErrors.ERRORS_EXT },
-        {"ERRORS_FRONTAL_DETECTION", eIERPLCErrors.ERRORS_FRONTAL_DETECTION },
-        {"ERRORS_FRONTAL_OCCULTED", eIERPLCErrors.ERRORS_FRONTAL_OCCULTED },
-        {"ERRORS_FTP", eIERPLCErrors.ERRORS_FTP },
-        {"ERRORS_HALL_EFFECT_FAILURE", eIERPLCErrors.ERRORS_HALL_EFFECT_FAILURE },
-        {"ERRORS_INSTALLATION", eIERPLCErrors.ERRORS_INSTALLATION },
-        {"ERRORS_LATERAL_DETECTION", eIERPLCErrors.ERRORS_LATERAL_DETECTION },
-        {"ERRORS_LCD", eIERPLCErrors.ERRORS_LCD },
-        {"ERRORS_MODBUS_SERIAL_FAILURE", eIERPLCErrors.ERRORS_MODBUS_SERIAL_FAILURE },
-        {"ERRORS_MODBUS_TCP_FAILURE", eIERPLCErrors.ERRORS_MODBUS_TCP_FAILURE },
-        {"ERRORS_MOTOR_BRAKE", eIERPLCErrors.ERRORS_MOTOR_BRAKE },
-        {"ERRORS_MOTOR_BRAKE_FAILURE", eIERPLCErrors.ERRORS_MOTOR_BRAKE_FAILURE },
-        {"ERRORS_MOTOR_CARD", eIERPLCErrors.ERRORS_MOTOR_CARD },
-        {"ERRORS_MOTOR_CARD_CONFIG", eIERPLCErrors.ERRORS_MOTOR_CARD_CONFIG },
-        {"ERRORS_MOTOR_INIT", eIERPLCErrors.ERRORS_MOTOR_INIT },
-        {"ERRORS_MOTOR_PEAK_CURRENT", eIERPLCErrors.ERRORS_MOTOR_PEAK_CURRENT },
-        {"ERRORS_OBSTRUCTED_CELLS", eIERPLCErrors.ERRORS_OBSTRUCTED_CELLS },
-        {"ERRORS_OPENED_SERVICE_DOOR", eIERPLCErrors.ERRORS_OPENED_SERVICE_DOOR },
-        {"ERRORS_READER", eIERPLCErrors.ERRORS_READER },
-        {"ERRORS_SOUNDPLAYER", eIERPLCErrors.ERRORS_SOUNDPLAYER },
-        {"ERRORS_SYSTEMD_FAILURE", eIERPLCErrors.ERRORS_SYSTEMD_FAILURE },
-        {"ERRORS_TEMPERATURE", eIERPLCErrors.ERRORS_TEMPERATURE },
-        {"ERRORS_THERMOPILE", eIERPLCErrors.ERRORS_THERMOPILE },
-        {"ERRORS_USINE_TEST_WARNING", eIERPLCErrors.ERRORS_USINE_TEST_WARNING }
+        {"ERRORS_BLOCKED_MOTOR", eIERPLCError.ERRORS_BLOCKED_MOTOR },
+        {"ERRORS_CAMERA_HEIGHT", eIERPLCError.ERRORS_CAMERA_HEIGHT },
+        {"ERRORS_CAMERA_NG", eIERPLCError.ERRORS_CAMERA_NG },
+        {"ERRORS_CAMERA_VERSION", eIERPLCError.ERRORS_CAMERA_VERSION },
+        {"ERRORS_CAN", eIERPLCError.ERRORS_CAN },
+        {"ERRORS_CAN_HEARTBEAT", eIERPLCError.ERRORS_CAN_HEARTBEAT },
+        {"ERRORS_CAN_OVERFLOW", eIERPLCError.ERRORS_CAN_OVERFLOW },
+        {"ERRORS_CAN_PRODUCT_CODE", eIERPLCError.ERRORS_CAN_PRODUCT_CODE },
+        {"ERRORS_CAN_SW_VERSION", eIERPLCError.ERRORS_CAN_SW_VERSION },
+        {"ERRORS_CELL_IR", eIERPLCError.ERRORS_CELL_IR },
+        {"ERRORS_CPU", eIERPLCError.ERRORS_CPU },
+        {"ERRORS_CUSTOMER", eIERPLCError.ERRORS_CUSTOMER },
+        {"ERRORS_CUSTOMER_FAILURE", eIERPLCError.ERRORS_CUSTOMER_FAILURE },
+        {"ERRORS_DETECTION", eIERPLCError.ERRORS_DETECTION },
+        {"ERRORS_DIRAS_EMITTER", eIERPLCError.ERRORS_DIRAS_EMITTER },
+        {"ERRORS_DIRAS_RECEIVER", eIERPLCError.ERRORS_DIRAS_RECEIVER },
+        {"ERRORS_EGRESS", eIERPLCError.ERRORS_EGRESS },
+        {"ERRORS_EXT", eIERPLCError.ERRORS_EXT },
+        {"ERRORS_FRONTAL_DETECTION", eIERPLCError.ERRORS_FRONTAL_DETECTION },
+        {"ERRORS_FRONTAL_OCCULTED", eIERPLCError.ERRORS_FRONTAL_OCCULTED },
+        {"ERRORS_FTP", eIERPLCError.ERRORS_FTP },
+        {"ERRORS_HALL_EFFECT_FAILURE", eIERPLCError.ERRORS_HALL_EFFECT_FAILURE },
+        {"ERRORS_INSTALLATION", eIERPLCError.ERRORS_INSTALLATION },
+        {"ERRORS_LATERAL_DETECTION", eIERPLCError.ERRORS_LATERAL_DETECTION },
+        {"ERRORS_LCD", eIERPLCError.ERRORS_LCD },
+        {"ERRORS_MODBUS_SERIAL_FAILURE", eIERPLCError.ERRORS_MODBUS_SERIAL_FAILURE },
+        {"ERRORS_MODBUS_TCP_FAILURE", eIERPLCError.ERRORS_MODBUS_TCP_FAILURE },
+        {"ERRORS_MOTOR_BRAKE", eIERPLCError.ERRORS_MOTOR_BRAKE },
+        {"ERRORS_MOTOR_BRAKE_FAILURE", eIERPLCError.ERRORS_MOTOR_BRAKE_FAILURE },
+        {"ERRORS_MOTOR_CARD", eIERPLCError.ERRORS_MOTOR_CARD },
+        {"ERRORS_MOTOR_CARD_CONFIG", eIERPLCError.ERRORS_MOTOR_CARD_CONFIG },
+        {"ERRORS_MOTOR_INIT", eIERPLCError.ERRORS_MOTOR_INIT },
+        {"ERRORS_MOTOR_PEAK_CURRENT", eIERPLCError.ERRORS_MOTOR_PEAK_CURRENT },
+        {"ERRORS_OBSTRUCTED_CELLS", eIERPLCError.ERRORS_OBSTRUCTED_CELLS },
+        {"ERRORS_OPENED_SERVICE_DOOR", eIERPLCError.ERRORS_OPENED_SERVICE_DOOR },
+        {"ERRORS_READER", eIERPLCError.ERRORS_READER },
+        {"ERRORS_SOUNDPLAYER", eIERPLCError.ERRORS_SOUNDPLAYER },
+        {"ERRORS_SYSTEMD_FAILURE", eIERPLCError.ERRORS_SYSTEMD_FAILURE },
+        {"ERRORS_TEMPERATURE", eIERPLCError.ERRORS_TEMPERATURE },
+        {"ERRORS_THERMOPILE", eIERPLCError.ERRORS_THERMOPILE },
+        {"ERRORS_USINE_TEST_WARNING", eIERPLCError.ERRORS_USINE_TEST_WARNING }
     };
 
     static public Either<List<string>, GetStatusStdRaw> ProcessGetStatusStd(object ip)
@@ -329,7 +329,7 @@ internal static class IERRHelper
                             {
                                 if (o is string s)
                                 {
-                                    if (infractionsDi2.TryGetValue(s, out eInfractions v))
+                                    if (infractionsDi2.TryGetValue(s, out eInfraction v))
                                         alarms |= (int)v;
                                 }
                                 else
@@ -457,7 +457,7 @@ internal static class IERRHelper
                             foreach (object o in a)
                             {
                                 if (o is string s)
-                                    if (plcErrors.TryGetValue(s, out eIERPLCErrors v))
+                                    if (plcErrors.TryGetValue(s, out eIERPLCError v))
                                         res.majorTechnicalFailures.Add(v);
                                     else
                                     {
@@ -485,7 +485,7 @@ internal static class IERRHelper
                             foreach (object o in a)
                             {
                                 if (o is string s)
-                                    if (plcErrors.TryGetValue(s, out eIERPLCErrors v))
+                                    if (plcErrors.TryGetValue(s, out eIERPLCError v))
                                         res.minorTechnicalFailures.Add(v);
                                     else
                                     {
@@ -759,7 +759,7 @@ internal static class IERRHelper
                                     {
                                         if (kvp1.Value is string s)
                                         {
-                                            if (exceptionModeDi.TryGetValue(s, out eDoorsStatesMachine v))
+                                            if (exceptionModeDi.TryGetValue(s, out OverallState v))
                                                 res.exceptionMode = v;
                                             else
                                                 errors.Add("exception_mode value " + s);

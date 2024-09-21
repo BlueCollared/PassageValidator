@@ -32,8 +32,9 @@ namespace EtGate.Domain.Tests
             //modeMgrFactoryMock.Setup(f => f.Create(It.IsAny<Mode>())).Returns(modeMgrMock.Object);
 
             modeMgrFactoryMock
-                .Setup(f => f.Create(It.IsAny<Mode>()))
-                .Returns(() => { modeMgrMock = new Mock<ISubModeMgr>();
+                .Setup(f => f.Create(It.IsAny<global::Domain.Mode>()))
+                .Returns(() => {
+                    modeMgrMock = new Mock<ISubModeMgr>();
                     return modeMgrMock.Object;
                 });
 
@@ -45,19 +46,19 @@ namespace EtGate.Domain.Tests
         public void AppBootingPhase()
         {
             // Assert
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.AppBooting, modeManager.CurMode);
 
             s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.AppBooting, modeManager.CurMode);
 
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.AppBooting, modeManager.CurMode);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.AppBooting, modeManager.CurMode);
 
             s.subjGateStatus.OnNext(GateHwStatus.Disconnected);
-            Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
+            Assert.NotEqual(global::Domain.Mode.AppBooting, modeManager.CurMode);
         }
 
         [Fact]
@@ -66,7 +67,7 @@ namespace EtGate.Domain.Tests
             // Act
             testScheduler.AdvanceBy(TimeSpan.FromSeconds(ModeManager.DEFAULT_TimeToCompleteBoot_InSeconds).Ticks);
 
-            Assert.NotEqual(Mode.AppBooting, modeManager.CurMode);
+            Assert.NotEqual(global::Domain.Mode.AppBooting, modeManager.CurMode);
         }
 
         [Fact]
@@ -77,7 +78,7 @@ namespace EtGate.Domain.Tests
             s.subjQrStatus.OnNext(QrReaderStatus.Disconnected);
 
             // Assert
-            Assert.Equal(Mode.OOO,
+            Assert.Equal(global::Domain.Mode.OOO,
                 modeManager.CurMode
                 );
 
@@ -85,7 +86,7 @@ namespace EtGate.Domain.Tests
             s.subjQrStatus.OnNext(QrReaderStatus.AllGood);
 
             // Assert
-            Assert.Equal(Mode.InService,
+            Assert.Equal(global::Domain.Mode.InService,
                 modeManager.CurMode
                 );
         }
@@ -106,18 +107,18 @@ namespace EtGate.Domain.Tests
         public void AllWorking_ModeInservice()
         {
             // Assert
-            Assert.Equal(Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.AppBooting, modeManager.CurMode);
 
             s.subjQrStatus.OnNext(QrReaderStatus.AllGood);
-            modeManager.CurMode.ShouldBe(Mode.AppBooting);
+            modeManager.CurMode.ShouldBe(global::Domain.Mode.AppBooting);
 
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
-            modeManager.CurMode.ShouldBe(Mode.AppBooting);
+            modeManager.CurMode.ShouldBe(global::Domain.Mode.AppBooting);
 
             s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
 
             s.subjGateStatus.OnNext(GateHwStatus.AllGood);
-            modeManager.CurMode.ShouldBe(Mode.InService);
+            modeManager.CurMode.ShouldBe(global::Domain.Mode.InService);
         }
 
         [Fact]
@@ -128,7 +129,7 @@ namespace EtGate.Domain.Tests
             var modeMgrMockBak = modeMgrMock;
 
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
-            Assert.Equal(Mode.OOO, modeManager.CurMode);
+            Assert.Equal(global::Domain.Mode.OOO, modeManager.CurMode);
             //
             // 
             modeMgrMockBak.Verify(m => m.Dispose(), Times.Once);            
@@ -141,9 +142,9 @@ namespace EtGate.Domain.Tests
 
             var subModeMgr = modeManager.curModeMgr;
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
-            modeManager.CurMode.ShouldBe(Mode.OOO);
+            modeManager.CurMode.ShouldBe(global::Domain.Mode.OOO);
             s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
-            modeManager.CurMode.ShouldBe(Mode.InService);
+            modeManager.CurMode.ShouldBe(global::Domain.Mode.InService);
             modeManager.curModeMgr.ShouldNotBeSameAs(subModeMgr);
 
         }

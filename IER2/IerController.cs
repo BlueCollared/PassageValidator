@@ -1,8 +1,10 @@
-﻿using EtGate.Devices.Interfaces.Gate;
+﻿using Domain.Peripherals.Passage;
+using EtGate.Devices.Interfaces.Gate;
 using EtGate.Domain.Services.Gate;
 using EtGate.IER;
 using LanguageExt;
 using OneOf;
+using System.Reactive.Linq;
 
 namespace EtGate.Devices.IER;
 
@@ -20,10 +22,17 @@ public class IerController : GateControllerBase
         ier2 = xmlRpc;
     }
 
-    //public override IObservable<GateHwStatus> GateStatusObservable => 
-    //    //base.GateStatusObservable.Select(x=>new GateHwStatus(x.bConnected, x.doorState));
-    //    ier2.StatusObservable.Select(x=>new GateHwStatus(x.IsRight, x.Match(r=>r
-    //    ).IsRight && x.Right.));
+    public IObservable<Either<IERApiError, GetStatusStdRawComplete>> comp => ier2.StatusObservable
+            .Select(x => x.Bind<GetStatusStdRawComplete>(y => y.To_GetStatusStdRawComplete()));
+
+    public override IObservable<GateHwStatus> GateStatusObservable =>
+          //ier2.StatusObservable
+          //  .Select(x => x.Bind<GetStatusStdRawComplete>(y => y.To_GetStatusStdRawComplete()))
+          comp
+            .Select(x => x.Match(
+                r => new GateHwStatus(true, r.To_GateHwStatus()),
+                l => new GateHwStatus(false)
+                ));    
 
     // TODO:
     public override IObservable<OneOf<Intrusion, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> PassageStatusObservable 
@@ -69,7 +78,7 @@ public class IerController : GateControllerBase
         return ier.SetMaintenance();
     }
 
-    public override bool SetNormalMode(Option<global::Domain.Peripherals.Passage.SideOperatingMode> entry, Option<global::Domain.Peripherals.Passage.SideOperatingMode> exit)
+    public override bool SetNormalMode(GateOperationConfig config)
     {
         throw new NotImplementedException();
     }
