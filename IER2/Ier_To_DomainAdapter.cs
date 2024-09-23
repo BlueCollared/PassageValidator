@@ -1,4 +1,5 @@
-﻿using LanguageExt;
+﻿using EtGate.Domain.Services.Gate;
+using LanguageExt;
 
 namespace EtGate.IER;
 
@@ -41,12 +42,59 @@ public class Ier_To_DomainAdapter
         return worker.SetEmergency(true).IsRight;
     }
 
-    public bool SetNormalMode(Option<SideOperatingMode> entry, Option<SideOperatingMode> exit)
-    {
-        if (entry.IsNone && exit.IsNone)
-            return true;
+    public bool SetNormalMode(GateOperationConfig cfg)
+    {        
+        Option<SideOperatingMode> entry = cfg.mode switch
+        {
+            Mode.EntryOnly_EntryFree => SideOperatingMode.Free,
+            Mode.EntryOnly_EntryControlled => SideOperatingMode.Controlled,
+            Mode.ExitOnly_ExitFree => SideOperatingMode.Closed,
+            Mode.ExitOnly_ExitControlled => SideOperatingMode.Closed,
+            Mode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
+            Mode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Free,
+            Mode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Controlled,
+            Mode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
+            _ => default
+        };
 
-        return worker.SetMode(Option<DoorsMode>.None, entry, exit).IsRight;
+        Option<SideOperatingMode> exit = cfg.mode switch
+        {
+            Mode.EntryOnly_EntryFree => SideOperatingMode.Closed,
+            Mode.EntryOnly_EntryControlled => SideOperatingMode.Closed,
+            Mode.ExitOnly_ExitFree => SideOperatingMode.Free,
+            Mode.ExitOnly_ExitControlled => SideOperatingMode.Controlled,
+            Mode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
+            Mode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Controlled,
+            Mode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Free,
+            Mode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
+            _ => default
+        };
+
+        if (entry.IsNone || exit.IsNone)
+            return false;
+
+        if (cfg.bNormallyClosed)
+            return worker.SetMode(DoorsMode.NormallyClosed, entry, exit).IsRight;
+        else
+        {
+            Option<DoorsMode> dm =
+            cfg.mode switch
+            {
+                Mode.EntryOnly_EntryFree => DoorsMode.NormallyOpenedA,
+                Mode.EntryOnly_EntryControlled => DoorsMode.NormallyOpenedA,
+                Mode.ExitOnly_ExitFree => DoorsMode.NormallyOpenedB,
+                Mode.ExitOnly_ExitControlled => DoorsMode.NormallyOpenedB,
+                Mode.BiDi_EntryFree_ExitFree => DoorsMode.OpticalA,
+                Mode.BiDi_EntryFree_ExitControlled => DoorsMode.NormallyOpenedB,
+                Mode.BiDi_EntryControlled_ExitFree => DoorsMode.NormallyOpenedA,
+                Mode.BiDi_EntryControlled_ExitControlled => DoorsMode.NormallyOpenedA,
+                _ => default
+            };
+            if (dm.IsNone)
+                return false;
+
+            return worker.SetMode(dm, entry, exit).IsRight;
+        }
     }
 
     public Option<DateTime> GetDate()

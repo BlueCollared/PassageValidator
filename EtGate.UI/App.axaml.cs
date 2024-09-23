@@ -10,7 +10,7 @@ using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using EtGate.Devices.IER;
 using EtGate.Domain;
-using EtGate.Domain.Passage.IdleEvts;
+//using EtGate.Domain.Passage.IdleEvts;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Gate.Functions;
@@ -210,7 +210,7 @@ public partial class App : Avalonia.Application
 
 internal class MockPassageManager : IPassageManager
 {
-    IObservable<OneOf<Domain.Passage.IdleEvts.Intrusion, Domain.Passage.IdleEvts.Fraud, PassageTimeout, PassageDone>> IPassageManager.IdleStatusObservable => throw new NotImplementedException();
+    //IObservable<OneOf<Domain.Passage.IdleEvts.Intrusion, Domain.Passage.IdleEvts.Fraud, PassageTimeout, PassageDone>> IPassageManager.IdleStatusObservable => throw new NotImplementedException();
 
     public ObsAuthEvents Authorize(string ticketId, int nAuthorizations)
     {

@@ -4,14 +4,14 @@ namespace EtGate.Domain.Services.Gate;
 
 public class GateConnectedSession : IDisposable
 {
-    private readonly IGateController gateController;
+    //private readonly IGateController gateController;
 
     public ClockSynchronizer dateMgr { get; private set; } // Similarly other managers (one per functionality e.g. FirmwareUpgrader)
     public IPassageManager passageMgr { get; private set; }
 
-    public GateConnectedSession(IGateController gateController, Func<ClockSynchronizer> factoryClockSynch)
+    public GateConnectedSession(Func<ClockSynchronizer> factoryClockSynch)
     {
-        this.gateController = gateController;
+        //this.gateController = gateController;
 
         dateMgr = factoryClockSynch?.Invoke();
     }

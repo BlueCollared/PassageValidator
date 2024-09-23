@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Domain.Services\GlobalUsingNamespace.cs" Link="GlobalUsingNamespace.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />

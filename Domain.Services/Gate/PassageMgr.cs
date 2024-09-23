@@ -9,11 +9,11 @@ using ObsAuthEvents = System.IObservable<OneOf.OneOf<
     EtGate.Domain.Passage.PassageEvts.AuthroizedPassengerSteppedBack,
     EtGate.Domain.Passage.PassageEvts.PassageDone>>;
 
-using ObsIdleEvents = System.IObservable<OneOf.OneOf<
-    EtGate.Domain.Passage.IdleEvts.Intrusion,
-    EtGate.Domain.Passage.IdleEvts.Fraud,
-    EtGate.Domain.Passage.IdleEvts.PassageTimeout,
-    EtGate.Domain.Passage.IdleEvts.PassageDone>>;
+//using ObsIdleEvents = System.IObservable<OneOf.OneOf<
+//    EtGate.Domain.Passage.IdleEvts.Intrusion,
+//    EtGate.Domain.Passage.IdleEvts.Fraud,
+//    EtGate.Domain.Passage.IdleEvts.PassageTimeout,
+//    EtGate.Domain.Passage.IdleEvts.PassageDone>>;
 
 public class PassageMgr : IPassageManager
 {
@@ -29,7 +29,7 @@ public class PassageMgr : IPassageManager
         this.controller = controller;
     }
 
-    public ObsIdleEvents IdleStatusObservable => throw new NotImplementedException();
+    //public ObsIdleEvents IdleStatusObservable => throw new NotImplementedException();
 
     public ObsAuthEvents Authorize(string ticketId, int nAuthorizations)
     {

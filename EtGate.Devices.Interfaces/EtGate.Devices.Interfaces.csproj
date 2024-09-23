@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Domain.Services\GlobalUsingNamespace.cs" Link="GlobalUsingNamespace.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,7 @@
-﻿using LanguageExt;
+﻿//using EtGate.Domain.Passage.IdleEvts;
+//using EtGate.Domain.Passage.PassageEvts;
+using EtGate.Domain.Services.Gate;
+using LanguageExt;
 using System.Collections;
 using System.Collections.Concurrent;
 using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
@@ -269,6 +272,16 @@ internal static class IERRHelper
         {"ERRORS_TEMPERATURE", eIERPLCError.ERRORS_TEMPERATURE },
         {"ERRORS_THERMOPILE", eIERPLCError.ERRORS_THERMOPILE },
         {"ERRORS_USINE_TEST_WARNING", eIERPLCError.ERRORS_USINE_TEST_WARNING }
+    };
+
+    static public readonly Dictionary<eInfraction, IntrusionType> infractionDi = new()
+    {
+        {eInfraction.LANG_OPPOSITE_INTRUSION_B, IntrusionType.LANG_OPPOSITE_INTRUSION_B},
+        {eInfraction.LANG_OPPOSITE_INTRUSION_A, IntrusionType.LANG_OPPOSITE_INTRUSION_A},
+        {eInfraction.LANG_INTRUSION_B, IntrusionType.LANG_INTRUSION_B},
+        {eInfraction.LANG_INTRUSION_A, IntrusionType.LANG_INTRUSION_A},
+        {eInfraction.LANG_PREALARM_B, IntrusionType.LANG_PREALARM_B},
+        {eInfraction.LANG_PREALARM_A, IntrusionType.LANG_PREALARM_A},        
     };
 
     static public Either<List<string>, GetStatusStdRaw> ProcessGetStatusStd(object ip)

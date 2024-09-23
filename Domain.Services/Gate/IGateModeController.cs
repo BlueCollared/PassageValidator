@@ -1,6 +1,4 @@
-﻿using Domain.Peripherals.Passage;
-
-namespace EtGate.Domain.Services.Gate;
+﻿namespace EtGate.Domain.Services.Gate;
 
 public enum Mode { 
     EntryOnly_EntryFree,
@@ -29,9 +27,8 @@ public enum FlapOpeningModeApplicableOnlyOnNormallyOpen { A, B, NA };
 
 public interface IGateModeController
 {
+    bool SetOOS();
     bool SetEmergency();
     bool SetMaintenance();
     bool SetNormalMode(GateOperationConfig config);
-
-    IObservable<GateHwStatus> GateStatusObservable { get; }
 }

@@ -11,7 +11,7 @@ public class GateMgr
         public ClockSynchronizer.Config ClockSynchronizerConfig { get; set; } = new();
     }
 
-    public IGateController gateController { get; private set;}
+    public IDeviceDate deviceDate { get; private set;}
     private readonly IDeviceStatus<GateHwStatus> statusMgr;
 
     public IObservable<GateHwStatus> StatusStream => statusMgr.statusObservable;
@@ -21,17 +21,17 @@ public class GateMgr
     Func<ClockSynchronizer> ClockSynchronizerFactory;
     Config config;
 
-    public GateMgr(IGateController gateController,
+    public GateMgr(IDeviceDate deviceDate,
         IDeviceStatus<GateHwStatus> statusMgr,
         Config config
         )
     {
-        this.gateController = gateController ?? throw new ArgumentNullException(nameof(gateController));
+        this.deviceDate = deviceDate ?? throw new ArgumentNullException(nameof(deviceDate));
         this.statusMgr = statusMgr ?? throw new ArgumentNullException(nameof(statusMgr));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
 
         ClockSynchronizerFactory = () => {
-            return new ClockSynchronizer(gateController
+            return new ClockSynchronizer(deviceDate
                 , ()=>DateTimeOffset.Now
                 , (ClockSynchronizer.DateChanged d)=>{}
                 , this.config.ClockSynchronizerConfig);
@@ -45,7 +45,7 @@ public class GateMgr
                 if (!bConnected)
                     session?.Dispose();
                 else
-                    session = new GateConnectedSession(this.gateController, ClockSynchronizerFactory);                    
+                    session = new GateConnectedSession(ClockSynchronizerFactory);                    
             });
     }
 }

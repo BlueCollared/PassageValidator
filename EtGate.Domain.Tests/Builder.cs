@@ -1,5 +1,6 @@
 ﻿using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
+using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
@@ -43,7 +44,7 @@ namespace EtGate.Domain.Tests
             var mockGateStatus = new Mock<IDeviceStatus<GateHwStatus>>();
             mockGateStatus.Setup(m => m.statusObservable).Returns(r.subjGateStatus);
 
-            var dummyGate = new Mock<IGateController>();            
+            var dummyGate = new Mock<IDeviceDate>();            
             r.gate = new GateMgr(dummyGate.Object, mockGateStatus.Object, new GateMgr.Config());            
 
             // Valiation

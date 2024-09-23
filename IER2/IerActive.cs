@@ -1,5 +1,4 @@
-﻿using IFS2.Equipment.DriverInterface;
-using LanguageExt;
+﻿using LanguageExt;
 using System.Reactive.Linq;
 
 namespace EtGate.IER

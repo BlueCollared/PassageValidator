@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Peripherals.Passage;
+using EtGate.Domain.Services.Gate;
 using LanguageExt.UnsafeValueAccess;
 
 namespace EtGate.IER;
@@ -10,6 +11,27 @@ public static class GetStatusStdRawConverter
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         mapper = config.CreateMapper();
+    }
+
+    public static IntrusionX To_IntrusionX(this GetStatusStdRawComplete src)
+    {
+        bool bEntry = (src.infractions 
+            & ((int)eInfraction.LANG_INTRUSION_A            
+            | (int)eInfraction.LANG_OPPOSITE_INTRUSION_A
+            | (int)eInfraction.LANG_PREALARM_A
+            )
+            ) > 0;
+
+        bool bExit = (src.infractions
+            & ((int)eInfraction.LANG_INTRUSION_B
+            | (int)eInfraction.LANG_OPPOSITE_INTRUSION_B
+            | (int)eInfraction.LANG_PREALARM_B
+            )
+            ) > 0;
+
+        return new IntrusionX(bEntry, bExit, 
+            new List<IntrusionType>()) // TODO: fill this. In fact first serializing to an integer and then deserializing it back seems so ugly
+            ;
     }
 
     public static GetStatusStdRawComplete To_GetStatusStdRawComplete(this GetStatusStdRaw src)
