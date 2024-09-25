@@ -5,11 +5,23 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
  where MetaAlarmType : System.Enum
 {
     private Dictionary<AlarmType, AlarmLevel> diAlarms = new();
+    Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType>> diMetaAlarms = new();
 
+    public ModuleAlarmMgrBuilder(int moduleId, Action<int, int> RaiseAlarm)
+    {
+        this.moduleId = moduleId;
+        raiseAlarm = RaiseAlarm;
+    }
+    
     public ModuleAlarmMgr<AlarmType, MetaAlarmType> Build()
     {
-        //ModuleAlarmMgr<AlarmType, MetaAlarmType> result = new(diAlarms);
-        throw new NotImplementedException();
+        return new(
+            moduleId,
+            diAlarms,
+            diMetaAlarms,
+            (null, null),
+            raiseAlarm
+            );
     }
 
     public void AddAlarm(AlarmType alarmType, AlarmLevel alarmLevel)
@@ -22,17 +34,14 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
         AlarmLevel alarmLevel,
         List<AlarmType> alarms)
     {
-        throw new NotImplementedException();
-    }
+        diMetaAlarms.Add(metaAlarmType, new MetaAlarmConfig<AlarmType> {AlarmLevel=alarmLevel, ConstituentAlarms= alarms});
+    }   
 
-    public void AddMetaAlarm(MetaAlarmType metaAlarmType, AlarmLevel alarmLevel, 
-        Func<List<AlarmType>, bool> metaAlarmCalculator)
+    public void SetMetaStatusDefault()
     {
-        throw new NotImplementedException();
+        bSetMetaStatusDefault = true;
     }
-
-    public void SetMetaStatus(string name)
-    {
-        throw new NotImplementedException();
-    }
+    bool bSetMetaStatusDefault = false;
+    private readonly int moduleId;
+    private readonly Action<int, int> raiseAlarm;
 }

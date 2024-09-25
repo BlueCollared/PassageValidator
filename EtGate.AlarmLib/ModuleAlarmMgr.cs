@@ -5,8 +5,8 @@ namespace EtGate.AlarmLib;
 
 public class MetaAlarmConfig<AlarmType> where AlarmType : System.Enum
 {
-    public AlarmLevel AlarmLevel { get; }
-    public List<AlarmType> ConstituentAlarms { get; }
+    public AlarmLevel AlarmLevel { get; internal set; }
+    public List<AlarmType> ConstituentAlarms { get; internal set; }
 }
 
 public class ModuleAlarmMgr <AlarmType, MetaAlarmType> 
@@ -30,9 +30,9 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
     internal ModuleAlarmMgr(
         int moduleId,
         Dictionary<AlarmType, AlarmLevel> alarmsConfig, 
-        Dictionary<MetaAlarmType, (AlarmLevel, MetaAlarmConfig<AlarmType>)> metaAlarmConfig,
+        Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType>> metaAlarmConfig,
         (List<AlarmType> alarmTypes, List<MetaAlarmType> metaAlarmTypes) metaStatusConfig,
-        Action<(int alarmId, int alarmValue)> RaiseAlarm
+        Action<int , int > RaiseAlarm
         )
     {
         List<IObservable<MetaStatusAlarm>> alarmsMetaEq = new();
@@ -46,7 +46,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
 
         foreach(var metaAlarm in metaAlarmConfig)
         {
-            var constitutentAlarms_ = metaAlarm.Value.Item2.ConstituentAlarms;
+            var constitutentAlarms_ = metaAlarm.Value.ConstituentAlarms;
             var constitutentAlarms = alarmsObservableDistinct
                 .Where(x => constitutentAlarms_.Contains(x.Key));
             var observables = new List<IObservable<bool>>();
@@ -58,7 +58,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
                     .CombineLatest(values => values.Aggregate((acc, current) => acc || current));
 
                 metaAlarmsObservableDistinct.Add(metaAlarm.Key, combined.AsObservable().DistinctUntilChanged());
-                alarmsMetaEq.Add(metaAlarmsObservableDistinct[metaAlarm.Key].Select(x => x == true ? diAlarmMapping[metaAlarm.Value.Item1] : MetaStatusAlarm.Normal));
+                alarmsMetaEq.Add(metaAlarmsObservableDistinct[metaAlarm.Key].Select(x => x == true ? diAlarmMapping[metaAlarm.Value.AlarmLevel] : MetaStatusAlarm.Normal));
             }
         }
         
@@ -85,6 +85,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
         all = Observable.Merge(lst);
         all = all.Merge(metaStatusStream)
             .Select(x=>(moduleId*1000 + x.Item1, x.Item2));
+        all.Subscribe(x => RaiseAlarm(x.alarmId, x.val));
     }
 
     const int METASTATUS_ID = 900;

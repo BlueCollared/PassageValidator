@@ -85,5 +85,4 @@ namespace EtGate.IER
         public int FraudClosingSpeed = 100;
         public int SecurityFraudClosingSpeed = 20;
     }
-
 }

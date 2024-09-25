@@ -1,7 +1,5 @@
 ﻿using EtGate.IER;
 using IFS2.Common;
-using IFS2.Common.CoreTechnical;
-using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 using System.Collections;
 using System.Xml.Serialization;
