@@ -7,7 +7,6 @@ public class MetaAlarmConfig<AlarmType> where AlarmType : System.Enum
 {
     public AlarmLevel AlarmLevel { get; }
     public List<AlarmType> ConstituentAlarms { get; }
-    public Dictionary<AlarmType, AlarmLevel> masterAlarmConfig;
 }
 
 public class ModuleAlarmMgr <AlarmType, MetaAlarmType> 
@@ -47,10 +46,9 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
 
         foreach(var metaAlarm in metaAlarmConfig)
         {
-            var constitutentAlarms =
-            alarmsObservableDistinct
-                .Where(x => x.Key.Equals(metaAlarm.Key));
-
+            var constitutentAlarms_ = metaAlarm.Value.Item2.ConstituentAlarms;
+            var constitutentAlarms = alarmsObservableDistinct
+                .Where(x => constitutentAlarms_.Contains(x.Key));
             var observables = new List<IObservable<bool>>();
             foreach (var constAlarm in constitutentAlarms)
             {
