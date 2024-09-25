@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <Reference Include="Horizon.XmlRpc.Client">
-      <HintPath>C:\IFS2\Software\Equipment\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Client.dll</HintPath>
+      <HintPath>..\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Client.dll</HintPath>
     </Reference>
     <Reference Include="Horizon.XmlRpc.Core">
-      <HintPath>C:\IFS2\Software\Equipment\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Core.dll</HintPath>
+      <HintPath>..\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Core.dll</HintPath>
     </Reference>
     <Reference Include="IFS2.Common.CoreTechnical.Communication.NetCoreNet6.0">
       <HintPath>C:\IFS2\Software\Common\CoreTechnical\Outputs\DotNETCoreNet6.0\net6.0\IFS2.Common.CoreTechnical.Communication.NetCoreNet6.0.dll</HintPath>
