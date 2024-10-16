@@ -31,7 +31,8 @@ namespace AlarmLib.Tests
             builder.AddAlarm(Mod1Alarms.Alm3Error, AlarmLevel.Error);
             builder.AddAlarm(Mod1Alarms.Alm3Warning, AlarmLevel.Warning);
 
-            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm1, AlarmLevel.Warning, Mod1Alarms.Alm3Error, Mod1Alarms.Alm3Warning);
+            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm1, AlarmLevel.Warning, new HashSet<Mod1Alarms> { Mod1Alarms.Alm3Error, Mod1Alarms.Alm3Warning }, 
+                new HashSet<Mod1MetaAlarms> { });
 
             var sut = builder.Build();
             sut.IsRight.ShouldBeTrue();
