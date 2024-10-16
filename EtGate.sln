@@ -83,7 +83,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaintenanceMenu", "Maintena
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossCutting", "CrossCutting", "{FE208C4E-CED2-4EAE-910B-7AEC6377371E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.AlarmLib", "EtGate.AlarmLib\EtGate.AlarmLib.csproj", "{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlarmLib", "EtGate.AlarmLib\AlarmLib.csproj", "{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlarmLib.Tests", "AlarmLib.Tests\AlarmLib.Tests.csproj", "{83FA7F9E-C407-4375-B999-CA737CF3BF7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +193,10 @@ Global
 		{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83FA7F9E-C407-4375-B999-CA737CF3BF7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83FA7F9E-C407-4375-B999-CA737CF3BF7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83FA7F9E-C407-4375-B999-CA737CF3BF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83FA7F9E-C407-4375-B999-CA737CF3BF7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -231,6 +237,7 @@ Global
 		{BF7503C0-0BF1-4B83-A51A-139CE7687AC5} = {0FB0FE57-0D9C-48BB-9191-E3D0E3948454}
 		{FE208C4E-CED2-4EAE-910B-7AEC6377371E} = {04AF3EF2-656A-4474-9416-3EB70A2163F9}
 		{7A8C9BBC-CCCC-4C35-B7D0-39CD5EFDB9FF} = {FE208C4E-CED2-4EAE-910B-7AEC6377371E}
+		{83FA7F9E-C407-4375-B999-CA737CF3BF7B} = {22E49B18-DBF7-4090-A18B-3F4DBF32A484}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}

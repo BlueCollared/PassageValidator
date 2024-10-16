@@ -1,4 +1,6 @@
-﻿namespace EtGate.AlarmLib;
+﻿using LanguageExt;
+
+namespace EtGate.AlarmLib;
 
 public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
  where AlarmType : System.Enum
@@ -7,20 +9,36 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
     private Dictionary<AlarmType, AlarmLevel> diAlarms = new();
     Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType>> diMetaAlarms = new();
 
-    public ModuleAlarmMgrBuilder(int moduleId, Action<int, int> RaiseAlarm)
+    public ModuleAlarmMgrBuilder(int moduleId)
     {
-        this.moduleId = moduleId;
-        raiseAlarm = RaiseAlarm;
+        this.moduleId = moduleId;        
     }
     
-    public ModuleAlarmMgr<AlarmType, MetaAlarmType> Build()
+    static Option<EnumType> MissingEnum<EnumType>(List<EnumType> alarmTypes)
     {
-        return new(
+        var missingEnum = Enum.GetValues(typeof(EnumType))
+                           .Cast<EnumType>()
+                           .FirstOrDefault(alarm => !alarmTypes.Contains(alarm));
+
+        // If no missing value is found, FirstOrDefault will return the default enum value.
+        // We need to check if that default value is actually present in the list.
+        return alarmTypes.Contains(missingEnum) ? Option<EnumType>.None : missingEnum;
+    }
+
+    public Either<string, ModuleAlarmMgr<AlarmType, MetaAlarmType>> Build()
+    {        
+        var missingAlarm = MissingEnum (diAlarms.Keys.ToList());
+        if (!missingAlarm.IsNone)
+            return $"{missingAlarm.ToString()} not configured";
+
+        var missingMetaAlarm = MissingEnum(diMetaAlarms.Keys.ToList());
+        if (!missingMetaAlarm.IsNone)
+            return $"{missingMetaAlarm.ToString()} not configured";
+
+        return new ModuleAlarmMgr<AlarmType, MetaAlarmType>(
             moduleId,
             diAlarms,
-            diMetaAlarms,
-            (null, null),
-            raiseAlarm
+            diMetaAlarms
             );
     }
 
@@ -30,18 +48,25 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
     }
 
     public void AddMetaAlarm(
-        MetaAlarmType metaAlarmType, 
+        MetaAlarmType metaAlarmType,
         AlarmLevel alarmLevel,
-        List<AlarmType> alarms)
+        params AlarmType[] alarms)
     {
         diMetaAlarms.Add(metaAlarmType, new MetaAlarmConfig<AlarmType> {AlarmLevel=alarmLevel, ConstituentAlarms= alarms});
-    }   
+    }
+
+    public void AddMetaAlarm(
+    MetaAlarmType metaAlarmType,
+    AlarmLevel alarmLevel
+        )
+    {
+        
+    }
 
     public void SetMetaStatusDefault()
     {
         bSetMetaStatusDefault = true;
     }
     bool bSetMetaStatusDefault = false;
-    private readonly int moduleId;
-    private readonly Action<int, int> raiseAlarm;
+    private readonly int moduleId;    
 }

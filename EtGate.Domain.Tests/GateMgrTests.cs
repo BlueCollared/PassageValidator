@@ -28,8 +28,6 @@ namespace EtGate.Domain.Tests
                 new GateMgr.Config {  ClockSynchronizerConfig = new() { interval = TimeSpan.FromSeconds(60) } });
             gateSatatusMgrMock.statusSubject.OnNext(GateHwStatus.AllGood);
             mockGateController.Verify(x => x.GetDate(), Times.Once);
-
-
         }
     }
 }

@@ -6,7 +6,7 @@ namespace EtGate.AlarmLib;
 public class MetaAlarmConfig<AlarmType> where AlarmType : System.Enum
 {
     public AlarmLevel AlarmLevel { get; internal set; }
-    public List<AlarmType> ConstituentAlarms { get; internal set; }
+    public AlarmType[] ConstituentAlarms { get; internal set; }
 }
 
 public class ModuleAlarmMgr <AlarmType, MetaAlarmType> 
@@ -25,14 +25,12 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
     Dictionary<MetaAlarmType, IObservable<bool>> metaAlarmsObservableDistinct = new();
     IObservable<MetaStatusAlarm> metaStatusAlarm;
     
-    IObservable<(int alarmId, int val)> all;
+    public IObservable<(int alarmId, int val)> all { get; private set; }
 
     internal ModuleAlarmMgr(
         int moduleId,
         Dictionary<AlarmType, AlarmLevel> alarmsConfig, 
-        Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType>> metaAlarmConfig,
-        (List<AlarmType> alarmTypes, List<MetaAlarmType> metaAlarmTypes) metaStatusConfig,
-        Action<int , int > RaiseAlarm
+        Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType>> metaAlarmConfig
         )
     {
         List<IObservable<MetaStatusAlarm>> alarmsMetaEq = new();
@@ -46,7 +44,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
 
         foreach(var metaAlarm in metaAlarmConfig)
         {
-            var constitutentAlarms_ = metaAlarm.Value.ConstituentAlarms;
+            var constitutentAlarms_ = metaAlarm.Value.ConstituentAlarms;            
             var constitutentAlarms = alarmsObservableDistinct
                 .Where(x => constitutentAlarms_.Contains(x.Key));
             var observables = new List<IObservable<bool>>();
@@ -64,7 +62,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
         
         List<IObservable<(int, int)>> lst = new();
 
-        foreach(var alarm in alarmsObservableDistinct)        
+        foreach(var alarm in alarmsObservableDistinct)
             lst.Add(alarm.Value.Select(x => (Convert.ToInt32(alarm.Key), x ? 1: 0)));
 
         foreach (var alarm in metaAlarmsObservableDistinct)
@@ -85,7 +83,8 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
         all = Observable.Merge(lst);
         all = all.Merge(metaStatusStream)
             .Select(x=>(moduleId*1000 + x.Item1, x.Item2));
-        all.Subscribe(x => RaiseAlarm(x.alarmId, x.val));
+        
+        //all.Subscribe(x => RaiseAlarm(x.alarmId, x.val));
     }
 
     const int METASTATUS_ID = 900;

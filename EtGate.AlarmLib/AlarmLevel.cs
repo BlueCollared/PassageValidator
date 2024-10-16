@@ -14,3 +14,10 @@ public enum AlarmLevel
     Error,
     Warning
 }
+
+public enum MetaAlarmLevel
+{
+    NotConnected,
+    Error,
+    Warning
+}
