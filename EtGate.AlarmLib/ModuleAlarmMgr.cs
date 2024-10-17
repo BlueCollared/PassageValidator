@@ -118,11 +118,8 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
             lst.Add(alarm.Value.Select(x => (MEATAALARM_BEGINSWITH + Convert.ToInt32(alarm.Key), (int)x)));
 
         all = Observable.Merge(lst);
-        //all = all.Merge(metaStatusStream)
-        //    .Select(x=>(moduleId*1000 + x.Item1, x.Item2));        
     }
-
-    //const int METASTATUS_ID = 900;
+    
     public const int MEATAALARM_BEGINSWITH = 100;
 
     public void RaiseAlarm (AlarmType alarmType)

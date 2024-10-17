@@ -51,9 +51,9 @@ public static class GetStatusStdRawConverter
         result.exceptionMode = src.exceptionMode.Value();
         result.stateIfInNominal = src.stateIfInNominal.Value();
         result.customersActive = src.customersActive.Value();
-        result.emergencyButton = src.emergencyButton.Value();
-        result.entryLockOpen = src.entryLockOpen.Value();
-        result.systemPoweredByUPS = src.systemPoweredByUPS.Value();
+        result.bEmergencyButton = src.emergencyButton.Value();
+        result.bEntryLockOpen = src.entryLockOpen.Value();
+        result.bSystemPoweredByUPS = src.systemPoweredByUPS.Value();
         result.majorTechnicalFailures = src.majorTechnicalFailures;
         result.minorTechnicalFailures = src.minorTechnicalFailures;
         result.timeouts = src.timeouts.Value();

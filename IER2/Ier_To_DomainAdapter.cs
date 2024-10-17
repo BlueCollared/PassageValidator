@@ -17,6 +17,11 @@ public class Ier_To_DomainAdapter
         return worker.Reboot().IsRight;
     }
 
+    public bool Authorise(int nPersons, bool bEntry)
+    {
+        return worker.SetAuthorisation(nPersons, bEntry ? 1 : 2).IsRight; // TODO: check
+    }
+
     public bool Restart()
     {
         return worker.Restart().IsRight;

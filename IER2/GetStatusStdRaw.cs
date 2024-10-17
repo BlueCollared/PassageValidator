@@ -93,9 +93,9 @@ public struct GetStatusStdRawComplete
     public int customersActive;
     public bool IsCustomerActive(int id) // id starts from 1
     { return (customersActive & (1 << (id - 1))) != 0; }
-    public bool emergencyButton;
-    public bool entryLockOpen;
-    public bool systemPoweredByUPS;
+    public bool bEmergencyButton;
+    public bool bEntryLockOpen;
+    public bool bSystemPoweredByUPS;
     public List<eIERPLCError> majorTechnicalFailures;
     public List<eIERPLCError> minorTechnicalFailures;
     public int timeouts;

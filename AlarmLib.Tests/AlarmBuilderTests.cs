@@ -1,5 +1,6 @@
 using EtGate.AlarmLib;
 using Shouldly;
+using AH = AlarmLib.AlarmHelper;
 
 namespace AlarmLib.Tests
 {
@@ -15,13 +16,13 @@ namespace AlarmLib.Tests
     public enum Mod1MetaAlarms
     {
         MetaAlm1,
+        MetaAlm2,
+        MetaAlm3,
         MetaStatus
     }
 
     public class AlarmBuilderTests
     {
-        //private const int MOD1ID = 1;
-
         [Fact]
         public void GoodSUTCreation()
         {            
@@ -32,8 +33,26 @@ namespace AlarmLib.Tests
             builder.AddAlarm(Mod1Alarms.Alm3Error, AlarmLevel.Error);
             builder.AddAlarm(Mod1Alarms.Alm3Warning, AlarmLevel.Warning);
 
-            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm1, AlarmLevel.Warning, new HashSet<Mod1Alarms> { Mod1Alarms.Alm3Error, Mod1Alarms.Alm3Warning }, 
-                new HashSet<Mod1MetaAlarms> { });
+            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm1, AlarmLevel.Warning, new HashSet<Mod1Alarms> { Mod1Alarms.Alm3Error, Mod1Alarms.Alm3Warning },
+                AH.Alms(Mod1MetaAlarms.MetaAlm2)
+                );
+            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm2, 
+                null,
+                AH.NoAlms<Mod1Alarms>(), 
+                AH.Alms(Mod1MetaAlarms.MetaAlm3)
+                );
+
+            builder.AddMetaAlarm(Mod1MetaAlarms.MetaAlm3,
+                null,
+                AH.NoAlms<Mod1Alarms>(),
+                AH.NoAlms<Mod1MetaAlarms>()
+                );
+
+            builder.AddMetaAlarm(Mod1MetaAlarms.MetaStatus,
+                null,
+                AH.NoAlms<Mod1Alarms>(),
+                AH.Alms(Mod1MetaAlarms.MetaAlm1)
+                );
 
             var sut = builder.Build();
             sut.IsRight.ShouldBeTrue();

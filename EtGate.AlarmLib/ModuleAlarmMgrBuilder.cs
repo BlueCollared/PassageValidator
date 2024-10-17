@@ -7,11 +7,6 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
 {
     private Dictionary<AlarmType, AlarmLevel> diAlarms = new();
     Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType, MetaAlarmType>> diMetaAlarms = new();
-
-    //public ModuleAlarmMgrBuilder(int moduleId)
-    //{
-    //    this.moduleId = moduleId;        
-    //}
     
     static Option<EnumType> MissingEnum<EnumType>(List<EnumType> alarmTypes)
     {
@@ -39,15 +34,10 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
         foreach (var kvp in diMetaAlarms)
             deps.Add(kvp.Key, kvp.Value.ConstituentMetaAlarms);
 
-
         if (HasCycle(deps))
             return "Cycles in the input";
 
-        return new ModuleAlarmMgr<AlarmType, MetaAlarmType>(
-            //moduleId,
-            diAlarms,
-            diMetaAlarms
-            );
+        return new ModuleAlarmMgr<AlarmType, MetaAlarmType>(diAlarms, diMetaAlarms);
     }
 
     private enum NodeState
@@ -134,6 +124,5 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
     {
         bSetMetaStatusDefault = true;
     }
-    bool bSetMetaStatusDefault = false;
-    //private readonly int moduleId;    
+    bool bSetMetaStatusDefault = false;    
 }

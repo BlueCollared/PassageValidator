@@ -11,7 +11,11 @@ namespace EtGate.Devices.IER;
 
 public class IerController : GateControllerBase
 {
-    bool bIsConnected = false;
+    bool bIsConnected => hwStatus != null && hwStatus.bConnected;
+    bool bIsAvailable => hwStatus != null && hwStatus.IsAvailable;
+
+    GateHwStatus hwStatus = null;
+
     Ier_To_DomainAdapter ier;
     private readonly IIerStatusMonitor ier2;
 
@@ -23,15 +27,13 @@ public class IerController : GateControllerBase
         ier2 = xmlRpc;
 
         statusObservable
-            .Subscribe(x => bIsConnected = x.bConnected);
+            .Subscribe(x => hwStatus = x);
     }
 
     public IObservable<Either<IERApiError, GetStatusStdRawComplete>> comp => ier2.StatusObservable
             .Select(x => x.Bind<GetStatusStdRawComplete>(y => y.To_GetStatusStdRawComplete()));
 
     public override IObservable<GateHwStatus> statusObservable =>
-          //ier2.StatusObservable
-          //  .Select(x => x.Bind<GetStatusStdRawComplete>(y => y.To_GetStatusStdRawComplete()))
           comp
             .Select(x => x.Match(
                 r => new GateHwStatus(true, r.To_GateHwStatus()),
@@ -55,13 +57,17 @@ public class IerController : GateControllerBase
                 eDoorNominalModes.INTRUSION => new IntrusionX(bEntry: true, bExit: true, null)
             });
 
-    public override bool Authorize(int nAuthorizations)
+    public override bool Authorize(int nAuthorizations, bool bEntry)
     {
-        throw new NotImplementedException();
+        if (!bIsConnected)
+            return false;
+        return ier.Authorise(nAuthorizations, bEntry);
     }
 
     public override Option<DateTimeOffset> GetDate()
     {
+        if (!bIsConnected)
+            return Option<DateTimeOffset>.None;
         return ier.GetDate().Map(x=>new DateTimeOffset(x)); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }
 
@@ -78,6 +84,8 @@ public class IerController : GateControllerBase
 
     public override bool SetDate(DateTimeOffset dt)
     {
+        if (!bIsConnected)
+            return false;
         return ier.SetDate(dt.DateTime); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }    
 
@@ -99,8 +107,7 @@ public class IerController : GateControllerBase
     {
         if (!bIsConnected)
             return false;
-
-        throw new NotImplementedException();
+        return ier.SetNormalMode(config);        
     }
 
     public override bool SetOOS()
@@ -108,6 +115,6 @@ public class IerController : GateControllerBase
         if (!bIsConnected)
             return false;
 
-        throw new NotImplementedException();
+        return ier.SetOOS();
     }
 }

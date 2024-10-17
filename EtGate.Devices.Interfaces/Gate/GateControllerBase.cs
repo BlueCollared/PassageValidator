@@ -9,9 +9,6 @@ namespace EtGate.Devices.Interfaces.Gate;
 
 abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGateController, IPassageController, IGateModeController, IDeviceDate
 {
-    //readonly protected ReplaySubject<GateHwStatus> GateStatusSubject = new();
-    //virtual public IObservable<GateHwStatus> GateStatusObservable => GateStatusSubject.AsObservable();
-
     readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
     virtual public IObservable<EventInNominalMode> PassageStatusObservable => EventsInNominalModeSubject.AsObservable();
 
@@ -20,7 +17,7 @@ abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGate
     public abstract bool SetMaintenance();
     public abstract bool SetNormalMode(GateOperationConfig config);
     public abstract bool Reboot(bool bHardboot);
-    public abstract bool Authorize(int nAuthorizations);
+    public abstract bool Authorize(int nAuthorizations, bool bEntry);
     public abstract bool SetDate(DateTimeOffset dt);
     public abstract Option<DateTimeOffset> GetDate();    
 }
