@@ -8,7 +8,7 @@ public class MetaAlarmConfig<AlarmType, MetaAlarmType>
     where AlarmType : System.Enum
     where MetaAlarmType : System.Enum
 {
-    public AlarmLevel AlarmLevel { get; internal set; }
+    public AlarmLevel? AlarmLevel { get; internal set; }
     public HashSet<AlarmType> ConstituentAlarms { get; internal set; } = new();
     public HashSet<MetaAlarmType> ConstituentMetaAlarms { get; internal set; } = new();
 }
@@ -30,7 +30,6 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
         {AlarmLevel.NotConnected, MetaStatusAlarm.NotConnected },
     };
 
-
     Dictionary<AlarmType, ReplaySubject<bool>> alarmsObservable = new();    
     Dictionary<MetaAlarmType, IObservable<bool>> metaAlarmsObservableDistinct = new();
     IObservable<MetaStatusAlarm> metaStatusAlarm;
@@ -44,7 +43,6 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
 
 
     internal ModuleAlarmMgr(
-        int moduleId,
         Dictionary<AlarmType, AlarmLevel> alarmsConfig, 
         Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType, MetaAlarmType>> metaAlarmConfig
         )
@@ -102,8 +100,13 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
                      if (x != MetaStatusAlarm.Error)
                          return x;
                      else
-                         return diMetaAlarmMapping[myStaticLevel];
-            });
+                     {
+                         if (myStaticLevel == null)
+                             return x;
+                         else
+                             return diMetaAlarmMapping[(AlarmLevel)myStaticLevel];
+                     }
+            }).DistinctUntilChanged();
         }
         
         List<IObservable<(int, int)>> lst = new();
@@ -112,11 +115,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
             lst.Add(alarm.Value.Select(x => (Convert.ToInt32(alarm.Key), (int)x)));
 
         foreach (var alarm in metaAlarmsMetaEq)
-            lst.Add(alarm.Value.Select(x => (Convert.ToInt32(alarm.Key), (int)x)));
-
-        //foreach (var alarm in metaAlarmsObservableDistinct)
-        //    lst.Add(alarm.Value.Select(x => (MEATAALARM_BEGINSWITH + Convert.ToInt32(alarm.Key), x ? 1 : 0)));      
-
+            lst.Add(alarm.Value.Select(x => (MEATAALARM_BEGINSWITH + Convert.ToInt32(alarm.Key), (int)x)));
 
         all = Observable.Merge(lst);
         //all = all.Merge(metaStatusStream)
@@ -124,7 +123,7 @@ public class ModuleAlarmMgr <AlarmType, MetaAlarmType>
     }
 
     //const int METASTATUS_ID = 900;
-    const int MEATAALARM_BEGINSWITH = 100;
+    public const int MEATAALARM_BEGINSWITH = 100;
 
     public void RaiseAlarm (AlarmType alarmType)
     {

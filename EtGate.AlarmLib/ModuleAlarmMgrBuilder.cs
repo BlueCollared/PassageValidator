@@ -1,5 +1,4 @@
 ﻿using LanguageExt;
-
 namespace EtGate.AlarmLib;
 
 public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
@@ -9,10 +8,10 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
     private Dictionary<AlarmType, AlarmLevel> diAlarms = new();
     Dictionary<MetaAlarmType, MetaAlarmConfig<AlarmType, MetaAlarmType>> diMetaAlarms = new();
 
-    public ModuleAlarmMgrBuilder(int moduleId)
-    {
-        this.moduleId = moduleId;        
-    }
+    //public ModuleAlarmMgrBuilder(int moduleId)
+    //{
+    //    this.moduleId = moduleId;        
+    //}
     
     static Option<EnumType> MissingEnum<EnumType>(List<EnumType> alarmTypes)
     {
@@ -45,7 +44,7 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
             return "Cycles in the input";
 
         return new ModuleAlarmMgr<AlarmType, MetaAlarmType>(
-            moduleId,
+            //moduleId,
             diAlarms,
             diMetaAlarms
             );
@@ -124,7 +123,7 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
 
     public void AddMetaAlarm(
         MetaAlarmType metaAlarmType,
-        AlarmLevel alarmLevel,
+        AlarmLevel? alarmLevel,
         System.Collections.Generic.HashSet<AlarmType> alarms,
         System.Collections.Generic.HashSet<MetaAlarmType> metaAlarms)
     {
@@ -136,5 +135,5 @@ public class ModuleAlarmMgrBuilder<AlarmType, MetaAlarmType>
         bSetMetaStatusDefault = true;
     }
     bool bSetMetaStatusDefault = false;
-    private readonly int moduleId;    
+    //private readonly int moduleId;    
 }
