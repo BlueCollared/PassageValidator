@@ -10,7 +10,6 @@ using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using EtGate.Devices.IER;
 using EtGate.Domain;
-//using EtGate.Domain.Passage.IdleEvts;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Gate.Functions;
@@ -22,9 +21,7 @@ using EtGate.UI.ViewModels;
 using EtGate.UI.Views;
 using GateApp;
 using Horizon.XmlRpc.Client;
-using IFS2.Equipment.HardwareInterface.IERPLCManager;
 using Microsoft.Extensions.DependencyInjection;
-using OneOf;
 using System;
 using System.Reactive.Concurrency;
 
