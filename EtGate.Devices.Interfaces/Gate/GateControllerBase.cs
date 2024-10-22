@@ -8,9 +8,12 @@ using System.Reactive.Subjects;
 namespace EtGate.Devices.Interfaces.Gate;
 
 abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGateController, IPassageController, IGateModeController, IDeviceDate
-{
-    readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
-    virtual public IObservable<EventInNominalMode> PassageStatusObservable => EventsInNominalModeSubject.AsObservable();
+{    
+    // migrate it to the test class where it is needed. Real implmentation is not even using it
+    //readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
+
+    // 
+    abstract public IObservable<EventInNominalMode> InServiceEventsObservable { get; }//=> EventsInNominalModeSubject.AsObservable();
 
     public abstract bool SetOOS();
     public abstract bool SetEmergency();

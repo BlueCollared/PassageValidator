@@ -208,7 +208,7 @@ public partial class App : Avalonia.Application
 
 internal class MockPassageManager : IPassageController
 {
-    public IObservable<OneOf<IntrusionX, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> PassageStatusObservable => throw new NotImplementedException();
+    public IObservable<OneOf<IntrusionX, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> InServiceEventsObservable => throw new NotImplementedException();
 
     //IObservable<OneOf<Domain.Passage.IdleEvts.Intrusion, Domain.Passage.IdleEvts.Fraud, PassageTimeout, PassageDone>> IPassageManager.IdleStatusObservable => throw new NotImplementedException();
 

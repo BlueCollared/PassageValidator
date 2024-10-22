@@ -40,7 +40,7 @@ public class IerController : GateControllerBase
                 l => new GateHwStatus(l != IERApiError.DeviceInaccessible) // TODO: still to treat errors other than DeviceInaccessible
                 ));
     
-    public override IObservable<EventInNominalMode> PassageStatusObservable
+    public override IObservable<EventInNominalMode> InServiceEventsObservable
         => comp.Where(x => x.IsRight)
         .Select<Either<IERApiError, GetStatusStdRawComplete>, GetStatusStdRawComplete>(a => a.Value())
         .Where(a => a.exceptionMode == OverallState.NOMINAL)

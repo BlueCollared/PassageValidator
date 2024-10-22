@@ -6,7 +6,7 @@
 
 public interface IPassageController
 {
-    IObservable<EventInNominalMode> PassageStatusObservable { get; }
+    IObservable<EventInNominalMode> InServiceEventsObservable { get; }
 
     // returns true if the request is accepted    
     bool Authorize(int nAuthorizations, bool bEntry);
