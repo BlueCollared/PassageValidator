@@ -25,7 +25,7 @@ namespace EtGate.Domain.Tests
         {
             s = new MockSytemBuilder().Build();
 
-            var modeMgrFactoryMock = new Mock<IModeMgrFactory>();
+            var modeMgrFactoryMock = new Mock<ISubModeMgrFactory>();
             //modeMgrMock = new Mock<ISubModeMgr>();
 
             // Set up the mock to return the modeMgrMock when Create is called with any Mode value

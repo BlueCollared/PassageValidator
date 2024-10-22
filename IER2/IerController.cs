@@ -54,7 +54,7 @@ public class IerController : GateControllerBase
                 eDoorNominalModes.FRAUD => new Fraud(bEntry: true, null),
                 eDoorNominalModes.OPEN_DOOR => new OpenDoor(bEntry: true),
                 eDoorNominalModes.WAIT_FOR_AUTHORIZATION => new WaitForAuthroization(),
-                eDoorNominalModes.INTRUSION => new IntrusionX(bEntry: true, bExit: true, null)
+                eDoorNominalModes.INTRUSION => a.To_IntrusionX()
             });
 
     public override bool Authorize(int nAuthorizations, bool bEntry)

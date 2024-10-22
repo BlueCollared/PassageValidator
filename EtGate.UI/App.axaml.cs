@@ -80,7 +80,7 @@ public partial class App : Avalonia.Application
             .WithParameter(new NamedParameter(bEntry, false))
             .Named<MainWindowViewModel>(SecondaryExit);
 
-        builder.RegisterType<ModeService>().As<IModeCommandService>().SingleInstance();
+        builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
@@ -108,7 +108,7 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
-        builder.RegisterType<ModeMgrFactory>().As<IModeMgrFactory>().SingleInstance();
+        builder.RegisterType<ModeMgrFactory>().As<ISubModeMgrFactory>().SingleInstance();
 
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
@@ -124,7 +124,7 @@ public partial class App : Avalonia.Application
             .SingleInstance()
             .AsSelf();
 
-        builder.RegisterType<MockPassageManager>().As<IPassageController>();
+        builder.RegisterType<MockPassageManager>().As<IGateInServiceController>();
 
         Container = builder.Build();
 
@@ -191,6 +191,7 @@ public partial class App : Avalonia.Application
         builder.RegisterInstance(ier)
             .As<IGateController>()
             .As<IDeviceStatus<GateHwStatus>>()
+            .As<IDeviceDate>() // TODO: this is WRONG to assume that only IerController implements IDeveiceDate
             .SingleInstance();
 
         builder.RegisterInstance(new GateMgr.Config { ClockSynchronizerConfig = new ClockSynchronizer.Config { interval = TimeSpan.FromMinutes(5) } })
@@ -206,7 +207,7 @@ public partial class App : Avalonia.Application
 }
 
 
-internal class MockPassageManager : IPassageController
+internal class MockPassageManager : IGateInServiceController
 {
     public IObservable<OneOf<IntrusionX, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> InServiceEventsObservable => throw new NotImplementedException();
 

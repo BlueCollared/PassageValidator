@@ -4,6 +4,7 @@ using EtGate.Domain.Services.Gate;
 
 namespace EtGate.Devices.Interfaces.Validation
 {
+    // 22010-2024 TODO: `PassageMgr` is  HORRIBLE MISFIT here. still giving some time before eliminating this code
     public class TicketValidationService : ITicketValidationService
     {
         //private readonly IPassageController _flapController;
@@ -11,11 +12,11 @@ namespace EtGate.Devices.Interfaces.Validation
         //private GateStatus _gateStatus;
 
         //public IPassageController PassageController => _flapController;
-        public IPassageController PassageMgr { get; private set; }
+        //public IPassageController PassageMgr { get; private set; }
 
-        public TicketValidationService(IPassageController passageMgr)
+        public TicketValidationService(IGateInServiceController passageMgr)
         {
-            PassageMgr = passageMgr;
+          //  PassageMgr = passageMgr;
             _passengerStatus = new PassengerStatus();
             //_gateStatus = new GateStatus { IsInService = false, IsQrReaderWorking = false, IsFlapControllerWorking = false };
         }
@@ -26,7 +27,7 @@ namespace EtGate.Devices.Interfaces.Validation
                 //&& _gateStatus.IsInService 
                 && !_passengerStatus.FlapOpened)
             {
-                PassageMgr.Authorize(1, bEntry:true); // TODO: correct it
+            //    PassageMgr.Authorize(1, bEntry:true); // TODO: correct it
                 _passengerStatus.FlapOpened = true;
                 return true;
             }

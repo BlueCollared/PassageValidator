@@ -1,5 +1,4 @@
-﻿using Domain.Services.Modes;
-using GateApp;
+﻿using GateApp;
 using Newtonsoft.Json;
 using RecordsRemoteListener;
 using System.IO.Pipes;
@@ -8,14 +7,15 @@ namespace Infrastructure
 {
     public class MainAppServer
     {
-        private readonly ModeManager modeMgr;
-        private readonly IContextRepository contextRepository;
+        private readonly IModeCommandService modeService;
 
-        public MainAppServer(ModeManager modeMgr, IContextRepository contextRepository)
+        public MainAppServer(
+            IModeCommandService modeService            
+            )
         {
-            this.modeMgr = modeMgr;
-            this.contextRepository = contextRepository;
+            this.modeService = modeService;            
         }
+
         public void StartNamedPipeListener()
         {
             while (true)
@@ -64,9 +64,8 @@ namespace Infrastructure
         }
 
         private ChangeModeResponse ProcessChangeMode(ChangeMode reqA)
-        {
-            ModeService srv = new ModeService(modeMgr, contextRepository);
-            srv.ChangeMode(reqA.mode, TimeSpan.FromSeconds(20));
+        {            
+            modeService.ChangeMode(reqA.mode, TimeSpan.FromSeconds(20));
 
             throw new NotImplementedException();
             //return new ChangeModeResponse { ResultA = $"Processed MyReqA: {reqA.DataA}" };

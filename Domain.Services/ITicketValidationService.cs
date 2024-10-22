@@ -1,11 +1,8 @@
-﻿using EtGate.Domain.Services.Gate;
+﻿namespace Domain.Services;
 
-namespace Domain.Services
+public interface ITicketValidationService
 {
-    public interface ITicketValidationService
-    {
-        bool ValidateQrCode(Ticket ticket);
-        void UpdatePassengerStatus(bool hasCrossedZoneB);
-        IPassageController PassageMgr { get; }
-    }
+    bool ValidateQrCode(Ticket ticket);
+    void UpdatePassengerStatus(bool hasCrossedZoneB);
+    //IPassageController PassageMgr { get; }
 }

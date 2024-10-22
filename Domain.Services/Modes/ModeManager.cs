@@ -29,9 +29,9 @@ namespace Domain.Services.Modes
         private readonly IQrReaderMgr qrReaderMgr;
         private readonly ValidationMgr validationMgr;
         private readonly GateMgr gateMgr;
-        private readonly IModeMgrFactory modeMgrFactory;
+        private readonly ISubModeMgrFactory modeMgrFactory;
         private readonly IDisposable timerAppBootTimeoutSubscr;
-        private bool bMaintenacneRequested = false;
+        private bool bMaintenanceRequested = false;
         private OpMode opModeDemanded;
         public ISubModeMgr curModeMgr { get; private set; } = new DoNothingModeMgr(Mode.AppBooting);
 
@@ -45,7 +45,7 @@ namespace Domain.Services.Modes
         public ModeManager(IQrReaderMgr qrReaderMgr,
                                ValidationMgr validationMgr,
                                GateMgr gateMgr,
-                               IModeMgrFactory modeMgrFactory,
+                               ISubModeMgrFactory modeMgrFactory,
                                IScheduler scheduler,
                                int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
         {
@@ -132,7 +132,7 @@ namespace Domain.Services.Modes
         private void DoModeRelatedX()
         {
             Mode modeBefore = CurMode;
-            Mode modeAfter = bMaintenacneRequested ? Mode.Maintenance : CalculateMode(equipmentStatus);
+            Mode modeAfter = bMaintenanceRequested ? Mode.Maintenance : CalculateMode(equipmentStatus);
 
             if (modeAfter != modeBefore)
             {
@@ -161,16 +161,20 @@ namespace Domain.Services.Modes
                 && e.gateStatus.IsKnown;
         }
 
-        public void SwitchToMaintenance()
+        public async Task SwitchToMaintenance()
         {
-            bMaintenacneRequested = true;
+            await curModeMgr.Stop();
+            curModeMgr.Dispose();
+
+            bMaintenanceRequested = true;
             DoModeRelatedX();
         }
 
-        public void SwitchOutMaintenance()
+        public Task SwitchOutMaintenance()
         {
-            bMaintenacneRequested = false;
+            bMaintenanceRequested = false;
             DoModeRelatedX();
+            return Task.CompletedTask;
         }
     }
 }

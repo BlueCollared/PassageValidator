@@ -151,16 +151,17 @@ namespace EtGate.UI.ViewModel.Tests
         
         Subject<Mode> subj = new();
         
-        private class MockModeService : IModeCommandService, IModeQueryService
+        private class MockModeService : IModeCommandService,
+                                        IModeQueryService
         {
             Subject<(Mode, ISubModeMgr)> subjMode = new();
             public IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable => subjMode.AsObservable();
 
             public ISubModeMgr curModeMgr => throw new NotImplementedException();
 
-            public bool ChangeMode(OpMode mode, TimeSpan timeout)
+            public void ChangeMode(OpMode mode, TimeSpan timeout)
             {
-                return true;
+                //return true;
             }
 
             public Task SwitchOutMaintenance()

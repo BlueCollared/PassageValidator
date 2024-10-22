@@ -1,5 +1,4 @@
 ﻿using Domain;
-using Domain.Services.InService;
 
 namespace GateApp
 {
@@ -9,7 +8,7 @@ namespace GateApp
         //Mode CurMode { get; }
         
 
-        bool ChangeMode(OpMode mode, TimeSpan timeout);
+        void ChangeMode(OpMode mode, TimeSpan timeout);
         Task SwitchOutMaintenance();
         Task SwitchToMaintenance();
         //ISubModeMgr curModeMgr { get; }

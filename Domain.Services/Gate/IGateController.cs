@@ -46,7 +46,19 @@ public record Fraud(bool bEntry, List<FraudType> fraudType // don't know that we
     );
 
 // It is very easy to have intrusions from both sides (if both sides are controlled). Just make on both sides stand a person.
-public record IntrusionX(bool bEntry, bool bExit, List<IntrusionType> intrusions);
+// TODO: for now, the domain is made around IER. This of course is bad. But can be corrected only after experimentation.
+public record struct IntrusionX(
+    bool LANG_INTRUSION_A,
+    bool LANG_INTRUSION_B,
+    bool LANG_OPPOSITE_INTRUSION_A,
+    bool LANG_OPPOSITE_INTRUSION_B,
+    bool LANG_PREALARM_A,
+    bool LANG_PREALARM_B)
+{
+    bool bEntry => LANG_INTRUSION_A || LANG_OPPOSITE_INTRUSION_A || LANG_PREALARM_A;
+    bool bExit => LANG_INTRUSION_B || LANG_OPPOSITE_INTRUSION_B || LANG_PREALARM_B;
+}
+
 public record OpenDoor(bool bEntry);
 public record CloseDoor(bool bEntry);
 public record WaitForAuthroization;
