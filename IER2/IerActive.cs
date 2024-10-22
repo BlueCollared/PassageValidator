@@ -6,6 +6,8 @@ namespace EtGate.IER
     enum Nothing { Nothing };
     public class IerActive : IIerStatusMonitor, IIerXmlRpc
     {
+        // poll the IER continuously, but with a lower priority (if lock to the device can't be acquired,
+        // it waits for 10 msec before re-trying
         public IObservable<Either<IERApiError, GetStatusStdRaw>> StatusObservable =>
             // Q: is it fundamentally good? are we sure that if the processing inside `Select` takes more that the 
             // timespan mentioned in .Interval, it would not cause the processing of next element?

@@ -11,9 +11,9 @@ namespace EtGate.Devices.Interfaces.Validation
         //private GateStatus _gateStatus;
 
         //public IPassageController PassageController => _flapController;
-        public IPassageManager PassageMgr { get; private set; }
+        public IPassageController PassageMgr { get; private set; }
 
-        public TicketValidationService(IPassageManager passageMgr)
+        public TicketValidationService(IPassageController passageMgr)
         {
             PassageMgr = passageMgr;
             _passengerStatus = new PassengerStatus();
@@ -26,7 +26,7 @@ namespace EtGate.Devices.Interfaces.Validation
                 //&& _gateStatus.IsInService 
                 && !_passengerStatus.FlapOpened)
             {
-                PassageMgr.Authorize("", 1);
+                PassageMgr.Authorize(1, bEntry:true); // TODO: correct it
                 _passengerStatus.FlapOpened = true;
                 return true;
             }

@@ -12,7 +12,7 @@ public record Authorization(int nAuthorizations);
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
     private readonly ValidationMgr validationMgr;
-    private readonly IPassageManager passage;        
+    private readonly IPassageController passage;        
     private readonly IQrReaderMgr qrReader;
     private Queue<Authorization> authorizations = new();
 
@@ -49,7 +49,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
 
     public InServiceMgr(
         ValidationMgr validationMgr,
-        IPassageManager passage,            
+        IPassageController passage,            
         IQrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
         )
     {

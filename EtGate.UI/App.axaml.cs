@@ -22,6 +22,7 @@ using EtGate.UI.Views;
 using GateApp;
 using Horizon.XmlRpc.Client;
 using Microsoft.Extensions.DependencyInjection;
+using OneOf;
 using System;
 using System.Reactive.Concurrency;
 
@@ -113,9 +114,9 @@ public partial class App : Avalonia.Application
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
         builder.RegisterType<ModeManager>()
-            .WithParameter(new ResolvedParameter(
-                (pi, ctx) => pi.ParameterType == typeof(IPassageManager),
-                (pi, ctx) => ctx.ResolveOptional<IPassageManager>()))
+            //.WithParameter(new ResolvedParameter(
+            //    (pi, ctx) => pi.ParameterType == typeof(IPassageManager),
+            //    (pi, ctx) => ctx.ResolveOptional<IPassageManager>()))
             .WithParameter(new ResolvedParameter(
                 (pi, ctx) => pi.ParameterType == typeof(IScheduler),
                 (pi, ctx) => ctx.Resolve<IScheduler>()))
@@ -123,7 +124,7 @@ public partial class App : Avalonia.Application
             .SingleInstance()
             .AsSelf();
 
-        builder.RegisterType<MockPassageManager>().As<IPassageManager>();
+        builder.RegisterType<MockPassageManager>().As<IPassageController>();
 
         Container = builder.Build();
 
@@ -205,11 +206,18 @@ public partial class App : Avalonia.Application
 }
 
 
-internal class MockPassageManager : IPassageManager
+internal class MockPassageManager : IPassageController
 {
+    public IObservable<OneOf<IntrusionX, Fraud, OpenDoor, WaitForAuthroization, CloseDoor>> PassageStatusObservable => throw new NotImplementedException();
+
     //IObservable<OneOf<Domain.Passage.IdleEvts.Intrusion, Domain.Passage.IdleEvts.Fraud, PassageTimeout, PassageDone>> IPassageManager.IdleStatusObservable => throw new NotImplementedException();
 
     public ObsAuthEvents Authorize(string ticketId, int nAuthorizations)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Authorize(int nAuthorizations, bool bEntry)
     {
         throw new NotImplementedException();
     }

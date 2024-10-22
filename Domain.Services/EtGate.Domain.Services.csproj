@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Gate\IPassageManager.cs" />
+    <Compile Remove="Gate\PassageMgr.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Gate\IPassageManager.cs" />
+    <None Include="Gate\PassageMgr.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>

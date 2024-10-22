@@ -14,11 +14,13 @@ namespace Domain.Services.Modes
     {
         private readonly IQrReaderMgr qrReaderMgr;
         private readonly ValidationMgr validationMgr;
+        private readonly IPassageController passageMgr;
 
-        public ModeMgrFactory(IQrReaderMgr qrReaderMgr, ValidationMgr validationMgr)
+        public ModeMgrFactory(IQrReaderMgr qrReaderMgr, ValidationMgr validationMgr, IPassageController passageMgr)
         {
             this.qrReaderMgr = qrReaderMgr;
             this.validationMgr = validationMgr;
+            this.passageMgr = passageMgr;
         }
 
         ISubModeMgr IModeMgrFactory.Create(Mode mode)
@@ -26,7 +28,7 @@ namespace Domain.Services.Modes
             switch (mode)
             {
                 case Mode.InService:
-                    return new InServiceMgr(validationMgr, new PassageMgr(), qrReaderMgr);                    
+                    return new InServiceMgr(validationMgr, passageMgr, qrReaderMgr);
                 default:
                     return new DoNothingModeMgr(mode);                    
             }

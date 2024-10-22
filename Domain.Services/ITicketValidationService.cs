@@ -6,6 +6,6 @@ namespace Domain.Services
     {
         bool ValidateQrCode(Ticket ticket);
         void UpdatePassengerStatus(bool hasCrossedZoneB);
-        IPassageManager PassageMgr { get; }
+        IPassageController PassageMgr { get; }
     }
 }
