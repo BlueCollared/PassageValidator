@@ -11,10 +11,8 @@ namespace EtGate.Devices.IER;
 
 public class IerController : GateControllerBase
 {
-    bool bIsConnected => hwStatus != null && hwStatus.bConnected;
-    bool bIsAvailable => hwStatus != null && hwStatus.IsAvailable;
-
-    GateHwStatus hwStatus = null;
+    bool bIsConnected => CurStatus != null && CurStatus.bConnected;
+    bool bIsAvailable => CurStatus != null && CurStatus.IsAvailable;    
 
     Ier_To_DomainAdapter ier;
     private readonly IIerStatusMonitor ier2;
@@ -25,9 +23,8 @@ public class IerController : GateControllerBase
             xmlRpc2
             );
         ier2 = xmlRpc;
-
-        statusObservable
-            .Subscribe(x => hwStatus = x);
+        // ideally it belongs to IDeviceStatus, but can't keep it there.
+        statusObservable.Subscribe(x => CurStatus = x);
     }
 
     public IObservable<Either<IERApiError, GetStatusStdRawComplete>> comp => ier2.StatusObservable

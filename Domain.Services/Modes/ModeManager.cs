@@ -1,10 +1,7 @@
-﻿using Domain.Peripherals.Passage;
-using Domain.Peripherals.Qr;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
-using EtGate.Domain.ValidationSystem;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -58,9 +55,23 @@ namespace Domain.Services.Modes
             timerAppBootTimeoutSubscr = Observable.Timer(TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds), scheduler)
                                            .Subscribe(_ => DoModeRelatedX());
 
-            qrReaderMgr.StatusStream.Subscribe(onNext: QrRdrStatusChanged);
-            validationMgr.StatusStream.Subscribe(onNext: ValidationSystemStatusChanged);
-            gateMgr.StatusStream.Subscribe(onNext: GateStatusChanged);
+            qrReaderMgr.StatusStream.ObserveOn(scheduler).Subscribe(onNext: x =>
+            {
+                equipmentStatus = equipmentStatus with { QrEntry = equipmentStatus.QrEntry.UpdateStatus(x) };
+                DoModeRelated();
+            });
+
+            validationMgr.StatusStream.ObserveOn(scheduler).Subscribe(onNext: x =>
+            {
+                equipmentStatus = equipmentStatus with { ValidationAPI = equipmentStatus.ValidationAPI.UpdateStatus(x) };
+                DoModeRelated();
+            });
+
+            gateMgr.StatusStream.ObserveOn(scheduler).Subscribe(onNext: x =>
+            {
+                equipmentStatus = equipmentStatus with { gateStatus = equipmentStatus.gateStatus.UpdateStatus(x) };
+                DoModeRelated();
+            });
         }
 
         //// Public factory method to create an instance with the default scheduler
@@ -88,36 +99,10 @@ namespace Domain.Services.Modes
             set
             {
                 this.opModeDemanded = value;
-                if (value == OpMode.OOS)
-                {
-                    if (curModeMgr == null)
-                        return;
-                    if (curModeMgr is InServiceMgr x)
-                    {
-                        x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitely.
-                        curModeMgr.Dispose();
-                        curModeMgr = null;
-                    }
-                }
+                
+                if (bMaintenanceRequested)
+                    return;
             }
-        }
-
-        private void QrRdrStatusChanged(QrReaderStatus status)
-        {
-            equipmentStatus = equipmentStatus with { QrEntry = equipmentStatus.QrEntry.UpdateStatus(status) };
-            DoModeRelated();
-        }
-
-        private void ValidationSystemStatusChanged(ValidationSystemStatus status)
-        {
-            equipmentStatus = equipmentStatus with { ValidationAPI = equipmentStatus.ValidationAPI.UpdateStatus(status) };
-            DoModeRelated();
-        }
-
-        private void GateStatusChanged(GateHwStatus status)
-        {
-            equipmentStatus = equipmentStatus with { gateStatus = equipmentStatus.gateStatus.UpdateStatus(status) };
-            DoModeRelated();
         }
 
         private void DoModeRelated()
@@ -136,8 +121,10 @@ namespace Domain.Services.Modes
 
             if (modeAfter != modeBefore)
             {
-                if (curModeMgr != null)
-                    curModeMgr.Dispose();
+                if (curModeMgr is InServiceMgr x)                
+                    x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitely.
+                
+                curModeMgr?.Dispose();
                 curModeMgr = modeMgrFactory.Create(modeAfter);                
             }
             EquipmentModeSubject.OnNext((modeAfter, curModeMgr));
