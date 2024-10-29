@@ -182,7 +182,7 @@ public partial class App : Avalonia.Application
 
     private static void DoForGate(ContainerBuilder builder)
     {
-        string url = ""; // TODO: load from configuration
+        string url = "https://www.google.com/"; // TODO: load from configuration
         var xmlRpc = XmlRpcProxyGen.Create<IIERXmlRpcInterface>();
         xmlRpc.Url = url;
         var ierRpc = new IerActive(new IERXmlRpc(xmlRpc, null));

@@ -6,182 +6,161 @@ using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using LanguageExt;
-using LanguageExt.ClassInstances;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Xml.Schema;
 
-namespace Domain.Services.Modes
+namespace Domain.Services.Modes;
+
+public interface IModeQueryService
 {
-    public interface IModeQueryService
+    IObservable<(Mode, ISubModeMgr)> EqptModeObservable { get; }
+}
+
+public class ModeManager : IModeQueryService
+{
+    public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
+
+    private readonly IQrReaderMgr qrReaderMgr;
+    private readonly ValidationMgr validationMgr;
+    private readonly GateMgr gateMgr;
+    private readonly ISubModeMgrFactory modeMgrFactory;
+    IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
+
+    Subject<bool> maintAskedSubject = new();
+    IConnectableObservable<bool> maintenanceAsked;
+
+    Subject<OpMode> modeAskedSubject = new();
+    IConnectableObservable<OpMode> modeRequested;       
+
+    IObservable<EquipmentStatus> equipmentStatusStream;        
+    
+    private OpMode opModeDemanded;
+    public ISubModeMgr curModeMgr => EqptModeSubject.Value.Item2;    
+
+    private readonly BehaviorSubject<(Mode, ISubModeMgr)> EqptModeSubject;
+    public IObservable<(Mode, ISubModeMgr)> EqptModeObservable => EqptModeSubject
+        .DistinctUntilChanged()
+        .AsObservable();
+    public Mode CurMode => EqptModeSubject.Value.Item1;
+    Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
+
+    //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
+    IObservable<T> ProcessedIObservable<T>(IObservable<T> stream, T defValue, TimeSpan maxTimeToWaitBeforeFallbacking) //where T:ModuleStatus
     {
-        IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable { get; }
+        var timeoutSignal = forceTimeoutSubject.Select(_ => defValue);
+
+        return stream
+            .Merge(timeoutSignal)
+            .Timeout(maxTimeToWaitBeforeFallbacking)
+            .Catch(Observable.Return(defValue))  // If no event in 20s, inject NotConnected
+                                                 //.Catch(Observable.Return(Option<T>.None))
+            .Merge(stream)
+            .DistinctUntilChanged();
     }
-    // Ideally, when ModeManager is accepting a stream and giving another stream as an output, we shouldn't leave the stream domain
-    // But there is so much overhead that  
-    public class ModeManager : IModeQueryService
+    
+    public ModeManager(IQrReaderMgr qrReaderMgr, // TODO: replace with status stream
+                           ValidationMgr validationMgr, // TODO: replace with status stream
+                           GateMgr gateMgr, // TODO: replace with status stream
+                           ISubModeMgrFactory modeMgrFactory,
+                           IScheduler scheduler,
+                           int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
     {
-        public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
+        maintenanceAsked = maintAskedSubject.AsObservable().Replay(1);
+        maintenanceAsked.Connect();
+        maintAskedSubject.OnNext(false);
 
-        private readonly IQrReaderMgr qrReaderMgr;
-        private readonly ValidationMgr validationMgr;
-        private readonly GateMgr gateMgr;
-        private readonly ISubModeMgrFactory modeMgrFactory;
-        IObservable<Mode> modeCalculatedStream, modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed
-        //private readonly IDisposable timerAppBootTimeoutSubscr;
-        // ---- Begin ------
-        Subject<bool> maintAskedSubject = new();
-        IConnectableObservable<bool> maintenanceAsked;
-
-        Subject<OpMode> modeAskedSubject = new();
-        IConnectableObservable<OpMode> modeRequested;
-        //IDisposable maintSubscription; // TODO: make it a local variable
-        // ---- End ------
-
-        IObservable<EquipmentStatus> equipmentStatusStream;
+        modeRequested = modeAskedSubject.AsObservable().Replay(1);
+        modeRequested.Connect();
+        modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file
         
-        //private bool bMaintenanceRequested = false;
-        private OpMode opModeDemanded;
-        public ISubModeMgr curModeMgr { get; private set; } = new DoNothingModeMgr(Mode.AppBooting);
+        EqptModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, modeMgrFactory.Create(Mode.AppBooting)));
+        this.qrReaderMgr = qrReaderMgr;
+        this.validationMgr = validationMgr;
+        this.gateMgr = gateMgr;
+        this.modeMgrFactory = modeMgrFactory;
 
-        private readonly BehaviorSubject<(Mode, ISubModeMgr)> EquipmentModeSubject;
-        public IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable => EquipmentModeSubject
-            .DistinctUntilChanged()
-            .AsObservable();
-        public Mode CurMode => EquipmentModeSubject.Value.Item1;
+        var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
+        var qr = qrReaderMgr.StatusStream;
+        qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking);            
 
-        //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
-        static IObservable<T> ProcessedIObservable<T>(IObservable<T> stream, T defValue, TimeSpan maxTimeToWaitBeforeFallbacking) //where T:ModuleStatus
-        {
-            return stream
-                .Timeout(maxTimeToWaitBeforeFallbacking)
-                .Catch(Observable.Return(defValue))  // If no event in 20s, inject NotConnected
-                                                     //.Catch(Observable.Return(Option<T>.None))
-                .Merge(stream)
-                .DistinctUntilChanged();
-        }        
+        var valid = validationMgr.StatusStream;
+        valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking);
 
-        // Private constructor that includes the scheduler parameter
-        public ModeManager(IQrReaderMgr qrReaderMgr,
-                               ValidationMgr validationMgr,
-                               GateMgr gateMgr,
-                               ISubModeMgrFactory modeMgrFactory,
-                               IScheduler scheduler,
-                               int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
-        {
-            maintenanceAsked = maintAskedSubject.AsObservable().Replay(1);
-            maintenanceAsked.Connect();
-            maintAskedSubject.OnNext(false);
+        var gate = gateMgr.StatusStream;
+        gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking);
 
-            modeRequested = modeAskedSubject.AsObservable().Replay(1);
-            modeRequested.Connect();
+        equipmentStatusStream =
+        Observable.CombineLatest(qr, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
+            qr, valid, gate,
+            bMaintAsked: maint,
+            modeAsked:mod
+            ))
+        //.ObserveOn(scheduler) // TODO: It was causing problems in running tests; they got blocked. Investigate. But w/o this, of course the test AppBootingPhase_Timeout fails
+        ;
 
-            curModeMgr = modeMgrFactory.Create(Mode.AppBooting);
-            EquipmentModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, curModeMgr));
-            this.qrReaderMgr = qrReaderMgr;
-            this.validationMgr = validationMgr;
-            this.gateMgr = gateMgr;
-            this.modeMgrFactory = modeMgrFactory;
-
-            var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
-            var qr = qrReaderMgr.StatusStream;
-            qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking);
-
-            var valid = validationMgr.StatusStream;
-            valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking);
-
-            var gate = gateMgr.StatusStream;
-            gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking);
-
-            equipmentStatusStream =            
-            Observable.CombineLatest(qr, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
-                qr, valid, gate,
-                bMaintAsked: maint,
-                modeAsked:mod
-                )).ObserveOn(scheduler);            
-            
-            modeCalculatedStream = equipmentStatusStream
-                .Select((EquipmentStatus e) =>
-                {
-                    if (e.bMaintAsked)
-                        return Mode.Maintenance;
-
-                    bool bCanBeInService = e.QrEntry.IsAvailable && e.gateStatus.IsAvailable && e.ValidationAPI.IsAvailable;
-                    switch (e.modeAsked)
-                    {
-                        case OpMode.Emergency:
-                            return Mode.Emergency;
-                        case OpMode.InService:
-                            return bCanBeInService ? Mode.InService : Mode.OOO;
-                        case OpMode.OOS:
-                            return bCanBeInService ? Mode.OOS : Mode.OOO;
-                        default:
-                            throw new NotImplementedException();
-                    }                    
-                }
-                );
-        }        
-
-        IDisposable eqptStatus;
-
-        //// Public factory method to create an instance with the default scheduler
-        //public static ModeManager Create(IQrReaderMgr qrReaderMgr,
-        //                                 ValidationMgr validationMgr,
-        //                                 GateMgr gateMgr,
-        //                                 int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
-        //{
-        //    return new ModeManager(qrReaderMgr, validationMgr, gateMgr, Scheduler.Default, timeToCompleteAppBoot_InSeconds);
-        //}
-
-        //// Public factory method for testing purposes
-        //public static ModeManager CreateForTesting(IQrReaderMgr qrReaderMgr,
-        //                                           ValidationMgr validationMgr,
-        //                                           GateMgr gateMgr,
-        //                                           IScheduler scheduler,
-        //                                           int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
-        //{
-        //    return new ModeManager(qrReaderMgr, validationMgr, gateMgr, scheduler, timeToCompleteAppBoot_InSeconds);
-        //}
-
-        public OpMode ModeDemanded
-        {
-            get { return opModeDemanded; }
-            set
+        modeEffectuatedStream = equipmentStatusStream
+            .Select((EquipmentStatus e) =>
             {
-                modeAskedSubject.OnNext(value);
-                //this.opModeDemanded = value;                
+                if (e.bMaintAsked)
+                    return Mode.Maintenance;
+
+                bool bCanBeInService = e.QrEntry.IsAvailable && e.gateStatus.IsAvailable && e.ValidationAPI.IsAvailable;
+                switch (e.modeAsked)
+                {
+                    case OpMode.Emergency:
+                        return Mode.Emergency;
+                    case OpMode.InService:
+                        return bCanBeInService ? Mode.InService : Mode.OOO;
+                    case OpMode.OOS:
+                        return bCanBeInService ? Mode.OOS : Mode.OOO;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
-        }
+            ).DistinctUntilChanged();
 
-        //private void DoModeRelatedX()
-        //{
-            //Mode modeBefore = CurMode;
-            //Mode modeAfter = bMaintenanceRequested ? Mode.Maintenance : CalculateMode(equipmentStatus);
+        modeEffectuatedStream.ForEachAsync(async x => {
+            await curModeMgr.Stop(bImmediate: CurMode == Mode.Emergency);
+            curModeMgr.Dispose();            
+            
+            EqptModeSubject.OnNext((x, modeMgrFactory.Create(x)));
+        });
 
-            //if (modeAfter != modeBefore)
-            //{
-            //    if (curModeMgr is InServiceMgr x)                
-            //        x.HaltFurtherValidations().Wait(); // TODO: don't wait infinitely.
-                
-            //    curModeMgr?.Dispose();
-            //    curModeMgr = modeMgrFactory.Create(modeAfter);                
-            //}
-            //EquipmentModeSubject.OnNext((modeAfter, curModeMgr));
-        //}       
+        qr.Subscribe(x => Debug.WriteLine($"qr {x}"));
+        gate.Subscribe(x => Debug.WriteLine($"gate {x}"));
+        valid.Subscribe(x => Debug.WriteLine($"validation {x}"));
 
-        public async Task SwitchToMaintenance()
+        equipmentStatusStream.Subscribe(x => Debug.WriteLine($"equipmentStatusStream {equipmentStatusStream}"));
+
+        modeEffectuatedStream.Subscribe(x => Debug.WriteLine($"modeEffectuatedStream {x}"));
+    }
+
+    IDisposable eqptStatus;
+
+    public OpMode ModeDemanded
+    {
+        get { return opModeDemanded; }
+        set
         {
-            await curModeMgr.Stop();
-            curModeMgr.Dispose();
-
-            maintAskedSubject.OnNext(true);            
+            modeAskedSubject.OnNext(value);                
         }
+    }
 
-        public Task SwitchOutMaintenance()
-        {
-            maintAskedSubject.OnNext(false);            
-            return Task.CompletedTask;
-        }
+    public async Task SwitchToMaintenance()
+    {
+        forceTimeoutSubject.OnNext(Unit.Default);
+
+        await curModeMgr.Stop(bImmediate:false);
+        curModeMgr.Dispose();
+
+        maintAskedSubject.OnNext(true);            
+    }
+
+    public Task SwitchOutMaintenance()
+    {
+        maintAskedSubject.OnNext(false);
+        return Task.CompletedTask;
     }
 }

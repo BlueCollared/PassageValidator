@@ -20,7 +20,7 @@ namespace EtGate.UI.ViewModel.Tests
             // Arrange
             var mockModeService = new Mock<IModeCommandService>();
             var mockModeQueryService = new Mock<IModeQueryService>();
-            mockModeQueryService.Setup(service => service.EquipmentModeObservable).Returns(subjMode);
+            mockModeQueryService.Setup(service => service.EqptModeObservable).Returns(subjMode);
 
             var InServiceMgrStub = new Mock<IInServiceMgr>();
             InServiceMgrStub.Setup(x => x.StateObservable).Returns(
@@ -99,7 +99,7 @@ namespace EtGate.UI.ViewModel.Tests
             return Task.CompletedTask;
         }
 
-        public Task Stop()
+        public Task Stop(bool bImmediate)
         {
             return Task.CompletedTask;
         }

@@ -1,4 +1,3 @@
-using Domain;
 using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.InService;

@@ -1,7 +1,6 @@
 ﻿using Domain;
 using Domain.Services.InService;
 using Domain.Services.Modes;
-using GateApp;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
@@ -24,7 +23,7 @@ public class MainWindowViewModel : ViewModelBase
         this.modeViewModelFactory = modeViewModelFactory;
         this.bEntry = bEntry;
         this.bPrimary = bPrimary;
-        modeService.EquipmentModeObservable.Subscribe(x => ModeChanged(x.Item1, x.Item2));
+        modeService.EqptModeObservable.Subscribe(x => ModeChanged(x.Item1, x.Item2));
     }
 
     private void ModeChanged(Mode x, ISubModeMgr subModeMgr)

@@ -155,7 +155,7 @@ namespace EtGate.UI.ViewModel.Tests
                                         IModeQueryService
         {
             Subject<(Mode, ISubModeMgr)> subjMode = new();
-            public IObservable<(Mode, ISubModeMgr)> EquipmentModeObservable => subjMode.AsObservable();
+            public IObservable<(Mode, ISubModeMgr)> EqptModeObservable => subjMode.AsObservable();
 
             public ISubModeMgr curModeMgr => throw new NotImplementedException();
 

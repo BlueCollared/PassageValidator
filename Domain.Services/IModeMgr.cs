@@ -2,7 +2,7 @@
 {
     public interface ISubModeMgr : IDisposable
     {
-        public abstract Task Stop();
+        public abstract Task Stop(bool bImmediate);
     }
 
     public class DoNothingModeMgr : ISubModeMgr
@@ -24,7 +24,7 @@
             IsDisposed = true;
         }
 
-        public Task Stop()
+        public Task Stop(bool bImmediate)
         {
             return Task.CompletedTask;
         }

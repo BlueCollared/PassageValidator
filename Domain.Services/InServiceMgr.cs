@@ -168,7 +168,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         IsDisposed = true;
     }
 
-    public Task Stop()
+    public Task Stop(bool bImmediate)
     {
         throw new NotImplementedException();
     }

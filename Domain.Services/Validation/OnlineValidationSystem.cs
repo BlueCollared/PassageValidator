@@ -1,5 +1,6 @@
 ﻿using Domain.Peripherals.Qr;
 using EtGate.Domain.ValidationSystem;
+using System.Diagnostics;
 
 namespace EtGate.Domain.Services.Validation
 {
@@ -10,6 +11,7 @@ namespace EtGate.Domain.Services.Validation
         public OnlineValidationSystem(IDeviceStatus<OnlineValidationSystemStatus> statusMgr)
         {
             this.statusMgr = statusMgr;
+            StatusStream.Subscribe(x => Debug.WriteLine($"Online {x}"));
         }
 
         public IObservable<OnlineValidationSystemStatus> StatusStream
