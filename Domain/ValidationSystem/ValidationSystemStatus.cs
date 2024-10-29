@@ -5,5 +5,7 @@
         public override bool IsAvailable => (onlineStatus?.IsAvailable ?? false) || (offlineStatus?.IsAvailable ?? false);
 
         public static ValidationSystemStatus Default => new ValidationSystemStatus(OnlineValidationSystemStatus.Disconnected, OfflineValidationSystemStatus.Obsolete);
+
+        //public override ModuleStatus defStatus => Default;
     }
 }

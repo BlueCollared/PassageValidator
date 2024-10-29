@@ -5,5 +5,7 @@
         public override bool IsAvailable => bConnected;
 
         public static OnlineValidationSystemStatus Disconnected => new OnlineValidationSystemStatus(bConnected: false);
+
+        //public override ModuleStatus defStatus => Disconnected;
     }
 }

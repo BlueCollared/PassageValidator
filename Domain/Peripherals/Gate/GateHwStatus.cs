@@ -58,4 +58,8 @@ public record GateHwStatus(bool bConnected, Option<GateHwStatus_> status = defau
     public static GateHwStatus AllGood => new GateHwStatus(bConnected: true, status: GateHwStatus_.AllGood);
 
     public override bool IsAvailable =>this == AllGood;
+
+    public static GateHwStatus DisConnected => new GateHwStatus(bConnected: false);
+
+    //public override ModuleStatus defStatus => Disconnected;
 }
