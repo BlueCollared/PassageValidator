@@ -1,7 +1,4 @@
-﻿using IFS2.Equipment.DriverInterface;
-using IFS2.Equipment.HardwareInterface.IERPLCManager;
-using LanguageExt;
-using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
+﻿using static IFS2.Equipment.HardwareInterface.IERPLCManager.CIERRpcHelper;
 
 namespace EtGate.IER
 {

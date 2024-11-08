@@ -1,5 +1,4 @@
 ﻿using EtGate.IER;
-using IFS2.Common;
 using LanguageExt;
 using System.Collections;
 using System.Xml.Serialization;
@@ -24,16 +23,16 @@ public partial class CIERRpcHelper
     {
         try
         {
-            //The Gate shall have been previously in OutOfService Mode
-            FileTransfertConfiguration conf = new FileTransfertConfiguration();
-            conf.Password = "upload";
-            conf.Login = "upload";
-            conf.Mode = FileTransfertMode.SftpWinscp;
-            conf.Root = "update";
-            conf.ServerUrl = "192.168.0.200";
-            // TODO: see why its counterpart in SGP too is not compiling because of lack of WinSCP_FileTransfert
-            //WinSCP_FileTransfert fileTransfert = new WinSCP_FileTransfert(conf);
-            //fileTransfert.PutFile(fileName);
+            ////The Gate shall have been previously in OutOfService Mode
+            //FileTransfertConfiguration conf = new FileTransfertConfiguration();
+            //conf.Password = "upload";
+            //conf.Login = "upload";
+            //conf.Mode = FileTransfertMode.SftpWinscp;
+            //conf.Root = "update";
+            //conf.ServerUrl = "192.168.0.200";
+            //// TODO: see why its counterpart in SGP too is not compiling because of lack of WinSCP_FileTransfert
+            ////WinSCP_FileTransfert fileTransfert = new WinSCP_FileTransfert(conf);
+            ////fileTransfert.PutFile(fileName);
         }
         catch
         {

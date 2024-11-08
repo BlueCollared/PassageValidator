@@ -12,7 +12,7 @@ namespace EtGate.IER
             // Q: is it fundamentally good? are we sure that if the processing inside `Select` takes more that the 
             // timespan mentioned in .Interval, it would not cause the processing of next element?
             // Ans: yes, checked in sample program
-            Observable.Interval(TimeSpan.FromMilliseconds(50))
+            Observable.Interval(TimeSpan.FromMilliseconds(5000000)) // TODO: correct it
             .Select(_ =>
             {
                 // double-check locking for efficiency
