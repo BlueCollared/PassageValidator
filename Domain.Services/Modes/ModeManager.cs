@@ -1,9 +1,6 @@
 ﻿using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.InService;
-using EtGate.Domain.Services.Gate;
-using EtGate.Domain.Services.Qr;
-using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using LanguageExt;
 using System.Diagnostics;
@@ -21,10 +18,6 @@ public interface IModeQueryService
 public class ModeManager : IModeQueryService
 {
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
-
-    private readonly IQrReaderMgr qrReaderMgr;
-    private readonly ValidationMgr validationMgr;
-    private readonly GateMgr gateMgr;
     private readonly ISubModeMgrFactory modeMgrFactory;
     IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
 
@@ -60,9 +53,9 @@ public class ModeManager : IModeQueryService
             .DistinctUntilChanged();
     }
     
-    public ModeManager(IQrReaderMgr qrReaderMgr, // TODO: replace with status stream
-                           ValidationMgr validationMgr, // TODO: replace with status stream
-                           GateMgr gateMgr, // TODO: replace with status stream
+    public ModeManager(IObservable<QrReaderStatus> qrReaderMgr, // TODO: replace with status stream
+                           IObservable<ValidationSystemStatus> validationMgr, // TODO: replace with status stream
+                           IObservable<GateHwStatus> gateMgr, // TODO: replace with status stream
                            ISubModeMgrFactory modeMgrFactory,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
@@ -76,19 +69,19 @@ public class ModeManager : IModeQueryService
         modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file
         
         EqptModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, modeMgrFactory.Create(Mode.AppBooting)));
-        this.qrReaderMgr = qrReaderMgr;
-        this.validationMgr = validationMgr;
-        this.gateMgr = gateMgr;
+        //this.qrReaderMgr = qrReaderMgr;
+        //this.validationMgr = validationMgr;
+        //this.gateMgr = gateMgr;
         this.modeMgrFactory = modeMgrFactory;
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
-        var qr = qrReaderMgr.StatusStream;
+        var qr = qrReaderMgr;
         qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking);            
 
-        var valid = validationMgr.StatusStream;
+        var valid = validationMgr;
         valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking);
 
-        var gate = gateMgr.StatusStream;
+        var gate = gateMgr;
         gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking);
 
         equipmentStatusStream =

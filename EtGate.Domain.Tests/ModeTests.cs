@@ -38,7 +38,7 @@ namespace EtGate.Domain.Tests
                 });
 
             // Assign the mock to the modeManager
-            modeManager = new ModeManager(s.qr, s.validation, s.gate, modeMgrFactoryMock.Object, testScheduler);
+            modeManager = new ModeManager(s.qr.StatusStream, s.validation.StatusStream, s.gate.StatusStream, modeMgrFactoryMock.Object, testScheduler);
         }
 
         [Fact]

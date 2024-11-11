@@ -113,13 +113,16 @@ public partial class App : Avalonia.Application
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
-        builder.RegisterType<ModeManager>()
-            //.WithParameter(new ResolvedParameter(
-            //    (pi, ctx) => pi.ParameterType == typeof(IPassageManager),
-            //    (pi, ctx) => ctx.ResolveOptional<IPassageManager>()))
-            .WithParameter(new ResolvedParameter(
-                (pi, ctx) => pi.ParameterType == typeof(IScheduler),
-                (pi, ctx) => ctx.Resolve<IScheduler>()))
+        builder.Register(
+            c =>
+            {                
+                return new ModeManager(c.Resolve<IQrReaderMgr>().StatusStream, 
+                    c.Resolve<ValidationMgr>().StatusStream,
+                    c.Resolve<GateMgr>().StatusStream,
+                    c.Resolve<ISubModeMgrFactory>(),
+                    c.Resolve<IScheduler>()
+                    );
+            })
             .As<IModeQueryService>()
             .SingleInstance()
             .AsSelf();
@@ -177,6 +180,7 @@ public partial class App : Avalonia.Application
                (pi, ctx) => pi.ParameterType == typeof(IDeviceStatus<QrReaderStatus>),
                (pi, ctx) => ctx.Resolve<IDeviceStatus<QrReaderStatus>>())
            .As<IQrReaderMgr>()
+           
            .SingleInstance();
     }
 
