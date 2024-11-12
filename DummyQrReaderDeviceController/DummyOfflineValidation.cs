@@ -1,7 +1,6 @@
 ﻿using Domain.Peripherals.Qr;
 using EtGate.Devices.Interfaces.Validation;
 using EtGate.Domain;
-using EtGate.Domain.ValidationSystem;
 
 namespace DummyQrReaderDeviceController
 {
@@ -12,7 +11,7 @@ namespace DummyQrReaderDeviceController
 
         public DummyOfflineValidation()
         {
-            statusSubject.OnNext(new OfflineValidationSystemStatus(DateTimeOffset.MaxValue, DateTimeOffset.Now));
+            //statusSubject.OnNext(new OfflineValidationSystemStatus(DateTimeOffset.MaxValue, DateTimeOffset.Now));
         }
         public override bool Start()
         {

@@ -16,9 +16,7 @@ namespace EtGate.Domain.Tests
 
         System s;
         ModeManager modeManager;
-        Mock<ISubModeMgr> modeMgrMock;
-
-        // Modify the existing code in the constructor of ModeTests class as follows:
+        Mock<ISubModeMgr> modeMgrMock;        
 
         public ModeTests()
         {
@@ -36,8 +34,7 @@ namespace EtGate.Domain.Tests
                     modeMgrMock = new Mock<ISubModeMgr>();
                     return modeMgrMock.Object;
                 });
-
-            // Assign the mock to the modeManager
+            
             modeManager = new ModeManager(s.qr.StatusStream, s.validation.StatusStream, s.gate.StatusStream, modeMgrFactoryMock.Object, testScheduler);
         }
 

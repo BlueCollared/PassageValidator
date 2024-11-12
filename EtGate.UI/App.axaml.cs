@@ -114,7 +114,7 @@ public partial class App : Avalonia.Application
                     c.Resolve<ValidationMgr>().StatusStream,
                     c.Resolve<GateMgr>().StatusStream,
                     c.Resolve<ISubModeMgrFactory>(),
-                    c.Resolve<IScheduler>()
+                    new EventLoopScheduler()
                     );
             })
             .As<IModeQueryService>()

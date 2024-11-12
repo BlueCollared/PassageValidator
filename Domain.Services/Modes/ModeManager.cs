@@ -40,22 +40,22 @@ public class ModeManager : IModeQueryService
     Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
 
     //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
-    IObservable<T> ProcessedIObservable<T>(IObservable<T> stream, T defValue, TimeSpan maxTimeToWaitBeforeFallbacking) //where T:ModuleStatus
+    IObservable<T> ProcessedIObservable<T>(IObservable<T> stream, T defValue, TimeSpan maxTimeToWaitBeforeFallbacking, IScheduler scheduler) //where T:ModuleStatus
     {
         var timeoutSignal = forceTimeoutSubject.Select(_ => defValue);
 
         return stream
             .Merge(timeoutSignal)
-            .Timeout(maxTimeToWaitBeforeFallbacking)
+            .Timeout(maxTimeToWaitBeforeFallbacking, scheduler)
             .Catch(Observable.Return(defValue))  // If no event in 20s, inject NotConnected
                                                  //.Catch(Observable.Return(Option<T>.None))
             .Merge(stream)
             .DistinctUntilChanged();
     }
     
-    public ModeManager(IObservable<QrReaderStatus> qrReaderMgr, // TODO: replace with status stream
-                           IObservable<ValidationSystemStatus> validationMgr, // TODO: replace with status stream
-                           IObservable<GateHwStatus> gateMgr, // TODO: replace with status stream
+    public ModeManager(IObservable<QrReaderStatus> qr,
+                           IObservable<ValidationSystemStatus> valid,
+                           IObservable<GateHwStatus> gate,
                            ISubModeMgrFactory modeMgrFactory,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
@@ -72,14 +72,12 @@ public class ModeManager : IModeQueryService
         this.modeMgrFactory = modeMgrFactory;
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
-        var qr = qrReaderMgr;
-        qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking);            
-
-        var valid = validationMgr;
-        valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking);
-
-        var gate = gateMgr;
-        gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking);
+        
+        qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
+        
+        valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking, scheduler);
+        
+        gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking, scheduler);
 
         equipmentStatusStream =
         Observable.CombineLatest(qr, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
@@ -87,7 +85,7 @@ public class ModeManager : IModeQueryService
             bMaintAsked: maint,
             modeAsked:mod
             ))
-        //.ObserveOn(scheduler) // TODO: It was causing problems in running tests; they got blocked. Investigate. But w/o this, of course the test AppBootingPhase_Timeout fails
+        //.SubscribeOn(scheduler) // TODO: It was causing problems in running tests; they got blocked. Investigate. But w/o this, of course the test AppBootingPhase_Timeout fails
         ;
 
         modeEffectuatedStream = equipmentStatusStream
@@ -118,13 +116,13 @@ public class ModeManager : IModeQueryService
             EqptModeSubject.OnNext((x, modeMgrFactory.Create(x)));
         });
 
-        qr.Subscribe(x => Debug.WriteLine($"qr {x}"));
-        gate.Subscribe(x => Debug.WriteLine($"gate {x}"));
-        valid.Subscribe(x => Debug.WriteLine($"validation {x}"));
+        qr.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
+        gate.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
+        valid.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
 
-        equipmentStatusStream.Subscribe(x => Debug.WriteLine($"equipmentStatusStream {equipmentStatusStream}"));
+        equipmentStatusStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} equipmentStatusStream {equipmentStatusStream}"));
 
-        modeEffectuatedStream.Subscribe(x => Debug.WriteLine($"modeEffectuatedStream {x}"));
+        modeEffectuatedStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} modeEffectuatedStream {x}"));
     }
 
     IDisposable eqptStatus;
