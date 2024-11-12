@@ -69,9 +69,6 @@ public class ModeManager : IModeQueryService
         modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file
         
         EqptModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, modeMgrFactory.Create(Mode.AppBooting)));
-        //this.qrReaderMgr = qrReaderMgr;
-        //this.validationMgr = validationMgr;
-        //this.gateMgr = gateMgr;
         this.modeMgrFactory = modeMgrFactory;
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);

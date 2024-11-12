@@ -24,7 +24,7 @@ namespace EtGate.UI.ViewModel.Tests
         MockModeService mockModeService = new MockModeService();
         public MaintenanceTests()
         {
-//            nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
+            nav = new MaintenanceNavigationService(CreateVM, new NavigationEventManager(), mockModeService);            
 
             mainVM = new MainWindowViewModel(new ModeViewModelFactory(mockModeService, nav), mockModeService, true, true);
         }
@@ -42,7 +42,7 @@ namespace EtGate.UI.ViewModel.Tests
             mockModeService.SwitchToMaintenance();
             mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
             
-            ((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init();
+            //((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init();
             nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
             nav.CurrentViewModel.IsDisposed.ShouldBeFalse();
         }
@@ -78,11 +78,9 @@ namespace EtGate.UI.ViewModel.Tests
         void State3_SwitchingToLeafPage()
         {
             State2_LoginSuccess();
-
             var mainMenuVM = (MaintenanceMenuViewModel)nav.CurrentViewModel;
 
             mainMenuVM.FlapMaintenanceSelectedCommand.Execute(null);
-
             mainMenuVM.IsDisposed.ShouldBeTrue();
 
             nav.CurrentViewModel.ShouldBeOfType<FlapMaintenanceViewModel>();

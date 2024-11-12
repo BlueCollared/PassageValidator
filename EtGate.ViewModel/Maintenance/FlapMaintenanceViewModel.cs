@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-namespace EtGate.UI.ViewModels.Maintenance;
+﻿namespace EtGate.UI.ViewModels.Maintenance;
 
 public class FlapMaintenanceViewModel : MaintainenaceViewModelBase
 {

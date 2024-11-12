@@ -12,10 +12,8 @@ public class MaintenanceViewModel : ModeViewModel
         _navigationService = navigationService;        
     }   
 
-    public void Init(//ContentControl host
-                     )
-    {
-        //_navigationService.host = host;
+    public void Init()
+    {        
         _navigationService.NavigateTo<AgentLoginViewModel>();
     }
 }

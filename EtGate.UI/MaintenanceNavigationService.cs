@@ -30,11 +30,8 @@ public class MaintenanceNavigationService : INavigationService
         CurrentViewModel?.Dispose();        
 
         TViewModel viewModel = EstablishVM<TViewModel>(viewModelFactory);
-        //view.DataContext = viewModel;
-        //host.Content = view;
 
         _viewModelStack.Push(viewModel);
-        //Navigated?.Invoke(viewModel);
         _navigationEventManager.RaiseNavigated(viewModel);
     }
 
@@ -65,16 +62,12 @@ public class MaintenanceNavigationService : INavigationService
         }
         else
         {
-            MaintainenaceViewModelBase viewModel = CallEstablishVM(vmTop, viewModelFactory);
-            //view.DataContext = viewModel;
-            //host.Content = view;
+            MaintainenaceViewModelBase viewModel = CallEstablishVM(vmTop, viewModelFactory);            
             _viewModelStack.Push(viewModel);
         }
     }
 
-    private static TViewModel EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory
-        //IViewFactory viewFactory
-        ) 
+    private static TViewModel EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory) 
         where TViewModel : MaintainenaceViewModelBase
     {
         Type viewModelType = typeof(TViewModel);        
@@ -86,24 +79,18 @@ public class MaintenanceNavigationService : INavigationService
 
     private static MaintainenaceViewModelBase 
         CallEstablishVM(MaintainenaceViewModelBase x, 
-        Func<Type, MaintainenaceViewModelBase> viewModelFactory
-        //IViewFactory viewFactory
+        Func<Type, MaintainenaceViewModelBase> viewModelFactory        
         )
     {
         Type viewModelType = x.GetType();
-        MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
-        
-        return (viewModelBase);
+        return viewModelFactory(viewModelType);        
     }
 
     public Stack<MaintainenaceViewModelBase> ViewModelStack => new Stack<MaintainenaceViewModelBase>(_viewModelStack);
 
     private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
-    private readonly INavigationEventManager _navigationEventManager;
+    private readonly INavigationEventManager _navigationEventManager;    
 
-    //private readonly IViewFactory viewFactory;
-
-    private readonly IModeCommandService modeService;
-    //public event Action<MaintainenaceViewModelBase> Navigated;
+    private readonly IModeCommandService modeService;    
 }

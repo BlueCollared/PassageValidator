@@ -1,6 +1,5 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Domain.Peripherals.Passage;
@@ -17,6 +16,7 @@ using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using EtGate.IER;
 using EtGate.UI.ViewModels;
+using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views;
 using GateApp;
 using Horizon.XmlRpc.Client;
@@ -89,22 +89,15 @@ public partial class App : Avalonia.Application
             return viewModelType => (MaintainenaceViewModelBase)componentContext.Resolve(viewModelType);
         });
 
+        var viewModelAssembly = typeof(AgentLoginViewModel).Assembly;
+        builder.RegisterAssemblyTypes(viewModelAssembly);
+        
         builder.RegisterType<MaintenanceNavigationService>()
            .As<INavigationService>()
            .WithParameter(
                (pi, ctx) => pi.ParameterType == typeof(Func<Type, MaintainenaceViewModelBase>),
                (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
-           )
-           //.WithParameter(
-           //     (pi, _) => pi.ParameterType == typeof(Func<Type, UserControl>),
-           //    (_, ctx) =>
-           //        ctx.Resolve<IViewFactory>()
-           // )
-           //.WithParameter(
-           //    (pi, ctx) => pi.ParameterType == typeof(IModeCommandService),
-           //    (pi, ctx) => ctx.Resolve<IModeCommandService>()
-           //).SingleInstance()
-           ;
+           );
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 

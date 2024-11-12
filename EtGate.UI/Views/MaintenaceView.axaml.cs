@@ -10,21 +10,17 @@ public partial class MaintenanceView : UserControl
     private readonly INavigationService _navigationService;
     private readonly IViewFactory _viewLocator;
 
-    public MaintenanceView() : this(App.Container.Resolve<INavigationEventManager>(), App.Container.Resolve<IViewFactory>())
-    {
-        
-    }
-    public MaintenanceView(
-        INavigationEventManager navigationEventManager, IViewFactory viewLocator
-        )
+    public MaintenanceView() : this(App.Container?.Resolve<INavigationEventManager>(), App.Container?.Resolve<IViewFactory>())
+    {}
+    
+    public MaintenanceView(INavigationEventManager? navigationEventManager, IViewFactory? viewLocator)
     {
         InitializeComponent();
 
-        //this.DataContextChanged += OnDataContextChanged;
-        //_navigationService = navigationService;
-        _viewLocator = viewLocator;
+        if (Design.IsDesignMode)
+            return;
 
-        //_navigationService.Navigated += OnNavigated;
+        _viewLocator = viewLocator;
         navigationEventManager.Navigated += OnNavigated;
     }
 
@@ -39,12 +35,4 @@ public partial class MaintenanceView : UserControl
         view.DataContext = viewModel;
         hostControl.Content = view;
     }
-    //private void OnDataContextChanged(object sender, System.EventArgs e)
-    //{
-    //    if (this.DataContext is MaintenanceViewModel viewModel)
-    //    {
-    //        var hostControl = this.FindControl<ContentControl>("host");
-    //        viewModel.Init();
-    //    }
-    //}
 }
