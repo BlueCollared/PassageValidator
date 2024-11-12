@@ -2,11 +2,12 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using EtGate.Domain.Services;
 using EtGate.UI.ViewModels;
-//using Key = Avalonia.Remote.Protocol.Input.Key;
+
 using Key = Avalonia.Input.Key;
 
 namespace EtGate.UI.Views
 {
+
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -14,7 +15,7 @@ namespace EtGate.UI.Views
             InitializeComponent();
             this.KeyDown += OnKeyDown;
             if (!Design.IsDesignMode)
-                PositionWindowOnPrimaryScreen();
+                PositionWindowOnPrimaryScreen();            
         }
 
         public LoginService loginService { private get; set; }

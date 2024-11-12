@@ -95,21 +95,23 @@ public partial class App : Avalonia.Application
                (pi, ctx) => pi.ParameterType == typeof(Func<Type, MaintainenaceViewModelBase>),
                (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
            )
-           .WithParameter(
-                (pi, _) => pi.ParameterType == typeof(Func<Type, UserControl>),
-               (_, ctx) =>
-                   ctx.Resolve<IViewFactory>()
-            )
-           .WithParameter(
-               (pi, ctx) => pi.ParameterType == typeof(IModeCommandService),
-               (pi, ctx) => ctx.Resolve<IModeCommandService>()
-           ).SingleInstance();
+           //.WithParameter(
+           //     (pi, _) => pi.ParameterType == typeof(Func<Type, UserControl>),
+           //    (_, ctx) =>
+           //        ctx.Resolve<IViewFactory>()
+           // )
+           //.WithParameter(
+           //    (pi, ctx) => pi.ParameterType == typeof(IModeCommandService),
+           //    (pi, ctx) => ctx.Resolve<IModeCommandService>()
+           //).SingleInstance()
+           ;
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
         builder.RegisterType<ModeMgrFactory>().As<ISubModeMgrFactory>().SingleInstance();
 
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
+        builder.RegisterType<NavigationEventManager>().As<INavigationEventManager>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
         builder.Register(

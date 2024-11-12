@@ -33,6 +33,8 @@ public class MainWindowViewModel : ViewModelBase
         if (CurrentModeViewModel is IDisposable y)
             y.Dispose();
         CurrentModeViewModel = modeViewModelFactory.Create(x, subModeMgr, bPrimary, bEntry);
+        if (CurrentModeViewModel is MaintenanceViewModel r)
+            r.Init();
         curMode = x;
     }
 

@@ -24,7 +24,7 @@ namespace EtGate.UI.ViewModel.Tests
         MockModeService mockModeService = new MockModeService();
         public MaintenanceTests()
         {
-            nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
+//            nav = new MaintenanceNavigationService(CreateVM, dummy.Dummy_IViewFactory, mockModeService);            
 
             mainVM = new MainWindowViewModel(new ModeViewModelFactory(mockModeService, nav), mockModeService, true, true);
         }
@@ -42,7 +42,7 @@ namespace EtGate.UI.ViewModel.Tests
             mockModeService.SwitchToMaintenance();
             mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
             
-            ((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init(dummy.Dummy_ContentControl);
+            ((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init();
             nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
             nav.CurrentViewModel.IsDisposed.ShouldBeFalse();
         }

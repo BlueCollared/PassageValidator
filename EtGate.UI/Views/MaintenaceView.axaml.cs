@@ -1,3 +1,4 @@
+using Autofac;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using EtGate.UI.ViewModels;
@@ -6,24 +7,44 @@ namespace EtGate.UI.Views;
 
 public partial class MaintenanceView : UserControl
 {
-    public MaintenanceView()
+    private readonly INavigationService _navigationService;
+    private readonly IViewFactory _viewLocator;
+
+    public MaintenanceView() : this(App.Container.Resolve<INavigationEventManager>(), App.Container.Resolve<IViewFactory>())
+    {
+        
+    }
+    public MaintenanceView(
+        INavigationEventManager navigationEventManager, IViewFactory viewLocator
+        )
     {
         InitializeComponent();
 
-        this.DataContextChanged += OnDataContextChanged;        
+        //this.DataContextChanged += OnDataContextChanged;
+        //_navigationService = navigationService;
+        _viewLocator = viewLocator;
+
+        //_navigationService.Navigated += OnNavigated;
+        navigationEventManager.Navigated += OnNavigated;
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
     }
-
-    private void OnDataContextChanged(object sender, System.EventArgs e)
+    private void OnNavigated(MaintainenaceViewModelBase viewModel)
     {
-        if (this.DataContext is MaintenanceViewModel viewModel)
-        {
-            var hostControl = this.FindControl<ContentControl>("host");
-            viewModel.Init(hostControl);
-        }
+        var hostControl = this.FindControl<ContentControl>("host");
+        var view = _viewLocator.Create(viewModel.GetType());
+        view.DataContext = viewModel;
+        hostControl.Content = view;
     }
+    //private void OnDataContextChanged(object sender, System.EventArgs e)
+    //{
+    //    if (this.DataContext is MaintenanceViewModel viewModel)
+    //    {
+    //        var hostControl = this.FindControl<ContentControl>("host");
+    //        viewModel.Init();
+    //    }
+    //}
 }
