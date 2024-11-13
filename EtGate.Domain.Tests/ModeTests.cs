@@ -90,13 +90,40 @@ namespace EtGate.Domain.Tests
         [Fact]
         public void ValidationMgrNotWorking_ModeOOO()
         {
+            AllWorking_ModeInservice();
 
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.Obsolete);
+            s.subjOnlineStatus.OnNext(OnlineValidationSystemStatus.Disconnected);
+            
+            Assert.Equal(global::Domain.Mode.OOO,
+                modeManager.CurMode
+                );
+
+            s.subjOfflineStatus.OnNext(OfflineValidationSystemStatus.AllGood);
+            Assert.Equal(global::Domain.Mode.InService,
+                modeManager.CurMode
+                );
         }
 
         [Fact]
         public void GateHWNotWorking_ModeOOO()
         {
+            AllWorking_ModeInservice();
+            // Act            
+            s.subjGateStatus.OnNext(GateHwStatus.Disconnected);
 
+            // Assert
+            Assert.Equal(global::Domain.Mode.OOO,
+                modeManager.CurMode
+                );
+
+            // Act            
+            s.subjGateStatus.OnNext(GateHwStatus.AllGood);
+
+            // Assert
+            Assert.Equal(global::Domain.Mode.InService,
+                modeManager.CurMode
+                );
         }
 
         [Fact]

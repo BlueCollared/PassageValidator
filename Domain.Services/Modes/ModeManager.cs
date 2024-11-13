@@ -10,11 +10,6 @@ using System.Reactive.Subjects;
 
 namespace Domain.Services.Modes;
 
-public interface IModeQueryService
-{
-    IObservable<(Mode, ISubModeMgr)> EqptModeObservable { get; }
-}
-
 public class ModeManager : IModeQueryService
 {
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
@@ -47,7 +42,7 @@ public class ModeManager : IModeQueryService
         return stream
             .Merge(timeoutSignal)
             .Timeout(maxTimeToWaitBeforeFallbacking, scheduler)
-            .Catch(Observable.Return(defValue))  // If no event in 20s, inject NotConnected
+            .Catch(Observable.Return(defValue))  // If no event in `maxTimeToWaitBeforeFallbacking` seconds, inject NotConnected
                                                  //.Catch(Observable.Return(Option<T>.None))
             .Merge(stream)
             .DistinctUntilChanged();
@@ -84,9 +79,7 @@ public class ModeManager : IModeQueryService
             qr, valid, gate,
             bMaintAsked: maint,
             modeAsked:mod
-            ))
-        //.SubscribeOn(scheduler) // TODO: It was causing problems in running tests; they got blocked. Investigate. But w/o this, of course the test AppBootingPhase_Timeout fails
-        ;
+            ));
 
         modeEffectuatedStream = equipmentStatusStream
             .Select((EquipmentStatus e) =>
