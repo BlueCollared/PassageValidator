@@ -1,6 +1,7 @@
 ﻿using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.InService;
+using Equipment.Core.Message;
 using EtGate.Domain.ValidationSystem;
 using LanguageExt;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ public class ModeManager : IModeQueryService
             .DistinctUntilChanged();
     }
     
-    public ModeManager(IObservable<QrReaderStatus> qr,
+    public ModeManager(IMessageSubscriber<QrReaderStatus> qr,
                            IObservable<ValidationSystemStatus> valid,
                            IObservable<GateHwStatus> gate,
                            ISubModeMgrFactory modeMgrFactory,
@@ -68,14 +69,14 @@ public class ModeManager : IModeQueryService
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
         
-        qr =  ProcessedIObservable(qr, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
+        var qr_ =  ProcessedIObservable(qr.Messages, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
         
         valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking, scheduler);
         
         gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking, scheduler);
 
         equipmentStatusStream =
-        Observable.CombineLatest(qr, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
+        Observable.CombineLatest(qr_, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
             qr, valid, gate,
             bMaintAsked: maint,
             modeAsked:mod
@@ -109,7 +110,7 @@ public class ModeManager : IModeQueryService
             EqptModeSubject.OnNext((x, modeMgrFactory.Create(x)));
         });
 
-        qr.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
+        qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
         gate.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
         valid.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
 

@@ -2,10 +2,12 @@ using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.InService;
 using Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain.ValidationSystem;
 using Microsoft.Reactive.Testing;
 using Moq;
 using Shouldly;
+using System.Reactive.Linq;
 
 namespace EtGate.Domain.Tests
 {
@@ -16,7 +18,8 @@ namespace EtGate.Domain.Tests
 
         System s;
         ModeManager modeManager;
-        Mock<ISubModeMgr> modeMgrMock;        
+        Mock<ISubModeMgr> modeMgrMock;
+        Mock<IMessageSubscriber<QrReaderStatus>> mockQr = new();
 
         public ModeTests()
         {
@@ -34,8 +37,9 @@ namespace EtGate.Domain.Tests
                     modeMgrMock = new Mock<ISubModeMgr>();
                     return modeMgrMock.Object;
                 });
-            
-            modeManager = new ModeManager(s.qr.StatusStream, s.validation.StatusStream, s.gate.StatusStream, modeMgrFactoryMock.Object, testScheduler);
+
+            mockQr.Setup(sub => sub.Messages).Returns(s.subjQrStatus.AsObservable());
+            modeManager = new ModeManager(mockQr.Object, s.validation.StatusStream, s.gate.StatusStream, modeMgrFactoryMock.Object, testScheduler);
         }
 
         [Fact]

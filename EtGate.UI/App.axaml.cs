@@ -6,6 +6,7 @@ using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
+using Equipment.Core.Message;
 using EtGate.Devices.IER;
 using EtGate.Domain;
 using EtGate.Domain.Services;
@@ -107,10 +108,17 @@ public partial class App : Avalonia.Application
         builder.RegisterType<NavigationEventManager>().As<INavigationEventManager>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
 
+        builder.RegisterGeneric(typeof(MessagePublisher<>))
+       .As(typeof(IMessagePublisher<>))
+       .As(typeof(IMessageSubscriber<>))
+       .SingleInstance();
+
+
         builder.Register(
             c =>
             {                
-                return new ModeManager(c.Resolve<IQrReaderMgr>().StatusStream, 
+                var qr = c.Resolve<IMessageSubscriber<QrReaderStatus>>();
+                return new ModeManager(qr, 
                     c.Resolve<ValidationMgr>().StatusStream,
                     c.Resolve<GateMgr>().StatusStream,
                     c.Resolve<ISubModeMgrFactory>(),
