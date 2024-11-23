@@ -9,14 +9,14 @@ namespace EtGate.Domain.Services.Qr
     //: IQrReaderStatus, IQrInfoStatus
     {
         private readonly IQrReaderController qrRdrInfo;
-        private readonly IDeviceStatusSubscriber<QrReaderStatus> statusMgr;
+        private readonly DeviceStatusSubscriber<QrReaderStatus> statusMgr;
         private readonly IMessageSubscriber<QrCodeInfo> qrStream;
 
         //List<IQrReader> qrRdrs = new List<IQrReader>();
         public QrReaderMgr(
             //QrMgrConfig config,
             IQrReaderController qrRdrInfo,
-            IDeviceStatusSubscriber<QrReaderStatus> statusMgr,
+            DeviceStatusSubscriber<QrReaderStatus> statusMgr,
             IMessageSubscriber<QrCodeInfo> qrStream
             )
         {

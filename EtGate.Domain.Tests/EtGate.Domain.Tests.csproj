@@ -10,6 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ModeManagerTests.cs" />
+    <Compile Remove="ModeTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ModeManagerTests.cs" />
+    <None Include="ModeTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

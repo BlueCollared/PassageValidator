@@ -13,14 +13,14 @@ namespace EtGate.Domain.Services.Validation
         //public List<IValidate> validationSubSystems = new(); 
         IValidate offline;
         IValidate online;
-        private readonly IDeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus;
-        private readonly IDeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus;
+        private readonly DeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus;
+        private readonly DeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus;
 
         public ValidationMgr(
             IValidate online,
-            IDeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus,
+            DeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus,
             IValidate offline,
-            IDeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus            
+            DeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus            
             )
         {
             this.offline = offline;

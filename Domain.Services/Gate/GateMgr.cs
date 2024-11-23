@@ -13,7 +13,7 @@ public class GateMgr
     }
 
     public IDeviceDate deviceDate { get; private set;}
-    private readonly IDeviceStatusSubscriber<GateHwStatus> statusStream;
+    private readonly DeviceStatusSubscriber<GateHwStatus> statusStream;
 
     public IObservable<GateHwStatus> StatusStream => statusStream.Messages;
 
@@ -23,7 +23,7 @@ public class GateMgr
     Config config;
 
     public GateMgr(IDeviceDate deviceDate,
-        IDeviceStatusSubscriber<GateHwStatus> statusStream,
+        DeviceStatusSubscriber<GateHwStatus> statusStream,
         Config config
         )
     {

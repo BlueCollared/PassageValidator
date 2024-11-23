@@ -114,19 +114,19 @@ public partial class App : Avalonia.Application
        .As(typeof(IMessageSubscriber<>))
        .SingleInstance();
 
-        builder.RegisterGeneric(typeof(EventBus<>))
-       .As(typeof(IMessagePublisher<>))
-       .As(typeof(IMessageSubscriber<>))
+        builder.RegisterGeneric(typeof(DeviceStatusBus<>))
+       .As(typeof(IDeviceStatusPublisher<>))
+       .As(typeof(DeviceStatusSubscriber<>))
        .SingleInstance();
 
 
         builder.Register(
             c =>
             {                
-                var qr = c.Resolve<IMessageSubscriber<QrReaderStatus>>();
-                return new ModeManager(qr, 
-                    c.Resolve<ValidationMgr>().StatusStream,
-                    c.Resolve<GateMgr>().StatusStream,
+                return new ModeManager(c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
+                    c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
+                    c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
+                    c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
                     c.Resolve<ISubModeMgrFactory>(),
                     new EventLoopScheduler()
                     );
@@ -201,7 +201,7 @@ public partial class App : Avalonia.Application
 
         builder.RegisterInstance(ier)
             .As<IGateController>()
-            //.As<IDeviceStatus<GateHwStatus>>()
+            .As<IDeviceStatusPublisher<GateHwStatus>>()
             .As<IDeviceDate>() // TODO: this is WRONG to assume that only IerController implements IDeveiceDate
             .SingleInstance();
 

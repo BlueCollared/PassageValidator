@@ -49,9 +49,10 @@ public class ModeManager : IModeQueryService
             .DistinctUntilChanged();
     }
     
-    public ModeManager(IMessageSubscriber<QrReaderStatus> qr,
-                           IObservable<ValidationSystemStatus> valid,
-                           IObservable<GateHwStatus> gate,
+    public ModeManager(DeviceStatusSubscriber<QrReaderStatus> qr,
+                           DeviceStatusSubscriber<OfflineValidationSystemStatus> offline,
+                           DeviceStatusSubscriber<OnlineValidationSystemStatus> online,
+                           DeviceStatusSubscriber<GateHwStatus> gate,
                            ISubModeMgrFactory modeMgrFactory,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
@@ -71,13 +72,15 @@ public class ModeManager : IModeQueryService
         
         var qr_ =  ProcessedIObservable(qr.Messages, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
         
-        valid = ProcessedIObservable(valid, ValidationSystemStatus.Default, maxTimeToWaitBeforeFallbacking, scheduler);
-        
-        gate = ProcessedIObservable(gate, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking, scheduler);
+        var offline_ = ProcessedIObservable(offline.Messages, OfflineValidationSystemStatus.Obsolete, maxTimeToWaitBeforeFallbacking, scheduler);
+
+        var online_ = ProcessedIObservable(online.Messages, OnlineValidationSystemStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
+
+        var gate_ = ProcessedIObservable(gate.Messages, GateHwStatus.DisConnected, maxTimeToWaitBeforeFallbacking, scheduler);
 
         equipmentStatusStream =
-        Observable.CombineLatest(qr_, valid, gate, maintenanceAsked, modeRequested, (qr, valid, gate, maint, mod) => new EquipmentStatus(
-            qr, valid, gate,
+        Observable.CombineLatest(qr_, offline_, online_, gate_, maintenanceAsked, modeRequested, (qr, offline, online, gate, maint, mod) => new EquipmentStatus(
+            qr, offline, online, gate,
             bMaintAsked: maint,
             modeAsked:mod
             ));
@@ -88,7 +91,7 @@ public class ModeManager : IModeQueryService
                 if (e.bMaintAsked)
                     return Mode.Maintenance;
 
-                bool bCanBeInService = e.QrEntry.IsAvailable && e.gateStatus.IsAvailable && e.ValidationAPI.IsAvailable;
+                bool bCanBeInService = e.QrEntry.IsAvailable && e.gateStatus.IsAvailable && (e.offline.IsAvailable || e.online.IsAvailable);
                 switch (e.modeAsked)
                 {
                     case OpMode.Emergency:
@@ -111,8 +114,8 @@ public class ModeManager : IModeQueryService
         });
 
         qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
-        gate.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
-        valid.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
+        gate.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
+        offline.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
 
         equipmentStatusStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} equipmentStatusStream {equipmentStatusStream}"));
 

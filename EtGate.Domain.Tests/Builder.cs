@@ -35,7 +35,7 @@ namespace EtGate.Domain.Tests
             System r = new();
             
             // Qr
-            var mockQrReaderStatus = new Mock<IDeviceStatusSubscriber<QrReaderStatus>>();
+            var mockQrReaderStatus = new Mock<DeviceStatusSubscriber<QrReaderStatus>>();
             var dummyQr = new Mock<IQrReaderController>();
             //dummyQr.Setup(q => q.qrCodeInfoObservable).Returns(Observable.Empty<QrCodeInfo>());
 
