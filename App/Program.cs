@@ -1,4 +1,7 @@
-﻿using EtGate.Domain.Services.Qr;
+﻿using Domain.Peripherals.Qr;
+using Equipment.Core;
+using Equipment.Core.Message;
+using EtGate.Domain.Services.Qr;
 using EtGate.QrReader.Proxy;
 
 namespace App
@@ -9,8 +12,10 @@ namespace App
         {
             //GateApp.Application app = new();
 
-            QrReaderDeviceControllerProxy qrRdr = new QrReaderDeviceControllerProxy();
-            QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, qrRdr);
+            DeviceStatusBus<QrReaderStatus> status = new();
+            EventBus<QrCodeInfo> qrInfo = new();
+            QrReaderDeviceControllerProxy qrRdr = new QrReaderDeviceControllerProxy(status, qrInfo);
+            QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, status, qrInfo);
             //ValidationMgr validationMgr = new ValidationMgr();
 
             //ModeManager modeManager = new ModeManager(qrRdrMgr, validationMgr, new PassageMgr());

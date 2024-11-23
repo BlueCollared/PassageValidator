@@ -7,9 +7,10 @@ public class FlapMaintenanceViewModel : MaintainenaceViewModelBase
         
     }
 
+    
     public override void Dispose()
     {
-        
+    //    throw new NotImplementedException();
     }
 }
 

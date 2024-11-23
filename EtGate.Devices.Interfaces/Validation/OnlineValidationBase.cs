@@ -1,11 +1,10 @@
 ﻿using Domain.Peripherals.Qr;
 using EtGate.Domain;
-using EtGate.Domain.ValidationSystem;
 using Peripherals;
 
 namespace EtGate.Devices.Interfaces.Validation
 {
-    abstract public class OnlineValidationBase : StatusStreamBase<OnlineValidationSystemStatus>, IPeripheral
+    abstract public class OnlineValidationBase : IPeripheral
     {
         public abstract bool Start();
         public abstract void Stop();

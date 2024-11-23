@@ -15,7 +15,7 @@ namespace QrReaderGuiSimulator
             this.viewModel = viewModel;
         }
 
-        protected override void ProcessMessage(string message)
+        protected void ProcessMessage(string message)
         {
             dynamic json = JsonConvert.DeserializeObject(message);
 
@@ -33,12 +33,12 @@ namespace QrReaderGuiSimulator
             }
         }
 
-        protected override void OnError(Exception ex)
+        protected void OnError(Exception ex)
         {
             // Handle error (e.g., log or show a message box)
         }
 
-        public override void SendNotification<T>(T notification)
+        public void SendNotification<T>(T notification)
         {
             using (var client = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {

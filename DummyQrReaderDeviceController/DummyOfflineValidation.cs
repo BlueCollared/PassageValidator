@@ -13,15 +13,17 @@ namespace DummyQrReaderDeviceController
         {
             //statusSubject.OnNext(new OfflineValidationSystemStatus(DateTimeOffset.MaxValue, DateTimeOffset.Now));
         }
+
         public override bool Start()
         {
-            return true;
+            throw new NotImplementedException();
         }
 
         public override void Stop()
         {
-            bStop = true;            
+            throw new NotImplementedException();
         }
+
 
         public override QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {

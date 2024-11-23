@@ -10,22 +10,22 @@ namespace QrReader
             throw new NotImplementedException();
         }
 
-        public override bool Start()
+        public bool Start()
         {
             throw new NotImplementedException();
         }
 
-        public override bool StartDetecting()
+        public bool StartDetecting()
         {
             throw new NotImplementedException();
         }
 
-        public override void Stop()
+        public void Stop()
         {
             throw new NotImplementedException();
         }
 
-        public override void StopDetecting()
+        public void StopDetecting()
         {
             throw new NotImplementedException();
         }

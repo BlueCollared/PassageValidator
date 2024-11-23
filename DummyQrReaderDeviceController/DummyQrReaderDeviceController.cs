@@ -1,60 +1,66 @@
 ﻿using Domain.Peripherals.Qr;
-using EtGate.Devices.Interfaces.Qr;
+using Equipment.Core.Message;
+using EtGate.Domain.Services.Qr;
 
-namespace DummyQrReaderDeviceController
+namespace DummyQrReaderDeviceController;
+
+public class DummyQrReaderDeviceController : IQrReaderController
 {
-    public class DummyQrReaderDeviceController : QrReaderDeviceControllerBase
+    Task tskStatusDetection;
+    bool bStop = false;
+    QrReaderStaticData qrStatic = new("1.2.3");
+    private readonly IDeviceStatusPublisher<QrReaderStatus> publisher;
+    private IMessagePublisher<QrReaderStaticData> pubStaticData;
+
+    public DummyQrReaderDeviceController(IDeviceStatusPublisher<QrReaderStatus> publisher,
+        IMessagePublisher<QrReaderStaticData> pubStaticData)
     {
-        Task tskStatusDetection;
-        bool bStop = false;
-        QrReaderStaticData qrStatic = new("1.2.3");
-        public DummyQrReaderDeviceController()
+        this.publisher = publisher;
+        this.pubStaticData = pubStaticData;
+        tskStatusDetection = Task.Run(() =>
         {
-            tskStatusDetection = Task.Run(() =>
-            {
-                Worker();
-            });
-
-        }
-        public override bool Start()
-        {
-            qrCodeStatic.OnNext(qrStatic);
-            return true;
-        }
-
-        public override bool StartDetecting()
-        {
-            bStop = false;
-            return true;
-        }
-
-        private void Worker()
-        {
-            while (!bStop)
-            {
-                statusSubject.OnNext(new QrReaderStatus(false, false));
-
-                Thread.Sleep(5000);
-
-                statusSubject.OnNext(new QrReaderStatus(true, false));
-
-                Thread.Sleep(5000);
-            }
-        }
-
-        public override void Stop()
-        {
-            bStop = true;            
-        }
-
-        public override void StopDetecting()
-        {
-            bStop = true;
-        }
-
-        //public override void Reboot()
-        //{
-        //    throw new NotImplementedException();
-        //}
+            Worker();
+        });            
     }
+
+    public bool Start()
+    {
+        pubStaticData.Publish(qrStatic);
+        return true;
+    }
+
+    public bool StartDetecting()
+    {
+        bStop = false;
+        return true;
+    }
+
+    private void Worker()
+    {
+        while (!bStop)
+        {
+            publisher.Publish(new QrReaderStatus(false, false));
+
+            Thread.Sleep(1000);
+
+            publisher.Publish(new QrReaderStatus(true, false));
+
+            Thread.Sleep(1000);
+        }
+    }
+
+    public void Stop()
+    {
+        bStop = true;            
+    }
+
+    public void StopDetecting()
+    {
+        bStop = true;
+    }
+
+    //public void Reboot()
+    //{
+    //    throw new NotImplementedException();
+    //}
 }

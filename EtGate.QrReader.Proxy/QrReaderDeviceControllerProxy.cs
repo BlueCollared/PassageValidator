@@ -1,54 +1,58 @@
 ﻿using Domain.Peripherals.Qr;
-using EtGate.Devices.Interfaces.Qr;
+using Equipment.Core.Message;
+using EtGate.Domain.Services.Qr;
 
 namespace EtGate.QrReader.Proxy
 {
-    public class QrReaderDeviceControllerProxy : QrReaderDeviceControllerBase//, IQrReaderStatus
+    public class QrReaderDeviceControllerProxy : IQrReaderController//QrReaderDeviceControllerBase//, IQrReaderStatus
     {
         public const string pipeName = "QrSimul";
+        private readonly IDeviceStatusPublisher<QrReaderStatus> messagePublisher;
+        private readonly IMessagePublisher<QrCodeInfo> qrCodeInfo;
         SimulatorListener listener;//= new SimulatorListener(pipeName);
         //ReqClient client = new ReqClient(pipeName, new List<Type> { typeof(QrReaderStatus), typeof(QrCodeInfo) }, new List<Type> { typeof(StartReq), typeof(StartDetectingReq) });
-        public QrReaderDeviceControllerProxy()
+        public QrReaderDeviceControllerProxy(
+            IDeviceStatusPublisher<QrReaderStatus> messagePublisher,
+            IMessagePublisher<QrCodeInfo> qrCodeInfo
+            //IMessagePublisher<QrReaderStaticData> qrCodeStaticData
+            )//:base(qrCodeInfo, qrCodeStaticData)
         {
             //AsyncCaller svr = new AsyncCaller("QrReader");
             listener = new SimulatorListener(pipeName, this);
+            this.messagePublisher = messagePublisher;
+            this.qrCodeInfo = qrCodeInfo;
         }
 
         internal bool StartAnswer;
-        public override bool Start()
+        public bool Start()
         {
             return StartAnswer;
         }
 
         internal bool StartDetectingAnswer;
-        public override bool StartDetecting()
+        public bool StartDetecting()
         {
             return StartDetectingAnswer;
         }
 
-        public override void Stop()
+        public void Stop()
         {
             return;
         }
 
-        public override void StopDetecting()
+        public void StopDetecting()
         {
             return;
         }
 
         internal void Notify(QrReaderStatus x)
         {
-            statusSubject.OnNext(x);
+            messagePublisher.Publish(x);
         }
 
         internal void Notify(QrCodeInfo x)
         {
-            qrCodeInfoSubject.OnNext(x);
+            qrCodeInfo.Publish(x);
         }
-
-    //    public override void Reboot()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
     }
 }

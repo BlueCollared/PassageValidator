@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Passage;
+using Equipment.Core.Message;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using Moq;
@@ -9,13 +10,15 @@ namespace EtGate.Domain.Tests
 {
     public class GateMgrTests
     {
-        class GateSatatusMgr : IDeviceStatus<GateHwStatus>
+        class GateSatatusMgr //: IMessageSubscriber<GateHwStatus>
         {
             public GateSatatusMgr() : base()
             {
             }
             public Subject<GateHwStatus> statusSubject = new Subject<GateHwStatus>();
-            public override IObservable<GateHwStatus> statusObservable => statusSubject.AsObservable();
+
+            public IObservable<GateHwStatus> Messages => statusSubject.AsObservable();
+            //public IObservable<GateHwStatus> statusObservable => statusSubject.AsObservable();
         }
 
         [Fact]
@@ -24,7 +27,7 @@ namespace EtGate.Domain.Tests
             GateSatatusMgr gateSatatusMgrMock = new GateSatatusMgr();
             var mockGateController = new Mock<IDeviceDate>();
             
-            GateMgr gateMgr = new GateMgr(mockGateController.Object, gateSatatusMgrMock, 
+            GateMgr gateMgr = new GateMgr(mockGateController.Object, new Mock<IDeviceStatusSubscriber<GateHwStatus>>().Object,
                 new GateMgr.Config {  ClockSynchronizerConfig = new() { interval = TimeSpan.FromSeconds(60) } });
             gateSatatusMgrMock.statusSubject.OnNext(GateHwStatus.AllGood);
             mockGateController.Verify(x => x.GetDate(), Times.Once);

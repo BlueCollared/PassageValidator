@@ -1,4 +1,6 @@
-﻿namespace EtGate.Domain.ValidationSystem
+﻿using Equipment.Core;
+
+namespace EtGate.Domain.ValidationSystem
 {
     public record OfflineValidationSystemStatus (
         DateTimeOffset validTill, 

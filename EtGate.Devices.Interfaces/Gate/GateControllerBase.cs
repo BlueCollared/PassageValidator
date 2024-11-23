@@ -1,11 +1,11 @@
-﻿using Domain.Peripherals.Passage;
-using EtGate.Domain.Services;
+﻿using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using LanguageExt;
 
 namespace EtGate.Devices.Interfaces.Gate;
 
-abstract public class GateControllerBase : StatusStreamBase<GateHwStatus>, IGateController, IGateInServiceController, IGateModeController, IDeviceDate
+abstract public class GateControllerBase : //StatusStreamBase<GateHwStatus>, 
+    IGateController, IGateInServiceController, IGateModeController, IDeviceDate
 {    
     // migrate it to the test class where it is needed. Real implmentation is not even using it
     //readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();

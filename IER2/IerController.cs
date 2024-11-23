@@ -1,5 +1,5 @@
 ﻿using Domain.Peripherals.Passage;
-using EtGate.Devices.Interfaces.Gate;
+using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.IER;
 using LanguageExt;
@@ -9,10 +9,10 @@ using System.Reactive.Linq;
 
 namespace EtGate.Devices.IER;
 
-public class IerController : GateControllerBase
+public class IerController : IGateController, IGateInServiceController, IGateModeController, IDeviceDate
 {
-    bool bIsConnected => CurStatus != null && CurStatus.bConnected;
-    bool bIsAvailable => CurStatus != null && CurStatus.IsAvailable;    
+    bool bIsConnected => throw new NotImplementedException();//CurStatus != null && CurStatus.bConnected;
+    bool bIsAvailable => throw new NotImplementedException();//CurStatus != null && CurStatus.IsAvailable;    
 
     Ier_To_DomainAdapter ier;
     private readonly IIerStatusMonitor ier2;
@@ -24,20 +24,20 @@ public class IerController : GateControllerBase
             );
         ier2 = xmlRpc;
         // ideally it belongs to IDeviceStatus, but can't keep it there.
-        statusObservable.Subscribe(x => CurStatus = x);
+        //statusObservable.Subscribe(x => CurStatus = x);
     }
 
     public IObservable<Either<IERApiError, GetStatusStdRawComplete>> comp => ier2.StatusObservable
             .Select(x => x.Bind<GetStatusStdRawComplete>(y => y.To_GetStatusStdRawComplete()));
 
-    public override IObservable<GateHwStatus> statusObservable =>
+    public IObservable<GateHwStatus> statusObservable =>
           comp
             .Select(x => x.Match(
                 r => new GateHwStatus(true, r.To_GateHwStatus()),
                 l => new GateHwStatus(l != IERApiError.DeviceInaccessible) // TODO: still to treat errors other than DeviceInaccessible
                 ));
     
-    public override IObservable<EventInNominalMode> InServiceEventsObservable
+    public IObservable<EventInNominalMode> InServiceEventsObservable
         => comp.Where(x => x.IsRight)
         .Select<Either<IERApiError, GetStatusStdRawComplete>, GetStatusStdRawComplete>(a => a.Value())
         .Where(a => a.exceptionMode == OverallState.NOMINAL)
@@ -54,21 +54,21 @@ public class IerController : GateControllerBase
                 eDoorNominalModes.INTRUSION => a.To_IntrusionX()
             });
 
-    public override bool Authorize(int nAuthorizations, bool bEntry)
+    public bool Authorize(int nAuthorizations, bool bEntry)
     {
         if (!bIsConnected)
             return false;
         return ier.Authorise(nAuthorizations, bEntry);
     }
 
-    public override Option<DateTimeOffset> GetDate()
+    public Option<DateTimeOffset> GetDate()
     {
         if (!bIsConnected)
             return Option<DateTimeOffset>.None;
         return ier.GetDate().Map(x=>new DateTimeOffset(x)); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }
 
-    public override bool Reboot(bool bHardboot)
+    public bool Reboot(bool bHardboot)
     {
         if (!bIsConnected)
             return false;
@@ -79,35 +79,35 @@ public class IerController : GateControllerBase
             return ier.Restart();
     }
 
-    public override bool SetDate(DateTimeOffset dt)
+    public bool SetDate(DateTimeOffset dt)
     {
         if (!bIsConnected)
             return false;
         return ier.SetDate(dt.DateTime); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }    
 
-    public override bool SetEmergency()
+    public bool SetEmergency()
     {
         if (!bIsConnected)
             return false;
         return ier.SetEmergency();
     }
 
-    public override bool SetMaintenance()
+    public bool SetMaintenance()
     {
         if (!bIsConnected)
             return false;
         return ier.SetMaintenance();
     }
 
-    public override bool SetNormalMode(GateOperationConfig config)
+    public bool SetNormalMode(GateOperationConfig config)
     {
         if (!bIsConnected)
             return false;
         return ier.SetNormalMode(config);        
     }
 
-    public override bool SetOOS()
+    public bool SetOOS()
     {
         if (!bIsConnected)
             return false;

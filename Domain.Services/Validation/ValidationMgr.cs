@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
+using Equipment.Core.Message;
 using EtGate.Domain.ValidationSystem;
 using System.Diagnostics;
 using System.Reactive.Linq;
@@ -10,34 +11,48 @@ namespace EtGate.Domain.Services.Validation
     {
         // better to be direct i.e.OfflineValidationSystem, OnlineValidationSystem
         //public List<IValidate> validationSubSystems = new(); 
-        OfflineValidationSystem offline;
-        OnlineValidationSystem online;
+        IValidate offline;
+        IValidate online;
+        private readonly IDeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus;
+        private readonly IDeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus;
 
-        public ValidationMgr(OfflineValidationSystem offline, OnlineValidationSystem online)
+        public ValidationMgr(
+            IValidate online,
+            IDeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus,
+            IValidate offline,
+            IDeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus            
+            )
         {
             this.offline = offline;
             this.online = online;
-            StatusStream.Subscribe(x => Debug.WriteLine($"Validation {x}"));
+            this.onlineDeviceStatus = onlineDeviceStatus;
+            this.offlineDeviceStatus = offlineDeviceStatus;
+            StatusStream.Subscribe(x =>
+            {
+                status = x;
+                Debug.WriteLine($"Validation {x}"); }
+            );
         }
 
         public IObservable<ValidationSystemStatus> StatusStream
             => Observable.CombineLatest(
-            online.StatusStream,
-            offline.StatusStream,
+            onlineDeviceStatus.Messages,
+            offlineDeviceStatus.Messages,
             (on, off) => new ValidationSystemStatus(on, off)
             );
 
-        public bool IsWorking => online.IsWorking || offline.IsWorking;        
+        public ValidationSystemStatus status;
+        public bool IsWorking => status?.IsAvailable ?? false;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {
-            if (online.IsWorking)
+            if (onlineDeviceStatus.curStatus.IsAvailable)
             {
                 var result = online.Validate(qrCode);
                 if (result != QrCodeValidationResult.CallNotMade)
                     return result;
             }
-            else if (offline.IsWorking)
+            else if (offlineDeviceStatus.curStatus.IsAvailable)
             {
                 var result = offline.Validate(qrCode);
                 if (result != QrCodeValidationResult.CallNotMade)

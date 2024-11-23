@@ -1,0 +1,1 @@
+It is a simple illustration how a driver would be tested. It is "testing" a dummy driver DummyQrReaderDeviceController only because there is none real at the moment

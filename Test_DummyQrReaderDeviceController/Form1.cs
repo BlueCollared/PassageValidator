@@ -1,4 +1,6 @@
 
+using Domain.Peripherals.Qr;
+using Equipment.Core;
 using System.Reactive.Linq;
 
 namespace Test_DummyQrReaderDeviceController
@@ -7,14 +9,19 @@ namespace Test_DummyQrReaderDeviceController
     {
         public Form1()
         {
+            qrController = new DummyQrReaderDeviceController.DummyQrReaderDeviceController(qrStatus, null);
             InitializeComponent();
         }
-        DummyQrReaderDeviceController.DummyQrReaderDeviceController qrController = new();
+        DeviceStatusBus<QrReaderStatus> qrStatus = new();
+        //DeviceStatusBus<QrReaderStaticData> qrStaticData = new();
+        DummyQrReaderDeviceController.DummyQrReaderDeviceController qrController;
 
         private void btnStartDetection_Click(object sender, EventArgs e)
         {
             qrController.StartDetecting();
-            qrController.statusObservable.ObserveOn(SynchronizationContext.Current).Subscribe(x =>
+            qrStatus.Messages
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(x =>
             {
                 txtLog.Text += x.bConnected.ToString();
             });

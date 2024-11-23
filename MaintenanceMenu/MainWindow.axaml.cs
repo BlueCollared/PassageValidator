@@ -1,4 +1,7 @@
 using Avalonia.Controls;
+using Domain.Peripherals.Qr;
+using Equipment.Core;
+using Equipment.Core.Message;
 using EtGate.UI;
 using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views.Maintenance;
@@ -12,10 +15,13 @@ namespace MaintenanceMenu
         {
             InitializeComponent();
             var view = new MaintenanceMenuView();
-
-            var qrRdr = new DummyQrReaderDeviceController.DummyQrReaderDeviceController();//new QrReaderDeviceControllerProxy();
+            var evtBus = new DeviceStatusBus<QrReaderStatus>();
+            var evtStaticData = new EventBus<QrReaderStaticData>();
+            var evtQrCodeInfo = new EventBus<QrCodeInfo>();
+            var qrRdr = new DummyQrReaderDeviceController.DummyQrReaderDeviceController(evtBus, evtStaticData
+                );//new QrReaderDeviceControllerProxy();
             var vm = new MaintenanceMenuViewModel(new Mock<INavigationService>().Object,
-                new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, qrRdr));
+                new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, evtBus, evtQrCodeInfo));
 
             view.DataContext = vm;
             host.Content = view;

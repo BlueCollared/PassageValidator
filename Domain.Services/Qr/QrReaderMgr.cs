@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
+using Equipment.Core.Message;
 
 namespace EtGate.Domain.Services.Qr
 {
@@ -8,17 +9,22 @@ namespace EtGate.Domain.Services.Qr
     //: IQrReaderStatus, IQrInfoStatus
     {
         private readonly IQrReaderController qrRdrInfo;
-        private readonly IDeviceStatus<QrReaderStatus> statusMgr;
+        private readonly IDeviceStatusSubscriber<QrReaderStatus> statusMgr;
+        private readonly IMessageSubscriber<QrCodeInfo> qrStream;
 
         //List<IQrReader> qrRdrs = new List<IQrReader>();
         public QrReaderMgr(
             //QrMgrConfig config,
             IQrReaderController qrRdrInfo,
-            IDeviceStatus<QrReaderStatus> statusMgr
+            IDeviceStatusSubscriber<QrReaderStatus> statusMgr,
+            IMessageSubscriber<QrCodeInfo> qrStream
             )
         {
             this.statusMgr = statusMgr;
+            this.qrStream = qrStream;
             this.qrRdrInfo = qrRdrInfo;
+
+            StatusStream.Subscribe(x => { });
 
             // TODO: create IQrReader's using {qrFactory, config} and push them to qrRdrs.
             // `config` would also contain the `id` of that reader. This `id` would be bounced back in the 
@@ -28,17 +34,17 @@ namespace EtGate.Domain.Services.Qr
         //readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
 
         public IObservable<QrReaderStatus> StatusStream
-            => statusMgr.statusObservable
+            => statusMgr.Messages
             //.ObserveOn(syncContextClient) // I remove it from here, otherwise the unit tests fail (but as per https://chatgpt.com/c/4df3ed5d-cada-4f6f-8355-e6a060c87aad would not fail in normal environment; only in the unit test environment)
             // also, it indicates leaky abstraction. I now move this to `IQrReaderStatus`
             ;
 
-        public bool IsWorking => statusMgr.IsWorking;
+        //public bool IsWorking => statusMgr.IsWorking;
 
         public IObservable<QrCodeInfo> QrCodeStream
-            => qrRdrInfo.qrCodeInfoObservable
+            => qrStream.Messages;
             //.ObserveOn(syncContextClient)
-            ;
+            
 
         public void StopDetecting()
         {

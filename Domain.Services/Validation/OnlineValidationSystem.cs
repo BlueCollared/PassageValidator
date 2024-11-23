@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Qr;
+using Equipment.Core.Message;
 using EtGate.Domain.ValidationSystem;
 using System.Diagnostics;
 
@@ -8,18 +9,18 @@ namespace EtGate.Domain.Services.Validation
     // while we should be providing the dummy implementaion of the injected field?
     public class OnlineValidationSystem : IValidate
     {
-        public OnlineValidationSystem(IDeviceStatus<OnlineValidationSystemStatus> statusMgr)
+        public OnlineValidationSystem(IDeviceStatusPublisher<OnlineValidationSystemStatus> statusMgr)
         {
             this.statusMgr = statusMgr;
-            StatusStream.Subscribe(x => Debug.WriteLine($"Online {x}"));
+            //StatusStream.Subscribe(x => Debug.WriteLine($"Online {x}"));
         }
 
-        public IObservable<OnlineValidationSystemStatus> StatusStream
-            => statusMgr.statusObservable;
+        //public IObservable<OnlineValidationSystemStatus> StatusStream
+          //  => statusMgr.mes
 
-        public bool IsWorking => statusMgr.IsWorking;
+        //public bool IsWorking => statusMgr.IsWorking;
 
-        private readonly IDeviceStatus<OnlineValidationSystemStatus> statusMgr;
+        private readonly IDeviceStatusPublisher<OnlineValidationSystemStatus> statusMgr;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {

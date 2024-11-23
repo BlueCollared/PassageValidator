@@ -1,4 +1,5 @@
 ﻿using Domain.Peripherals.Passage;
+using Equipment.Core.Message;
 using EtGate.Domain.Services.Gate.Functions;
 using System.Reactive.Linq;
 
@@ -12,9 +13,9 @@ public class GateMgr
     }
 
     public IDeviceDate deviceDate { get; private set;}
-    private readonly IDeviceStatus<GateHwStatus> statusMgr;
+    private readonly IDeviceStatusSubscriber<GateHwStatus> statusStream;
 
-    public IObservable<GateHwStatus> StatusStream => statusMgr.statusObservable;
+    public IObservable<GateHwStatus> StatusStream => statusStream.Messages;
 
     GateConnectedSession session;
 
@@ -22,12 +23,12 @@ public class GateMgr
     Config config;
 
     public GateMgr(IDeviceDate deviceDate,
-        IDeviceStatus<GateHwStatus> statusMgr,
+        IDeviceStatusSubscriber<GateHwStatus> statusStream,
         Config config
         )
     {
         this.deviceDate = deviceDate ?? throw new ArgumentNullException(nameof(deviceDate));
-        this.statusMgr = statusMgr ?? throw new ArgumentNullException(nameof(statusMgr));
+        this.statusStream = statusStream ?? throw new ArgumentNullException(nameof(statusStream));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
 
         ClockSynchronizerFactory = () => {
@@ -37,7 +38,7 @@ public class GateMgr
                 , this.config.ClockSynchronizerConfig);
         };
 
-            statusMgr.statusObservable
+            statusStream.Messages
             .Select(x => x.bConnected)
             .DistinctUntilChanged()
             .Subscribe(bConnected =>

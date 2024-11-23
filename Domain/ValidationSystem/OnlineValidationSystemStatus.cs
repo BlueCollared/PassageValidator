@@ -1,4 +1,6 @@
-﻿namespace EtGate.Domain.ValidationSystem
+﻿using Equipment.Core;
+
+namespace EtGate.Domain.ValidationSystem
 {
     public record OnlineValidationSystemStatus (bool bConnected) : ModuleStatus
     {        
@@ -6,6 +8,6 @@
 
         public static OnlineValidationSystemStatus Disconnected => new OnlineValidationSystemStatus(bConnected: false);
 
-        //public override ModuleStatus defStatus => Disconnected;
+        //public ModuleStatus defStatus => Disconnected;
     }
 }

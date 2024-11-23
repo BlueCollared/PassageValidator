@@ -1,4 +1,4 @@
-﻿using EtGate.Domain;
+﻿using Equipment.Core;
 
 //using IFS2.Equipment.DriverInterface;
 using LanguageExt;
@@ -61,5 +61,5 @@ public record GateHwStatus(bool bConnected, Option<GateHwStatus_> status = defau
 
     public static GateHwStatus DisConnected => new GateHwStatus(bConnected: false);
 
-    //public override ModuleStatus defStatus => Disconnected;
+    //public ModuleStatus defStatus => Disconnected;
 }

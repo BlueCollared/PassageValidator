@@ -1,6 +1,6 @@
 ﻿using Domain.Peripherals.Qr;
+using Equipment.Core.Message;
 using EtGate.Domain.ValidationSystem;
-using System.Diagnostics;
 
 namespace EtGate.Domain.Services.Validation
 {
@@ -8,18 +8,20 @@ namespace EtGate.Domain.Services.Validation
     // but it will not decide that the data has gone stale. It depends upon the notification from status manager for it.
     public class OfflineValidationSystem : IValidate
     {
-        public OfflineValidationSystem(IDeviceStatus<OfflineValidationSystemStatus> statusMgr)
+        private IDeviceStatusPublisher<OfflineValidationSystemStatus> statusMgr;
+
+        public OfflineValidationSystem(IDeviceStatusPublisher<OfflineValidationSystemStatus> statusMgr)
         {
             this.statusMgr = statusMgr;
-            StatusStream.Subscribe(x => Debug.WriteLine($"Offline {x}"));
+            //'statusMgr.Subscribe(x => Debug.WriteLine($"Offline {x}"));
         }
 
-        public IObservable<OfflineValidationSystemStatus> StatusStream
-            => statusMgr.statusObservable;
+        //public IObservable<OfflineValidationSystemStatus> StatusStream
+          //  => statusMgr.statusObservable;
 
-        public bool IsWorking => statusMgr.IsWorking;
+        //public bool IsWorking => statusMgr.IsWorking;
         
-        private readonly IDeviceStatus<OfflineValidationSystemStatus> statusMgr;
+        //private readonly IDeviceStatus<OfflineValidationSystemStatus> statusMgr;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)
         {

@@ -1,13 +1,15 @@
 ﻿using Domain.Peripherals.Passage;
 using Domain.Peripherals.Qr;
+using Equipment.Core;
+using Equipment.Core.Message;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using Moq;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Xunit.Sdk;
 
 namespace EtGate.Domain.Tests
 {
@@ -33,30 +35,31 @@ namespace EtGate.Domain.Tests
             System r = new();
             
             // Qr
-            var mockQrReaderStatus = new Mock<IDeviceStatus<QrReaderStatus>>();
+            var mockQrReaderStatus = new Mock<IDeviceStatusSubscriber<QrReaderStatus>>();
             var dummyQr = new Mock<IQrReaderController>();
-            dummyQr.Setup(q => q.qrCodeInfoObservable).Returns(Observable.Empty<QrCodeInfo>());
+            //dummyQr.Setup(q => q.qrCodeInfoObservable).Returns(Observable.Empty<QrCodeInfo>());
 
-            mockQrReaderStatus.Setup(m => m.statusObservable).Returns(r.subjQrStatus);
+            mockQrReaderStatus.Setup(m => m.Messages).Returns(r.subjQrStatus);
 
-            r.qr = new QrReaderMgr(dummyQr.Object, mockQrReaderStatus.Object);
+            r.qr = new QrReaderMgr(dummyQr.Object, mockQrReaderStatus.Object,
+                (new Mock<IMessageSubscriber<QrCodeInfo>>()).Object);
 
-            var mockGateStatus = new Mock<IDeviceStatus<GateHwStatus>>();
-            mockGateStatus.Setup(m => m.statusObservable).Returns(r.subjGateStatus);
+            var mockGateStatus = new Mock<IMessageSubscriber<GateHwStatus>>();
+            mockGateStatus.Setup(m => m.Messages).Returns(r.subjGateStatus);
 
             var dummyGate = new Mock<IDeviceDate>();            
-            r.gate = new GateMgr(dummyGate.Object, mockGateStatus.Object, new GateMgr.Config());            
+            r.gate = new GateMgr(dummyGate.Object, new DeviceStatusBus<GateHwStatus>(), new GateMgr.Config());            
 
             // Valiation
-            var mockOfflineStatus = new Mock<IDeviceStatus<OfflineValidationSystemStatus>>();
-            mockOfflineStatus.Setup(m => m.statusObservable).Returns(r.subjOfflineStatus);
+            var mockOfflineStatus = new Mock<DeviceStatusBus<OfflineValidationSystemStatus>>();
+            mockOfflineStatus.Setup(m => m.Messages).Returns(r.subjOfflineStatus);
             OfflineValidationSystem offline = new(mockOfflineStatus.Object);
 
-            var mockOnlineStatus = new Mock<IDeviceStatus<OnlineValidationSystemStatus>>();
-            mockOnlineStatus.Setup(m => m.statusObservable).Returns(r.subjOnlineStatus);            
+            var mockOnlineStatus = new Mock<DeviceStatusBus<OnlineValidationSystemStatus>>();
+            mockOnlineStatus.Setup(m => m.Messages).Returns(r.subjOnlineStatus);            
             OnlineValidationSystem online = new(mockOnlineStatus.Object);
 
-            r.validation = new ValidationMgr(offline, online);
+            r.validation = new ValidationMgr(online, mockOnlineStatus.Object, offline, mockOfflineStatus.Object);
             return r;
         }
     }
