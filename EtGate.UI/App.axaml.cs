@@ -9,7 +9,6 @@ using DummyQrReaderDeviceController;
 using Equipment.Core;
 using Equipment.Core.Message;
 using EtGate.Devices.IER;
-using EtGate.Domain;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Gate.Functions;
@@ -33,14 +32,14 @@ using ObsAuthEvents = System.IObservable<OneOf.OneOf<EtGate.Domain.Passage.Passa
 
 public partial class App : Avalonia.Application
 {
-    public void Initialize()
+    public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
 
     public static Autofac.IContainer? Container { get; private set; }
 
-    public void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
@@ -123,7 +122,8 @@ public partial class App : Avalonia.Application
         builder.Register(
             c =>
             {                
-                return new ModeManager(c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
+                return new ModeManager(
+                    c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
                     c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
                     c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
                     c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
@@ -155,29 +155,45 @@ public partial class App : Avalonia.Application
 
         base.OnFrameworkInitializationCompleted();
     }
-
+    const string offlineValidatorMnemonic = "OffLine";
+    const string onlineValidatorMnemonic = "OnLine";
     private static void DoForValidation(ContainerBuilder builder)
     {
-        builder.RegisterType<DummyOfflineValidation>()
-            //.As<IDeviceStatus<OfflineValidationSystemStatus>>()
-            .SingleInstance();
+        builder.RegisterType<DummyOfflineValidation>()            
+            .SingleInstance()
+            .Named<IValidate>(offlineValidatorMnemonic);
 
-        builder.RegisterType<DummyOnlineValidation>()
-           //.As<IDeviceStatus<OnlineValidationSystemStatus>>()
-           .SingleInstance();
+        builder.RegisterType<DummyOnlineValidation>()           
+           .SingleInstance()
+           .Named<IValidate>(onlineValidatorMnemonic);
 
         builder.RegisterType<OfflineValidationSystem>().AsSelf()
             .SingleInstance();
         builder.RegisterType<OnlineValidationSystem>().AsSelf()
             .SingleInstance();
-        builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
+        //builder.RegisterType<ValidationMgr>().AsSelf().SingleInstance();
+        builder.RegisterType<ValidationMgr>()
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(IValidate) && pi.Name == "online",
+                   (pi, ctx) => ctx.ResolveNamed<IValidate>(onlineValidatorMnemonic))
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(DeviceStatusSubscriber<OnlineValidationSystemStatus>) && pi.Name == "onlineDeviceStatus",
+                   (pi, ctx) => ctx.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>())
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(IValidate) && pi.Name == "offline",
+                   (pi, ctx) => ctx.ResolveNamed<IValidate>(offlineValidatorMnemonic))
+               .WithParameter(
+                   (pi, ctx) => pi.ParameterType == typeof(DeviceStatusSubscriber<OfflineValidationSystemStatus>) && pi.Name == "offlineDeviceStatus",
+                   (pi, ctx) => ctx.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>())
+            .SingleInstance()
+            .AsSelf();
+
     }
 
     private static void DoForQr(ContainerBuilder builder)
     {
         builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()
           .As<IQrReaderController>()
-          //.As<IDeviceStatus<QrReaderStatus>>()
           .SingleInstance();
 
         builder.RegisterType<QrReaderMgr>()
@@ -201,7 +217,7 @@ public partial class App : Avalonia.Application
 
         builder.RegisterInstance(ier)
             .As<IGateController>()
-            .As<IDeviceStatusPublisher<GateHwStatus>>()
+            //.As<IDeviceStatusPublisher<GateHwStatus>>()
             .As<IDeviceDate>() // TODO: this is WRONG to assume that only IerController implements IDeveiceDate
             .SingleInstance();
 
