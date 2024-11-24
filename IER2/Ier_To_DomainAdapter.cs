@@ -51,27 +51,27 @@ public class Ier_To_DomainAdapter
     {        
         Option<SideOperatingMode> entry = cfg.mode switch
         {
-            Mode.EntryOnly_EntryFree => SideOperatingMode.Free,
-            Mode.EntryOnly_EntryControlled => SideOperatingMode.Controlled,
-            Mode.ExitOnly_ExitFree => SideOperatingMode.Closed,
-            Mode.ExitOnly_ExitControlled => SideOperatingMode.Closed,
-            Mode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
-            Mode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Free,
-            Mode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Controlled,
-            Mode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
+            GateOperatingMode.EntryOnly_EntryFree => SideOperatingMode.Free,
+            GateOperatingMode.EntryOnly_EntryControlled => SideOperatingMode.Controlled,
+            GateOperatingMode.ExitOnly_ExitFree => SideOperatingMode.Closed,
+            GateOperatingMode.ExitOnly_ExitControlled => SideOperatingMode.Closed,
+            GateOperatingMode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
+            GateOperatingMode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Free,
+            GateOperatingMode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Controlled,
+            GateOperatingMode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
             _ => default
         };
 
         Option<SideOperatingMode> exit = cfg.mode switch
         {
-            Mode.EntryOnly_EntryFree => SideOperatingMode.Closed,
-            Mode.EntryOnly_EntryControlled => SideOperatingMode.Closed,
-            Mode.ExitOnly_ExitFree => SideOperatingMode.Free,
-            Mode.ExitOnly_ExitControlled => SideOperatingMode.Controlled,
-            Mode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
-            Mode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Controlled,
-            Mode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Free,
-            Mode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
+            GateOperatingMode.EntryOnly_EntryFree => SideOperatingMode.Closed,
+            GateOperatingMode.EntryOnly_EntryControlled => SideOperatingMode.Closed,
+            GateOperatingMode.ExitOnly_ExitFree => SideOperatingMode.Free,
+            GateOperatingMode.ExitOnly_ExitControlled => SideOperatingMode.Controlled,
+            GateOperatingMode.BiDi_EntryFree_ExitFree => SideOperatingMode.Free,
+            GateOperatingMode.BiDi_EntryFree_ExitControlled => SideOperatingMode.Controlled,
+            GateOperatingMode.BiDi_EntryControlled_ExitFree => SideOperatingMode.Free,
+            GateOperatingMode.BiDi_EntryControlled_ExitControlled => SideOperatingMode.Controlled,
             _ => default
         };
 
@@ -85,14 +85,14 @@ public class Ier_To_DomainAdapter
             Option<DoorsMode> dm =
             cfg.mode switch
             {
-                Mode.EntryOnly_EntryFree => DoorsMode.NormallyOpenedA,
-                Mode.EntryOnly_EntryControlled => DoorsMode.NormallyOpenedA,
-                Mode.ExitOnly_ExitFree => DoorsMode.NormallyOpenedB,
-                Mode.ExitOnly_ExitControlled => DoorsMode.NormallyOpenedB,
-                Mode.BiDi_EntryFree_ExitFree => DoorsMode.OpticalA,
-                Mode.BiDi_EntryFree_ExitControlled => DoorsMode.NormallyOpenedB,
-                Mode.BiDi_EntryControlled_ExitFree => DoorsMode.NormallyOpenedA,
-                Mode.BiDi_EntryControlled_ExitControlled => DoorsMode.NormallyOpenedA,
+                GateOperatingMode.EntryOnly_EntryFree => DoorsMode.NormallyOpenedA,
+                GateOperatingMode.EntryOnly_EntryControlled => DoorsMode.NormallyOpenedA,
+                GateOperatingMode.ExitOnly_ExitFree => DoorsMode.NormallyOpenedB,
+                GateOperatingMode.ExitOnly_ExitControlled => DoorsMode.NormallyOpenedB,
+                GateOperatingMode.BiDi_EntryFree_ExitFree => DoorsMode.OpticalA,
+                GateOperatingMode.BiDi_EntryFree_ExitControlled => DoorsMode.NormallyOpenedB,
+                GateOperatingMode.BiDi_EntryControlled_ExitFree => DoorsMode.NormallyOpenedA,
+                GateOperatingMode.BiDi_EntryControlled_ExitControlled => DoorsMode.NormallyOpenedA,
                 _ => default
             };
             if (dm.IsNone)

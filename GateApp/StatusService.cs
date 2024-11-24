@@ -1,6 +1,5 @@
-﻿using Domain.Peripherals.Qr;
-using Domain.Services.Modes;
-using System.Reactive.Linq;
+﻿using Domain.Services.Modes;
+using EtGate.Domain.Peripherals.Qr;
 
 namespace GateApp
 {

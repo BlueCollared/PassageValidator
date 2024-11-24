@@ -2,13 +2,14 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Domain.Peripherals.Passage;
-using Domain.Peripherals.Qr;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using Equipment.Core;
 using Equipment.Core.Message;
 using EtGate.Devices.IER;
+using EtGate.Domain;
+using EtGate.Domain.Peripherals.Passage;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Gate.Functions;
@@ -127,6 +128,7 @@ public partial class App : Avalonia.Application
                     c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
                     c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
                     c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
+                    c.Resolve<IDeviceStatusPublisher<Domain.Mode>>(),
                     c.Resolve<ISubModeMgrFactory>(),
                     new EventLoopScheduler()
                     );
@@ -134,6 +136,8 @@ public partial class App : Avalonia.Application
             .As<IModeQueryService>()
             .SingleInstance()
             .AsSelf();
+
+        Domain.Mode m;
 
         builder.RegisterType<MockPassageManager>().As<IGateInServiceController>();
 
@@ -259,7 +263,7 @@ internal class MockPassageManager : IGateInServiceController
 
 public class MockContextRepository : IContextRepository
 {
-    public void SaveMode(global::Domain.OpMode mode)
+    public void SaveMode(OpMode mode)
     {
         throw new NotImplementedException();
     }

@@ -1,7 +1,7 @@
-﻿using Domain.Peripherals.Passage;
-using Domain.Peripherals.Qr;
-using Equipment.Core;
+﻿using Equipment.Core;
 using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Passage;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
@@ -9,7 +9,6 @@ using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using Moq;
 using System.Reactive.Subjects;
-using Xunit.Sdk;
 
 namespace EtGate.Domain.Tests
 {

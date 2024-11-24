@@ -1,10 +1,10 @@
 ﻿using Equipment.Core;
 
-namespace Domain.Peripherals.Qr
+namespace EtGate.Domain.Peripherals.Qr
 {
-    public record QrReaderStatus (bool bConnected, bool bScanning) : ModuleStatus
+    public record QrReaderStatus (bool bConnected, bool bScanning) //: ModuleStatus
     {        
-        public override bool IsAvailable => bConnected;
+        public bool IsAvailable => bConnected;
 
         public static QrReaderStatus AllGood => new QrReaderStatus(bConnected: true, bScanning: false);
         public static QrReaderStatus Disconnected => new QrReaderStatus(bConnected: false, bScanning: false);

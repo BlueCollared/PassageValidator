@@ -1,6 +1,4 @@
-﻿using Domain.Peripherals.Qr;
-
-namespace EtGate.Domain.Services.Qr
+﻿namespace EtGate.Domain.Services.Qr
 {
     public interface IQrReaderController
     {

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using Domain.Peripherals.Qr;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
 using Moq;
 using System.Reactive.Subjects;

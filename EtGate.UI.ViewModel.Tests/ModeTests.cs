@@ -1,6 +1,6 @@
-﻿using Domain;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
 using Domain.Services.Modes;
+using EtGate.Domain;
 using EtGate.UI.ViewModels;
 using GateApp;
 using Moq;

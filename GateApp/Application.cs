@@ -1,5 +1,5 @@
-﻿using Domain;
-using Domain.Services.Modes;
+﻿using Domain.Services.Modes;
+using EtGate.Domain;
 using EtGate.Domain.Services.Qr;
 
 namespace GateApp

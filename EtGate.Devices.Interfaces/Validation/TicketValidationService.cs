@@ -1,5 +1,5 @@
-﻿using Domain;
-using Domain.Services;
+﻿using Domain.Services;
+using EtGate.Domain;
 using EtGate.Domain.Services.Gate;
 
 namespace EtGate.Devices.Interfaces.Validation

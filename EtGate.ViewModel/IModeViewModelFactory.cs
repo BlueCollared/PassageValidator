@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using EtGate.Domain;
 
 namespace EtGate.UI.ViewModels
 {

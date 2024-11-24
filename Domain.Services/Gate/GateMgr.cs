@@ -1,5 +1,5 @@
-﻿using Domain.Peripherals.Passage;
-using Equipment.Core.Message;
+﻿using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Services.Gate.Functions;
 using System.Reactive.Linq;
 

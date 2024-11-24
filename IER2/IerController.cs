@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Passage;
+﻿using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.IER;

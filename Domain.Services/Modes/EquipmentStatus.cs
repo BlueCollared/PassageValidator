@@ -1,7 +1,7 @@
-﻿using Domain.Peripherals.Passage;
-using Domain.Peripherals.Qr;
+﻿using EtGate.Domain;
+using EtGate.Domain.Peripherals.Passage;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.ValidationSystem;
-using LanguageExt;
 
 namespace Domain.Services.Modes
 {

@@ -1,4 +1,6 @@
-﻿namespace Domain.Services;
+﻿using EtGate.Domain;
+
+namespace Domain.Services;
 
 public interface ITicketValidationService
 {

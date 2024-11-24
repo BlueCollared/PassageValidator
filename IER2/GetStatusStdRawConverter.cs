@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.Peripherals.Passage;
+using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Services.Gate;
 using LanguageExt.UnsafeValueAccess;
 
@@ -107,15 +107,15 @@ public static class GetStatusStdRawConverter
 
 public class MappingProfile : Profile
 {
-    static readonly Dictionary<OverallState, global::Domain.Peripherals.Passage.GatePhysicalState> doorsStatesMachineMap = new()
+    static readonly Dictionary<OverallState, global::EtGate.Domain.Peripherals.Passage.GatePhysicalState> doorsStatesMachineMap = new()
     {
-        { OverallState.NOMINAL, global::Domain.Peripherals.Passage.GatePhysicalState.NOMINAL },
-        { OverallState.TECHNICAL_FAILURE, global :: Domain.Peripherals.Passage.GatePhysicalState.OOO},
-        { OverallState.EMERGENCY, global :: Domain.Peripherals.Passage.GatePhysicalState.EMERGENCY},
-        { OverallState.MAINTENANCE, global :: Domain.Peripherals.Passage.GatePhysicalState.MAINTENANCE},
-        { OverallState.LOCKED_OPEN, global :: Domain.Peripherals.Passage.GatePhysicalState.OOO},
-        { OverallState.POWER_DOWN, global :: Domain.Peripherals.Passage.GatePhysicalState.OOO},
-        { OverallState.EGRESS, global :: Domain.Peripherals.Passage.GatePhysicalState.OOO}
+        { OverallState.NOMINAL, global::EtGate.Domain.Peripherals.Passage.GatePhysicalState.NOMINAL },
+        { OverallState.TECHNICAL_FAILURE, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.OOO},
+        { OverallState.EMERGENCY, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.EMERGENCY},
+        { OverallState.MAINTENANCE, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.MAINTENANCE},
+        { OverallState.LOCKED_OPEN, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.OOO},
+        { OverallState.POWER_DOWN, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.OOO},
+        { OverallState.EGRESS, global :: EtGate.Domain.Peripherals.Passage.GatePhysicalState.OOO}
     };
 
     public MappingProfile()
@@ -123,7 +123,7 @@ public class MappingProfile : Profile
         CreateMap<GetStatusStdRawComplete, IerNominalMode>();
         CreateMap<GetStatusStdRawComplete, IerDoors>();
         CreateMap<GetStatusStdRawComplete, IerErrors>();
-        CreateMap<GetStatusStdRawComplete, global::Domain.Peripherals.Passage.GateHwStatus_>()
+        CreateMap<GetStatusStdRawComplete, global::EtGate.Domain.Peripherals.Passage.GateHwStatus_>()
             .ForMember(dest => dest.mode, opt => opt.MapFrom(src =>
                 doorsStatesMachineMap[src.exceptionMode])
             );

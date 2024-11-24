@@ -1,10 +1,8 @@
-﻿using Domain.Peripherals.Passage;
-using Equipment.Core.Message;
+﻿using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using Moq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace EtGate.Domain.Tests
 {

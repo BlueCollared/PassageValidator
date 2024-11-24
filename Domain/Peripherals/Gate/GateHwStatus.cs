@@ -3,7 +3,7 @@
 //using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 
-namespace Domain.Peripherals.Passage;
+namespace EtGate.Domain.Peripherals.Passage;
 
 //public enum DoorsMode
 //{
@@ -52,12 +52,12 @@ public record GateHwStatus_(
         );
 }
     // TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
-public record GateHwStatus(bool bConnected, Option<GateHwStatus_> status = default) : ModuleStatus
+public record GateHwStatus(bool bConnected, Option<GateHwStatus_> status = default) //: ModuleStatus
 {
     public static GateHwStatus Disconnected => new GateHwStatus(bConnected: false, status : default);
     public static GateHwStatus AllGood => new GateHwStatus(bConnected: true, status: GateHwStatus_.AllGood);
 
-    public override bool IsAvailable =>this == AllGood;
+    public bool IsAvailable =>this == AllGood;
 
     public static GateHwStatus DisConnected => new GateHwStatus(bConnected: false);
 

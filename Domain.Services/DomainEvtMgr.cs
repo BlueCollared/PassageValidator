@@ -1,6 +1,6 @@
 ﻿using EtGate.Domain.Services.Qr;
 
-namespace Domain
+namespace EtGate.Domain
 {
     public class DomainEvtMgr
     {

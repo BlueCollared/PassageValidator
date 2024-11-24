@@ -1,4 +1,5 @@
 ﻿using Domain.Services.InService;
+using EtGate.Domain;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;

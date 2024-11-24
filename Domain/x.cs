@@ -1,4 +1,4 @@
-﻿namespace Domain
+﻿namespace EtGate.Domain
 {
     public class Ticket
     {

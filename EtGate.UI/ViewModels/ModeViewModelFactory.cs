@@ -1,5 +1,5 @@
-﻿using Domain;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
+using EtGate.Domain;
 using GateApp;
 using System;
 

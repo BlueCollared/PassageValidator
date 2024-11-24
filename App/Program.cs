@@ -1,6 +1,6 @@
-﻿using Domain.Peripherals.Qr;
-using Equipment.Core;
+﻿using Equipment.Core;
 using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
 using EtGate.QrReader.Proxy;
 

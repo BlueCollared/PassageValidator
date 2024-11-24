@@ -1,8 +1,7 @@
-﻿using Domain;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
 using Domain.Services.Modes;
+using EtGate.Domain;
 using ReactiveUI;
-using System;
 using System.Reactive.Linq;
 
 namespace EtGate.UI.ViewModels;

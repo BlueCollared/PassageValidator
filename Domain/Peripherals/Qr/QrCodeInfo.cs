@@ -1,4 +1,4 @@
-﻿namespace Domain.Peripherals.Qr
+﻿namespace EtGate.Domain.Peripherals.Qr
 {
     public class QrCodeInfo
     {

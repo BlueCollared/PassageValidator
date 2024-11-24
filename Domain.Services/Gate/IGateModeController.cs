@@ -1,6 +1,6 @@
 ﻿namespace EtGate.Domain.Services.Gate;
 
-public enum Mode { 
+public enum GateOperatingMode { 
     EntryOnly_EntryFree,
     EntryOnly_EntryControlled,
     ExitOnly_ExitFree,
@@ -12,14 +12,14 @@ public enum Mode {
 };
 
 public record GateOperationConfig
-    (Mode mode, bool bNormallyClosed, FlapOpeningModeApplicableOnlyOnNormallyOpen flapOpeningMode)
+    (GateOperatingMode mode, bool bNormallyClosed, FlapOpeningModeApplicableOnlyOnNormallyOpen flapOpeningMode)
 {
     private GateOperationConfig() : 
-        this(Mode.BiDi_EntryControlled_ExitControlled, true, FlapOpeningModeApplicableOnlyOnNormallyOpen.NA)
+        this(GateOperatingMode.BiDi_EntryControlled_ExitControlled, true, FlapOpeningModeApplicableOnlyOnNormallyOpen.NA)
     {}
 
-    GateOperationConfig CreateNormallyClosed(Mode mode)=> this with { bNormallyClosed = true, mode = mode };
-    GateOperationConfig CreateNormallyOpen(Mode mode, FlapOpeningModeApplicableOnlyOnNormallyOpen flapOpeningMode)
+    GateOperationConfig CreateNormallyClosed(GateOperatingMode mode)=> this with { bNormallyClosed = true, mode = mode };
+    GateOperationConfig CreateNormallyOpen(GateOperatingMode mode, FlapOpeningModeApplicableOnlyOnNormallyOpen flapOpeningMode)
         => this with { bNormallyClosed = false, mode = mode, flapOpeningMode =flapOpeningMode };
 }
 

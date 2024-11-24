@@ -1,4 +1,4 @@
-﻿using Domain.Peripherals.Qr;
+﻿using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
 using ReactiveUI;
 using System.Reactive.Linq;

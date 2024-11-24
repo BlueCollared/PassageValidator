@@ -31,13 +31,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <Reference Include="Equipment.Core">
-      <HintPath>$(EquipmentCommon_Outputs)$(Configuration)\$(TargetFramework)\Equipment.Core.dll</HintPath>
+      <HintPath>..\..\Binaries\EquipmentCommon_Outputs\Debug\net8.0\Equipment.Core.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

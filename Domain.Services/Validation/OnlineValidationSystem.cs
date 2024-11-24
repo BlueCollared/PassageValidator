@@ -1,7 +1,6 @@
-﻿using Domain.Peripherals.Qr;
-using Equipment.Core.Message;
+﻿using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.ValidationSystem;
-using System.Diagnostics;
 
 namespace EtGate.Domain.Services.Validation
 {

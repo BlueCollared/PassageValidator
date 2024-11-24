@@ -1,7 +1,8 @@
-﻿using Domain.Peripherals.Passage;
-using Domain.Peripherals.Qr;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
 using Equipment.Core.Message;
+using EtGate.Domain;
+using EtGate.Domain.Peripherals.Passage;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.ValidationSystem;
 using LanguageExt;
 using System.Diagnostics;
@@ -53,6 +54,7 @@ public class ModeManager : IModeQueryService
                            DeviceStatusSubscriber<OfflineValidationSystemStatus> offline,
                            DeviceStatusSubscriber<OnlineValidationSystemStatus> online,
                            DeviceStatusSubscriber<GateHwStatus> gate,
+                           IDeviceStatusPublisher<Mode> modePub,
                            ISubModeMgrFactory modeMgrFactory,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)

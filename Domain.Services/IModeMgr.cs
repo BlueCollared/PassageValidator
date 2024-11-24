@@ -1,4 +1,6 @@
-﻿namespace Domain.Services.InService
+﻿using EtGate.Domain;
+
+namespace Domain.Services.InService
 {
     public interface ISubModeMgr : IDisposable
     {

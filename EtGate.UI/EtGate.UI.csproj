@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
+    <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
     <ProjectReference Include="..\DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj" />
     <ProjectReference Include="..\EtGate.QrReader.Proxy\EtGate.QrReader.Proxy.csproj" />
     <ProjectReference Include="..\EtGate.ViewModel\EtGate.UI.ViewModels.csproj" />

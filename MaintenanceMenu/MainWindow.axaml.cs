@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using Domain.Peripherals.Qr;
 using Equipment.Core;
 using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.UI;
 using EtGate.UI.ViewModels.Maintenance;
 using EtGate.UI.Views.Maintenance;

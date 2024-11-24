@@ -1,6 +1,5 @@
-
-using Domain.Peripherals.Qr;
 using Equipment.Core;
+using EtGate.Domain.Peripherals.Qr;
 using System.Reactive.Linq;
 
 namespace Test_DummyQrReaderDeviceController

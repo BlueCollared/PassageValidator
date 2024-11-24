@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using EtGate.Domain;
 using EtGate.UI.ViewModels;
 using System.Reactive.Subjects;
 using Xunit;
