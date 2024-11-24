@@ -8,7 +8,7 @@ namespace GateApp
     {
         ModeManager modeManager;
         QrReaderMgr qrRdrMgr;
-        DomainEvtMgr domainEvtMgr;
+//        DomainEvtMgr domainEvtMgr;
 
         public Application()
         {

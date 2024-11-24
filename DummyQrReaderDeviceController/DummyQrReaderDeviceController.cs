@@ -29,10 +29,21 @@ public class DummyQrReaderDeviceController : IQrReaderController
         return true;
     }
 
-    public bool StartDetecting()
-    {
-        bStop = false;
-        return true;
+    public async Task<QrCodeInfo?> StartDetecting(CancellationToken cancellationToken)
+    {        
+        try
+        {
+            await Task.Delay(5000, cancellationToken);
+        }
+        catch (TaskCanceledException)
+        {
+            return null;
+        }
+
+        QrCodeInfo qr = new();
+        qr.TicketId = 3;
+        qr.ValidTill = DateTimeOffset.Now.AddMinutes(30);
+        return qr;
     }
 
     private void Worker()
@@ -53,14 +64,4 @@ public class DummyQrReaderDeviceController : IQrReaderController
     {
         bStop = true;            
     }
-
-    public void StopDetecting()
-    {
-        bStop = true;
-    }
-
-    //public void Reboot()
-    //{
-    //    throw new NotImplementedException();
-    //}
 }

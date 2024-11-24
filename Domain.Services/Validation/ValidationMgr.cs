@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace EtGate.Domain.Services.Validation
 {
     // TODO: Listen to the current site / and other such configuration so as to make pre-checks on the ticket
-    public class ValidationMgr //: IValidationMgr
+    public class ValidationMgr : IValidate
     {
         // better to be direct i.e.OfflineValidationSystem, OnlineValidationSystem
         //public List<IValidate> validationSubSystems = new(); 

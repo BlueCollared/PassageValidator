@@ -21,7 +21,7 @@ namespace MaintenanceMenu
             var qrRdr = new DummyQrReaderDeviceController.DummyQrReaderDeviceController(evtBus, evtStaticData
                 );//new QrReaderDeviceControllerProxy();
             var vm = new MaintenanceMenuViewModel(new Mock<INavigationService>().Object,
-                new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, evtBus, evtQrCodeInfo));
+                new EtGate.Domain.Services.Qr.QrReaderMgr(qrRdr, evtBus), evtBus);
 
             view.DataContext = vm;
             host.Content = view;

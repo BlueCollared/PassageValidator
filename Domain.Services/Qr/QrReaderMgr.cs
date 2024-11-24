@@ -1,5 +1,6 @@
 ﻿using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Qr;
+using LanguageExt;
 
 namespace EtGate.Domain.Services.Qr
 {
@@ -8,53 +9,75 @@ namespace EtGate.Domain.Services.Qr
     public class QrReaderMgr : IQrReaderMgr
     //: IQrReaderStatus, IQrInfoStatus
     {
-        private readonly IQrReaderController qrRdrInfo;
-        private readonly DeviceStatusSubscriber<QrReaderStatus> statusMgr;
-        private readonly IMessageSubscriber<QrCodeInfo> qrStream;
+        private readonly IQrReaderController qrEntry;
+        private readonly IQrReaderController qrExit;
+        private readonly DeviceStatusSubscriber<QrReaderStatus> statusMgr;        
 
         //List<IQrReader> qrRdrs = new List<IQrReader>();
-        public QrReaderMgr(
-            //QrMgrConfig config,
-            IQrReaderController qrRdrInfo,
-            DeviceStatusSubscriber<QrReaderStatus> statusMgr,
-            IMessageSubscriber<QrCodeInfo> qrStream
+        public QrReaderMgr(            
+            IQrReaderController qrEntry,
+            DeviceStatusSubscriber<QrReaderStatus> statusMgr            
             )
         {
-            this.statusMgr = statusMgr;
-            this.qrStream = qrStream;
-            this.qrRdrInfo = qrRdrInfo;
+            this.statusMgr = statusMgr;            
+            this.qrEntry = qrEntry;
 
-            StatusStream.Subscribe(x => { });
+            //StatusStream.Subscribe(x => { });
 
             // TODO: create IQrReader's using {qrFactory, config} and push them to qrRdrs.
             // `config` would also contain the `id` of that reader. This `id` would be bounced back in the 
             // event that is raised when the qr is detected
+        }        
+
+        public async Task<(string ReaderMnemonic, QrCodeInfo QrCodeInfo)> StartDetecting(string qrs, CancellationToken inServiceCycleToken)
+        {
+            try
+            {
+                using var internalCts = new CancellationTokenSource();
+
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(inServiceCycleToken, internalCts.Token);                
+
+                var entryTask = DetectAsync(IQrReaderMgr.Entry, qrEntry, linkedCts.Token);
+                var exitTask = DetectAsync(IQrReaderMgr.Exit, qrExit, linkedCts.Token);
+
+                var completedTask = await Task.WhenAny(entryTask, exitTask);
+
+                // Cancel the other detection
+                internalCts.Cancel();
+
+                // Await both tasks to ensure they finish (even if cancelled)
+                var results = await Task.WhenAll(entryTask, exitTask);
+
+                // Extract the result of the successfully completed task (if any)
+                var detectionResult = results.FirstOrDefault(r => r.QrCodeInfo != null); // the default value is (null, null)
+
+                if (detectionResult.QrCodeInfo == null)
+                {
+                    throw new OperationCanceledException("Polling was stopped without detecting any QR code.");
+                }
+
+                return detectionResult;
+            }
+            catch (OperationCanceledException) when (inServiceCycleToken.IsCancellationRequested)
+            {                
+                throw new OperationCanceledException("In-service cycle was cancelled.", inServiceCycleToken);
+            }
         }
 
-        //readonly SynchronizationContext syncContextClient = SynchronizationContext.Current;
-
-        public IObservable<QrReaderStatus> StatusStream
-            => statusMgr.Messages
-            //.ObserveOn(syncContextClient) // I remove it from here, otherwise the unit tests fail (but as per https://chatgpt.com/c/4df3ed5d-cada-4f6f-8355-e6a060c87aad would not fail in normal environment; only in the unit test environment)
-            // also, it indicates leaky abstraction. I now move this to `IQrReaderStatus`
-            ;
-
-        //public bool IsWorking => statusMgr.IsWorking;
-
-        public IObservable<QrCodeInfo> QrCodeStream
-            => qrStream.Messages;
-            //.ObserveOn(syncContextClient)
-            
-
-        public void StopDetecting()
+        async Task<(string ReaderMnemonic, QrCodeInfo? QrCodeInfo)> DetectAsync(
+            string readerMnemonic,
+            IQrReaderController controller,
+            CancellationToken cancellationToken)
         {
-            qrRdrInfo.StopDetecting();
-        }
-
-        public bool StartDetecting()
-        {
-            qrRdrInfo.StartDetecting();
-            return true;
+            try
+            {
+                var qrCodeInfo = await controller.StartDetecting(cancellationToken);
+                return (readerMnemonic, qrCodeInfo);
+            }
+            catch (OperationCanceledException)
+            {                
+                return (readerMnemonic, null);
+            }
         }
     }
 }

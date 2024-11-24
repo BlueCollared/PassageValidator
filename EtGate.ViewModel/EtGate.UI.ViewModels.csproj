@@ -15,4 +15,10 @@
     <ProjectReference Include="..\GateApp\EtGate.GateApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Equipment.Core">
+      <HintPath>..\..\Binaries\EquipmentCommon_Outputs\Debug\net8.0\Equipment.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

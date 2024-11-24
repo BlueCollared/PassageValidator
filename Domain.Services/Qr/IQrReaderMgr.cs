@@ -4,11 +4,10 @@ namespace EtGate.Domain.Services.Qr
 {
     public interface IQrReaderMgr
     {
-        //bool IsWorking { get; }
-        IObservable<QrCodeInfo> QrCodeStream { get; }
-        IObservable<QrReaderStatus> StatusStream { get; }
+        const string Entry = nameof(Entry);
+        const string Exit = nameof(Exit);
+        const string Both = nameof(Both);
 
-        bool StartDetecting();
-        void StopDetecting();
+        Task<(string ReaderMnemonic, QrCodeInfo QrCodeInfo)> StartDetecting(string qrs, CancellationToken cancelToken);
     }
 }

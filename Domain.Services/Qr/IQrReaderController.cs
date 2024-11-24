@@ -1,11 +1,9 @@
-﻿namespace EtGate.Domain.Services.Qr
-{
-    public interface IQrReaderController
-    {
-        //string id { get; } // typically would be "Entry"/"Exit"
-        //IObservable<QrCodeInfo> qrCodeInfoObservable { get; }
+﻿using EtGate.Domain.Peripherals.Qr;
 
-        bool StartDetecting();
-        void StopDetecting();
-    }
+namespace EtGate.Domain.Services.Qr;
+
+// We assume that: once it detects a media, it stops, and `StartDetecting` needs to be called again
+public interface IQrReaderController
+{
+    Task<QrCodeInfo?> StartDetecting(CancellationToken cancellationToken); // Returns null if cancelled    
 }

@@ -13,7 +13,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
     private readonly ValidationMgr validationMgr;
     private readonly IGateInServiceController passage;        
-    private readonly IQrReaderMgr qrReader;
+    private readonly IQrReaderMgr qrMgr;
     private Queue<Authorization> authorizations = new();
 
     State state = State.Unknown;
@@ -46,26 +46,34 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     }
 
     public IObservable<State> StateObservable => Observable.Empty<State>();
-
+    Task tsk;
     public InServiceMgr(
         ValidationMgr validationMgr,
         IGateInServiceController passage,            
-        IQrReaderMgr qrReader // I obey YAGNI and prefer it over IMediaRdr
+        IQrReaderMgr qrMgr
         )
     {
         this.validationMgr = validationMgr;
         this.passage = passage;            
-        this.qrReader = qrReader;
+        this.qrMgr = qrMgr;
 
-        qrCodeSubscription = qrReader.QrCodeStream
-            .Subscribe(qr => { QrAppeared(qr); });
+        //qrCodeSubscription = qrReader.QrCodeStream
+        //    .Subscribe(qr => { QrAppeared(qr); });
 
         //passageStatusSubscription = passage.PassageStatusObservable
         //    .ObserveOn(SynchronizationContext.Current)
         //    .Subscribe(x => PassageEvt(x));
+        tsk = Task.Run(async() => {
+            while (true)
+            {
+                await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
+            }
+        });
 
-        qrReader.StartDetecting();
+        
     }
+
+    CancellationTokenSource cts = new();
 
     public Task HaltFurtherValidations()
     {

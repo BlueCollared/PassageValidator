@@ -1,4 +1,5 @@
-﻿using EtGate.Domain.Peripherals.Qr;
+﻿using Equipment.Core.Message;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -13,10 +14,10 @@ namespace EtGate.UI.ViewModels.Maintenance
 
         public bool bQrWorking { get; set; }
 
-        public MaintenanceMenuViewModel(INavigationService navService, IQrReaderMgr qrReaderMgr) : base(navService)
+        public MaintenanceMenuViewModel(INavigationService navService, IQrReaderMgr qrReaderMgr, DeviceStatusSubscriber<QrReaderStatus> entryQr) : base(navService)
         {            
             this.qrReaderMgr = qrReaderMgr;
-            qrReaderMgr.StatusStream.Subscribe(onNext:
+            entryQr.Messages.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); });
 
             FlapMaintenanceSelectedCommand = ReactiveCommand.Create(()=>navService.NavigateTo<FlapMaintenanceViewModel>());

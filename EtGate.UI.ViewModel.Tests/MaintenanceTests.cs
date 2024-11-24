@@ -1,8 +1,10 @@
-﻿using Domain;
-using Domain.Services.InService;
+﻿using Domain.Services.InService;
 using Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain;
+using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
+using EtGate.Domain.Services.Qr;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using GateApp;
@@ -130,6 +132,7 @@ namespace EtGate.UI.ViewModel.Tests
         MaintainenaceViewModelBase CreateVM(Type typ)
         {
             Mock<ILoginService> loginService = new();
+            var x = new DeviceStatusSubscriberTest<QrReaderStatus>();
             //new Agent { id = "123", name = "abc", opTyp = OpTyp.Supervisor }
             loginService.Setup(service => service.Login(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new Agent());
@@ -139,7 +142,11 @@ namespace EtGate.UI.ViewModel.Tests
             if (typ == typeof(AgentLoginViewModel))
                 return new AgentLoginViewModel(loginService.Object, nav);
             else if (typ == typeof(MaintenanceMenuViewModel))
-                return new MaintenanceMenuViewModel(nav, dummy.Dummy_IQrReaderMgr);
+                return new MaintenanceMenuViewModel(
+                    nav,
+                    new QrReaderMgr(new Mock<IQrReaderController>().Object, x),
+                    x
+                    );
             else if (typ == typeof(FlapMaintenanceViewModel))
                 return new FlapMaintenanceViewModel(nav);
             else

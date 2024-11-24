@@ -10,25 +10,30 @@ namespace Test_DummyQrReaderDeviceController
         {
             qrController = new DummyQrReaderDeviceController.DummyQrReaderDeviceController(qrStatus, null);
             InitializeComponent();
+            qrStatus.Messages
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(x =>
+                {
+                    txtLog.Text += x.bConnected.ToString();
+                });
         }
+
         DeviceStatusBus<QrReaderStatus> qrStatus = new();
         //DeviceStatusBus<QrReaderStaticData> qrStaticData = new();
         DummyQrReaderDeviceController.DummyQrReaderDeviceController qrController;
 
-        private void btnStartDetection_Click(object sender, EventArgs e)
+        CancellationTokenSource cts;
+        private async void btnStartDetection_Click(object sender, EventArgs e)
         {
-            qrController.StartDetecting();
-            qrStatus.Messages
-                .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(x =>
-            {
-                txtLog.Text += x.bConnected.ToString();
-            });
+            cts = new CancellationTokenSource();
+            await qrController.StartDetecting(cts.Token);
         }
 
         private void btnStopDetect_Click(object sender, EventArgs e)
         {
-            qrController.StopDetecting();
+            if (cts.Token.IsCancellationRequested)
+                return;
+            cts.Cancel();
         }
     }
 }

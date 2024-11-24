@@ -40,8 +40,7 @@ namespace EtGate.Domain.Tests
 
             mockQrReaderStatus.Setup(m => m.Messages).Returns(r.subjQrStatus);
 
-            r.qr = new QrReaderMgr(dummyQr.Object, mockQrReaderStatus.Object,
-                (new Mock<IMessageSubscriber<QrCodeInfo>>()).Object);
+            r.qr = new QrReaderMgr(dummyQr.Object, mockQrReaderStatus.Object);
 
             var mockGateStatus = new Mock<IMessageSubscriber<GateHwStatus>>();
             mockGateStatus.Setup(m => m.Messages).Returns(r.subjGateStatus);

@@ -33,7 +33,7 @@ namespace EtGate.QrReader.Proxy
         static void HandleViewModelChange(ViewModel message)
         {
             parent.StartAnswer = message.StartResp.x;
-            parent.StartDetectingAnswer = message.StartDetectingResp.x;
+            //parent.StartDetectingAnswer = message.StartDetectingResp.x;
         }
     }
 }

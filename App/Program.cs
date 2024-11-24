@@ -15,7 +15,7 @@ namespace App
             DeviceStatusBus<QrReaderStatus> status = new();
             EventBus<QrCodeInfo> qrInfo = new();
             QrReaderDeviceControllerProxy qrRdr = new QrReaderDeviceControllerProxy(status, qrInfo);
-            QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, status, qrInfo);
+            QrReaderMgr qrRdrMgr = new QrReaderMgr(qrRdr, status);
             //ValidationMgr validationMgr = new ValidationMgr();
 
             //ModeManager modeManager = new ModeManager(qrRdrMgr, validationMgr, new PassageMgr());

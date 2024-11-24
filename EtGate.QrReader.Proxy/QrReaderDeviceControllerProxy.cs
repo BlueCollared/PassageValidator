@@ -29,12 +29,6 @@ namespace EtGate.QrReader.Proxy
             return StartAnswer;
         }
 
-        internal bool StartDetectingAnswer;
-        public bool StartDetecting()
-        {
-            return StartDetectingAnswer;
-        }
-
         public void Stop()
         {
             return;
@@ -53,6 +47,11 @@ namespace EtGate.QrReader.Proxy
         internal void Notify(QrCodeInfo x)
         {
             qrCodeInfo.Publish(x);
+        }
+
+        public Task<QrCodeInfo?> StartDetecting(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
