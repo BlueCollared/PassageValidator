@@ -1,4 +1,5 @@
-﻿using EtGate.Domain.Passage.PassageEvts;
+﻿using EtGate.Domain;
+using EtGate.Domain.Passage.PassageEvts;
 using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
@@ -16,11 +17,8 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     private readonly IQrReaderMgr qrMgr;
     private Queue<Authorization> authorizations = new();
 
-    State state = State.Unknown;
-    private bool disposedValue;
+    State state = State.Unknown;    
 
-    IDisposable qrCodeSubscription;
-    IDisposable passageStatusSubscription;
     private bool IsDisposed;
 
     public enum State
@@ -57,20 +55,30 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         this.passage = passage;            
         this.qrMgr = qrMgr;
 
-        //qrCodeSubscription = qrReader.QrCodeStream
-        //    .Subscribe(qr => { QrAppeared(qr); });
-
         //passageStatusSubscription = passage.PassageStatusObservable
         //    .ObserveOn(SynchronizationContext.Current)
         //    .Subscribe(x => PassageEvt(x));
         tsk = Task.Run(async() => {
             while (true)
             {
-                await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
+                (string ReaderMnemonic, QrCodeInfo QrCodeInfo) detectionResult;
+                try
+                {
+                    detectionResult = await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+
+                QrCodeValidationResult validationResult = validationMgr.Validate(detectionResult.QrCodeInfo);
+                if (validationResult != null)
+                {
+                    if (!validationResult.bGood)
+                    { }
+                }
             }
         });
-
-        
     }
 
     CancellationTokenSource cts = new();
