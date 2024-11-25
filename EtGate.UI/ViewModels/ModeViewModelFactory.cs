@@ -1,5 +1,7 @@
 ﻿using Domain.Services.InService;
+using Equipment.Core.Message;
 using EtGate.Domain;
+using EtGate.Domain.Peripherals.Qr;
 using GateApp;
 using System;
 
@@ -9,18 +11,21 @@ namespace EtGate.UI.ViewModels
     {
         private readonly IModeCommandService modeService;
         private readonly INavigationService maintenanceNavigationService;
+        private readonly DeviceStatusSubscriber<QrReaderStatus> qr;
 
-        public ModeViewModelFactory(IModeCommandService modeService, INavigationService maintenanceNavigationService)
+        public ModeViewModelFactory(IModeCommandService modeService, INavigationService maintenanceNavigationService,
+            DeviceStatusSubscriber<QrReaderStatus> qr = null)
         {
             this.modeService = modeService;
             this.maintenanceNavigationService = maintenanceNavigationService;
+            this.qr = qr;
         }
 
         public ModeViewModel Create(Mode mode, global::Domain.Services.InService.ISubModeMgr subModeMgr, bool bPrimary, bool bEntry)
         {
             return mode switch
             {
-                Mode.AppBooting => new AppBootingViewModel(modeService),
+                Mode.AppBooting => new AppBootingViewModel(modeService, qr),
                 Mode.InService => new InServiceViewModel(bEntry, modeService, (IInServiceMgr)subModeMgr),
                 Mode.OOS => new OOSViewModel(modeService),
                 Mode.Emergency => new EmergencyViewModel(modeService),

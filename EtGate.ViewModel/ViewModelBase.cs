@@ -1,6 +1,5 @@
 ﻿using GateApp;
 using ReactiveUI;
-using System;
 using System.Windows.Input;
 
 namespace EtGate.UI.ViewModels
