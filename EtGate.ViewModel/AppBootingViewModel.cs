@@ -1,5 +1,4 @@
 ﻿using GateApp;
-using System;
 
 namespace EtGate.UI.ViewModels
 {
@@ -8,7 +7,7 @@ namespace EtGate.UI.ViewModels
         public AppBootingViewModel(IModeCommandService modeService) : base(modeService)
         {
         }
-
+        public string QrRdrStatus { get; set; }
         public void Dispose()
         {
             

@@ -3,6 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="EtGate.UI.Views.AppBootingView">
-  App booting
+			 xmlns:vm="clr-namespace:EtGate.UI.ViewModels;assembly=EtGate.UI.ViewModels"
+             x:Class="EtGate.UI.Views.AppBootingView"
+			 x:DataType="vm:AppBootingViewModel">
+	
+	<StackPanel Orientation="Vertical">
+		<TextBlock>App booting</TextBlock>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock>Qr Rdr Status</TextBlock>
+			<TextBlock Text="{Binding QrRdrStatus}"/>
+		</StackPanel>
+	</StackPanel>
 </UserControl>
