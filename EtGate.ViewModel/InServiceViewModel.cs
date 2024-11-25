@@ -46,49 +46,39 @@ namespace EtGate.UI.ViewModels
             //                      .Select(state => state.ToString())
             //                      .ToProperty(this, x => x.NotificationMessage);
         }
-        private static CompoundState ConvertForExit(State state)
-        {
-            throw new NotImplementedException();
-            //switch (state)
-            //{
-            //    case PassageState.Idle:
-            //        return CompoundState.Idle;
-            //    case PassageState.IntrusionAtEntryWhenIdle:
-            //        return CompoundState.IntrusionOnOtherSideWhenIdle;
-            //    case PassageState.IntrusionAtExitWhenIdle:
-            //        return CompoundState.IntrusionOnMySideWhenIdle;
-            //    case PassageState.IntrusionDuringAuthorizedPassage:
-            //        return CompoundState.IntrusionDuringAuthorizedPassage;
-            //    case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
-            //        return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
-            //    case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
-            //        return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
-            //    case PassageState.Unknown:
-            //        return CompoundState.Unknown;
-            //}
-            //throw new ArgumentException();
-        }
+
         private static CompoundState ConvertForEntry(State state)
         {
+            switch(state)
+            {
+                case State.Idle:
+                    return CompoundState.Idle;
+                case State.ValidationAtEntryInProgress:
+                    return CompoundState.ValidationInProgress;
+                case State.PassageAuthroizedAtEntry:
+                    return CompoundState.PassageAuthroized;
+                case State.ValidationAtExitInProgress:
+                case State.PassageAuthroizedAtExit:
+                    return CompoundState.ProhibitedTemp;                
+            }
+            throw new NotImplementedException();            
+        }
+
+        private static CompoundState ConvertForExit(State state)
+        {
+            switch (state)
+            {
+                case State.Idle:
+                    return CompoundState.Idle;
+                case State.ValidationAtEntryInProgress:
+                case State.PassageAuthroizedAtEntry:
+                    return CompoundState.ProhibitedTemp;                
+                case State.ValidationAtExitInProgress:
+                    return CompoundState.ValidationInProgress;
+                case State.PassageAuthroizedAtExit:
+                    return CompoundState.PassageAuthroized;
+            }
             throw new NotImplementedException();
-            //switch (state)
-            //{
-            //    case PassageState.Idle:
-            //        return CompoundState.Idle;
-            //    case PassageState.IntrusionAtEntryWhenIdle:
-            //        return CompoundState.IntrusionOnMySideWhenIdle;
-            //    case PassageState.IntrusionAtExitWhenIdle:
-            //        return CompoundState.IntrusionOnOtherSideWhenIdle;
-            //    case PassageState.IntrusionDuringAuthorizedPassage:
-            //        return CompoundState.IntrusionDuringAuthorizedPassage;
-            //    case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
-            //        return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
-            //    case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
-            //        return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
-            //    case PassageState.Unknown:
-            //        return CompoundState.Unknown;
-            //}
-            
         }
 
 

@@ -50,7 +50,10 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         IntrusionOnOtherSideWhenIdle,
         IntrusionDuringAuthorizedPassage,
         PassengerInTransit_NoMorePendingAuthorizations,
-        SomeAuthorization_s_Queued_ThatHaventBeginTransit
+        SomeAuthorization_s_Queued_ThatHaventBeginTransit,
+        ValidationInProgress,
+        PassageAuthroized,
+        ProhibitedTemp
     }
     BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle);
     public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();

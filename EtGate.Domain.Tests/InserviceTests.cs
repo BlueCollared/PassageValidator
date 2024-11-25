@@ -3,6 +3,8 @@ using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
+using EtGate.Domain.Services.Qr;
+using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using Microsoft.Reactive.Testing;
 using Moq;
@@ -19,23 +21,27 @@ namespace EtGate.Domain.Tests
 
         ModeManager modeManager;
         Mock<ISubModeMgr> modeMgrSub;
-
+        private readonly ValidationMgr validationMgr;
+        private readonly IQrReaderMgr qrMgr;
+        IValidate onlineValidMgr, offlineValidMgr;
         public InserviceTests()
         {
-            var modeMgrFactoryMock = new Mock<ISubModeMgrFactory>();
+            onlineValidMgr = new OnlineValidationSystem(new Mock<IDeviceStatusPublisher<OnlineValidationSystemStatus>>().Object);
+            offlineValidMgr = new OfflineValidationSystem(new Mock<IDeviceStatusPublisher<OfflineValidationSystemStatus>>().Object);
+            validationMgr = new ValidationMgr(onlineValidMgr, online, offlineValidMgr, offline);
+            qrMgr = new Mock<IQrReaderMgr>().Object;
+            var modeMgrFactoryMock = new InServiceMgr(validationMgr, qrMgr);
             //modeMgrMock = new Mock<ISubModeMgr>();
 
             // Set up the mock to return the modeMgrMock when Create is called with any Mode value
             //modeMgrFactoryMock.Setup(f => f.Create(It.IsAny<Mode>())).Returns(modeMgrMock.Object);
 
-            modeMgrFactoryMock
-                .Setup(f => f.Create(It.IsAny<global::EtGate.Domain.Mode>()))
-                .Returns(() => {
-                    modeMgrSub = new Mock<ISubModeMgr>();
-                    return modeMgrSub.Object;
-                });
-
-            modeManager = new ModeManager(qr, offline, online, gate, (new Mock<IDeviceStatusPublisher<Mode>>()).Object, modeMgrFactoryMock.Object, testScheduler);
+            //modeMgrFactoryMock
+            //    .Setup(f => f.Create(It.IsAny<global::EtGate.Domain.Mode>()))
+            //    .Returns(() => {
+            //        modeMgrSub = new Mock<ISubModeMgr>();
+            //        return modeMgrSub.Object;
+            //    });
         }
 
         [Fact]
