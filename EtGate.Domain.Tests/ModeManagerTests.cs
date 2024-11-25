@@ -7,7 +7,6 @@ using EtGate.Domain.ValidationSystem;
 using Microsoft.Reactive.Testing;
 using Moq;
 using Shouldly;
-using System.Reactive.Linq;
 
 namespace EtGate.Domain.Tests
 {

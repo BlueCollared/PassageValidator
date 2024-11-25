@@ -1,7 +1,6 @@
 ﻿using Domain.Services.InService;
 using GateApp;
 using ReactiveUI;
-using System;
 using System.Reactive.Linq;
 using static Domain.Services.InService.InServiceMgr;
 
@@ -34,7 +33,7 @@ namespace EtGate.UI.ViewModels
         public InServiceViewModel(            
             bool isEntry, IModeCommandService modeService, IInServiceMgr inServiceMgr) : base(modeService)
         {            
-            _isEntry = isEntry;            
+            _isEntry = isEntry;
 
             if (_isEntry)
                 subscription = inServiceMgr.StateObservable.Select(x => ConvertForEntry(x))
@@ -49,45 +48,47 @@ namespace EtGate.UI.ViewModels
         }
         private static CompoundState ConvertForExit(State state)
         {
-            switch (state)
-            {
-                case State.Idle:
-                    return CompoundState.Idle;
-                case State.IntrusionAtEntryWhenIdle:
-                    return CompoundState.IntrusionOnOtherSideWhenIdle;
-                case State.IntrusionAtExitWhenIdle:
-                    return CompoundState.IntrusionOnMySideWhenIdle;
-                case State.IntrusionDuringAuthorizedPassage:
-                    return CompoundState.IntrusionDuringAuthorizedPassage;
-                case State.PassengerInTransit_NoMorePendingAuthorizations:
-                    return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
-                case State.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
-                    return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
-                case State.Unknown:
-                    return CompoundState.Unknown;
-            }
-            throw new ArgumentException();
+            throw new NotImplementedException();
+            //switch (state)
+            //{
+            //    case PassageState.Idle:
+            //        return CompoundState.Idle;
+            //    case PassageState.IntrusionAtEntryWhenIdle:
+            //        return CompoundState.IntrusionOnOtherSideWhenIdle;
+            //    case PassageState.IntrusionAtExitWhenIdle:
+            //        return CompoundState.IntrusionOnMySideWhenIdle;
+            //    case PassageState.IntrusionDuringAuthorizedPassage:
+            //        return CompoundState.IntrusionDuringAuthorizedPassage;
+            //    case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
+            //        return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
+            //    case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
+            //        return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
+            //    case PassageState.Unknown:
+            //        return CompoundState.Unknown;
+            //}
+            //throw new ArgumentException();
         }
         private static CompoundState ConvertForEntry(State state)
         {
-            switch (state)
-            {
-                case State.Idle:
-                    return CompoundState.Idle;
-                case State.IntrusionAtEntryWhenIdle:
-                    return CompoundState.IntrusionOnMySideWhenIdle;
-                case State.IntrusionAtExitWhenIdle:
-                    return CompoundState.IntrusionOnOtherSideWhenIdle;
-                case State.IntrusionDuringAuthorizedPassage:
-                    return CompoundState.IntrusionDuringAuthorizedPassage;
-                case State.PassengerInTransit_NoMorePendingAuthorizations:
-                    return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
-                case State.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
-                    return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
-                case State.Unknown:
-                    return CompoundState.Unknown;
-            }
-            throw new ArgumentException();
+            throw new NotImplementedException();
+            //switch (state)
+            //{
+            //    case PassageState.Idle:
+            //        return CompoundState.Idle;
+            //    case PassageState.IntrusionAtEntryWhenIdle:
+            //        return CompoundState.IntrusionOnMySideWhenIdle;
+            //    case PassageState.IntrusionAtExitWhenIdle:
+            //        return CompoundState.IntrusionOnOtherSideWhenIdle;
+            //    case PassageState.IntrusionDuringAuthorizedPassage:
+            //        return CompoundState.IntrusionDuringAuthorizedPassage;
+            //    case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
+            //        return CompoundState.PassengerInTransit_NoMorePendingAuthorizations;
+            //    case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
+            //        return CompoundState.SomeAuthorization_s_Queued_ThatHaventBeginTransit;
+            //    case PassageState.Unknown:
+            //        return CompoundState.Unknown;
+            //}
+            
         }
 
 

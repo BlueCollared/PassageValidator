@@ -110,7 +110,7 @@ public class ModeManager : IModeQueryService
 
         modeEffectuatedStream.ForEachAsync(async x => {
             await curModeMgr.Stop(bImmediate: CurMode == Mode.Emergency);
-            curModeMgr.Dispose();            
+            curModeMgr.Dispose();
             
             EqptModeSubject.OnNext((x, modeMgrFactory.Create(x)));
         });

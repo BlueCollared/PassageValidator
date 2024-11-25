@@ -6,6 +6,7 @@ using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using OneOf;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Domain.Services.InService;
 
@@ -13,15 +14,25 @@ public record Authorization(int nAuthorizations);
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
     private readonly ValidationMgr validationMgr;
-    private readonly IGateInServiceController passage;        
+    //private readonly IGateInServiceController passage;        
     private readonly IQrReaderMgr qrMgr;
     private Queue<Authorization> authorizations = new();
 
-    State state = State.Unknown;    
+    PassageState state = PassageState.Unknown;    
 
     private bool IsDisposed;
 
     public enum State
+    {
+        Unknown, // only when InServiceMgr is created
+        Idle,
+        ValidationAtEntryInProgress,
+        ValidationAtExitInProgress,
+        PassageAuthroizedAtEntry,
+        PassageAuthroizedAtExit,
+    }
+
+    public enum PassageState
     {
         Unknown, // only when InServiceMgr is created
         Idle,
@@ -42,17 +53,17 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         PassengerInTransit_NoMorePendingAuthorizations,
         SomeAuthorization_s_Queued_ThatHaventBeginTransit
     }
-
-    public IObservable<State> StateObservable => Observable.Empty<State>();
+    BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle);
+    public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();
     Task tsk;
     public InServiceMgr(
         ValidationMgr validationMgr,
-        IGateInServiceController passage,            
+        //IGateInServiceController passage,            
         IQrReaderMgr qrMgr
         )
     {
         this.validationMgr = validationMgr;
-        this.passage = passage;            
+        //this.passage = passage;            
         this.qrMgr = qrMgr;
 
         //passageStatusSubscription = passage.PassageStatusObservable
@@ -64,6 +75,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                 (string ReaderMnemonic, QrCodeInfo QrCodeInfo) detectionResult;
                 try
                 {
+                    stateSub.OnNext(State.Idle);
                     detectionResult = await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
                 }
                 catch (OperationCanceledException)
@@ -71,11 +83,31 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                     break;
                 }
 
+                if (detectionResult.ReaderMnemonic == IQrReaderMgr.Entry)
+                    stateSub.OnNext(State.ValidationAtEntryInProgress);
+                else if (detectionResult.ReaderMnemonic == IQrReaderMgr.Exit)
+                    stateSub.OnNext(State.ValidationAtExitInProgress);
+
                 QrCodeValidationResult validationResult = validationMgr.Validate(detectionResult.QrCodeInfo);
                 if (validationResult != null)
                 {
                     if (!validationResult.bGood)
                     { }
+                    else
+                    {
+                        if (detectionResult.ReaderMnemonic == IQrReaderMgr.Entry)
+                        {
+                            stateSub.OnNext(State.PassageAuthroizedAtEntry);
+                            // TODO: ask passageController to Authorise
+                            await Task.Delay(5000); // to simulate the delay in passage
+                        }
+                        else if (detectionResult.ReaderMnemonic == IQrReaderMgr.Exit)
+                        {
+                            stateSub.OnNext(State.PassageAuthroizedAtExit);
+                            // TODO: ask passageController to Authorise
+                            await Task.Delay(5000); // to simulate the delay in passage
+                        }
+                    }
                 }
             }
         });
@@ -93,30 +125,30 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     {
         switch (state)
         {
-            case State.Unknown:
+            case PassageState.Unknown:
                 {
-                    state = State.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;                        
                     break;
                 }
-            case State.Idle:
+            case PassageState.Idle:
                 {
-                    state = State.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;                        
                     break;
                 }
-            case State.IntrusionAtEntryWhenIdle:
+            case PassageState.IntrusionAtEntryWhenIdle:
                 {
-                    state = State.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;                        
                     break;
                 }
-            case State.IntrusionDuringAuthorizedPassage:
+            case PassageState.IntrusionDuringAuthorizedPassage:
                 {
-                    state = State.IntrusionDuringAuthorizedPassage;                        
+                    state = PassageState.IntrusionDuringAuthorizedPassage;                        
                     break;
                 }
-            case State.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
-            case State.PassengerInTransit_NoMorePendingAuthorizations:
+            case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
+            case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
                 {
-                    state = State.IntrusionDuringAuthorizedPassage;                        
+                    state = PassageState.IntrusionDuringAuthorizedPassage;                        
                     break;
                 }
         }
@@ -135,15 +167,15 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     {
         switch (state)
         {
-            case State.IntrusionAtEntryWhenIdle:
-            case State.Unknown:
+            case PassageState.IntrusionAtEntryWhenIdle:
+            case PassageState.Unknown:
                 // unexpected
                 break;
-            case State.IntrusionDuringAuthorizedPassage:
+            case PassageState.IntrusionDuringAuthorizedPassage:
                 //state = State.
                 //mmi.IntrusionCleared();
                 break;
-            case State.PassengerInTransit_NoMorePendingAuthorizations:
+            case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
                 break;
         }
     }
@@ -165,11 +197,6 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
             PassageEvt(x.AsT4);
         else if (x.IsT5)
             PassageEvt(x.AsT5);
-    }
-
-    private void QrAppeared(QrCodeInfo qr)
-    {
-        throw new NotImplementedException();
     }
 
     bool Authorize(Authorization auth)

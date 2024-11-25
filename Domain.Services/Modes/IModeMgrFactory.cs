@@ -29,7 +29,9 @@ namespace Domain.Services.Modes
             switch (mode)
             {
                 case Mode.InService:
-                    return new InServiceMgr(validationMgr, passageMgr, qrReaderMgr);
+                    return new InServiceMgr(validationMgr, 
+                        //passageMgr, 
+                        qrReaderMgr);
                 default:
                     return new DoNothingModeMgr(mode);                    
             }
