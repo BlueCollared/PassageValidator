@@ -1,8 +1,9 @@
-@startuml
 actor Passenger
 participant GateMgr
 participant TT
+participant "Health Check Sub-Entity" as HealthCheck
 participant "Validation Service" as ValidationService
+
 
 GateMgr -> TT : EnableDetection
 activate TT
@@ -17,7 +18,20 @@ ValidationService --> TT : AuthorizePassage | RejectPassage \n + QR Data
 deactivate ValidationService
 
 TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Data
-deactivate TicketingTerminal
 
-... Repeat the process ...
-@enduml
+par Periodic Health Check    
+    TT -> HealthCheck : Start Health Monitor
+    loop Periodic Check
+        HealthCheck -> ValidationService : CheckHealth()
+        activate ValidationService
+        ValidationService --> HealthCheck : Good | Bad
+        deactivate ValidationService
+
+        alt Health status changes
+            HealthCheck --> TT : NotifyStatusChange(Good | Bad)
+            TT --> GateMgr : NotifyStatusChange(Good | Bad)
+        end
+    end
+end
+
+deactivate TT
