@@ -1,0 +1,23 @@
+@startuml
+actor Passenger
+participant GateMgr
+participant TT
+participant "Validation Service" as ValidationService
+
+GateMgr -> TT : EnableDetection
+activate TT
+
+loop Hunt for QR
+    Passenger --> TT : Produce QR
+end
+
+TT -> ValidationService : Validate(QR)
+activate ValidationService
+ValidationService --> TT : AuthorizePassage | RejectPassage \n + QR Data
+deactivate ValidationService
+
+TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Data
+deactivate TicketingTerminal
+
+... Repeat the process ...
+@enduml
