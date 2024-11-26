@@ -1,5 +1,6 @@
 @startuml
 actor Passenger
+participant MMI
 participant GateMgr
 box "Ticketing Terminal (TT)"
   participant TT
@@ -8,19 +9,19 @@ end box
 participant "Validation Service" as ValidationService
 
 
-GateMgr -> TT : EnableDetection
+GateMgr -> TT : EnableDetection (Enable/Disable)
 activate TT
 
-loop Hunt for QR
-    Passenger --> TT : Produce QR
-end
 
+Passenger --> TT : Produce QR
 TT -> ValidationService : Validate(QR)
 activate ValidationService
 ValidationService --> TT : AuthorizePassage | RejectPassage \n + QR Data
 deactivate ValidationService
 
 TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Data
+GateMgr -> GateMgr: Offer Passage\non AuthorizePassage
+GateMgr -> MMI: Notify
 
 par Periodic Health Check    
     TT -> HealthCheck : Start Health Monitor
