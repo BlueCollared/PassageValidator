@@ -6,7 +6,7 @@ box "Ticketing Terminal (TT)"
   participant TT
   participant "Health Check Sub-Entity" as HealthCheck
 end box
-participant "Validation Service" as ValidationService
+participant "Validation Service \nBroker" as ValidationServiceBroker
 
 
 GateMgr -> TT : EnableDetection (Enable/Disable)
@@ -14,10 +14,12 @@ activate TT
 
 
 Passenger --> TT : Produce QR
-TT -> ValidationService : Validate(QR)
-activate ValidationService
-ValidationService --> TT : AuthorizePassage | RejectPassage \n + QR Data
-deactivate ValidationService
+TT -> ValidationServiceBroker : Validate(QR)
+activate ValidationServiceBroker
+ValidationServiceBroker->ValidationService
+ValidationServiceBroker<--ValidationService : AuthorizePassage | RejectPassage \n + QR Data
+ValidationServiceBroker --> TT : AuthorizePassage | RejectPassage \n + QR Data
+deactivate ValidationServiceBroker
 
 TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Data
 GateMgr -> GateMgr: Offer Passage\non AuthorizePassage
