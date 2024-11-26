@@ -20,9 +20,9 @@ namespace EtGate.UI.ViewModels
         //    get => _statusMessage;
         //    private set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
         //}
-        CompoundState state;
+        SideState state;
         
-        public CompoundState CurState
+        public SideState CurState
         {
             get => state;
             set => this.RaiseAndSetIfChanged(ref state, value);
@@ -47,36 +47,36 @@ namespace EtGate.UI.ViewModels
             //                      .ToProperty(this, x => x.NotificationMessage);
         }
 
-        private static CompoundState ConvertForEntry(State state)
+        private static SideState ConvertForEntry(State state)
         {
             switch(state)
             {
-                case State.Idle:
-                    return CompoundState.Idle;
-                case State.ValidationAtEntryInProgress:
-                    return CompoundState.ValidationInProgress;
-                case State.PassageAuthroizedAtEntry:
-                    return CompoundState.PassageAuthroized;
-                case State.ValidationAtExitInProgress:
-                case State.PassageAuthroizedAtExit:
-                    return CompoundState.ProhibitedTemp;                
+                case Idle idle:
+                    return SideState.Idle();
+                case ValidationAtEntryInProgress x:
+                    return SideState.ValidationInProgress(x.info);
+                case PassageAuthroizedAtEntry x:
+                    return SideState.PassageAuthroized(x.info);
+                case ValidationAtExitInProgress:
+                case PassageAuthroizedAtExit:
+                    return SideState.ProhibitedTemp();                
             }
             throw new NotImplementedException();            
         }
 
-        private static CompoundState ConvertForExit(State state)
+        private static SideState ConvertForExit(State state)
         {
             switch (state)
             {
-                case State.Idle:
-                    return CompoundState.Idle;
-                case State.ValidationAtEntryInProgress:
-                case State.PassageAuthroizedAtEntry:
-                    return CompoundState.ProhibitedTemp;                
-                case State.ValidationAtExitInProgress:
-                    return CompoundState.ValidationInProgress;
-                case State.PassageAuthroizedAtExit:
-                    return CompoundState.PassageAuthroized;
+                case Idle idle:
+                    return SideState.Idle();
+                case ValidationAtEntryInProgress:
+                case PassageAuthroizedAtEntry:
+                    return SideState.ProhibitedTemp();                
+                case ValidationAtExitInProgress x:
+                    return SideState.ValidationInProgress(x.info);
+                case PassageAuthroizedAtExit x:
+                    return SideState.PassageAuthroized(x.info);
             }
             throw new NotImplementedException();
         }

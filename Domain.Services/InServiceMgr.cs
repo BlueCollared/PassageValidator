@@ -12,8 +12,7 @@ namespace Domain.Services.InService;
 public record Authorization(int nAuthorizations);
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
-    private readonly ValidationMgr validationMgr;
-    //private readonly IGateInServiceController passage;        
+    private readonly ValidationMgr validationMgr;    
     private readonly IQrReaderMgr qrMgr;
     private Queue<Authorization> authorizations = new();
 
@@ -21,15 +20,20 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
 
     private bool IsDisposed;
 
-    public enum State
+    public record State
     {
-        Unknown, // only when InServiceMgr is created
-        Idle,
-        ValidationAtEntryInProgress,
-        ValidationAtExitInProgress,
-        PassageAuthroizedAtEntry,
-        PassageAuthroizedAtExit,
-    }
+        public static State Idle() { return new Idle(); }
+        public static State ValidationAtEntryInProgress(QrCodeInfo info) { return new ValidationAtEntryInProgress(info); }
+        public static State ValidationAtExitInProgress(QrCodeInfo info) { return new ValidationAtExitInProgress(info); }
+        public static State PassageAuthroizedAtEntry(QrCodeInfo info) { return new PassageAuthroizedAtEntry(info); }
+        public static State PassageAuthroizedAtExit(QrCodeInfo info) { return new PassageAuthroizedAtExit(info); }
+    };
+
+    public record Idle: State;
+    public record ValidationAtEntryInProgress (QrCodeInfo info): State;
+    public record ValidationAtExitInProgress(QrCodeInfo info) : State;
+    public record PassageAuthroizedAtEntry(QrCodeInfo info) : State;
+    public record PassageAuthroizedAtExit(QrCodeInfo info) : State;
 
     public enum PassageState
     {
@@ -42,20 +46,34 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         SomeAuthorization_s_Queued_ThatHaventBeginTransit
     }
 
-    public enum CompoundState
+    public record SideState
     {
-        Unknown,
-        Idle,
-        IntrusionOnMySideWhenIdle,
-        IntrusionOnOtherSideWhenIdle,
-        IntrusionDuringAuthorizedPassage,
-        PassengerInTransit_NoMorePendingAuthorizations,
-        SomeAuthorization_s_Queued_ThatHaventBeginTransit,
-        ValidationInProgress,
-        PassageAuthroized,
-        ProhibitedTemp
-    }
-    BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle);
+        public static SideState_Idle Idle() { 
+            return new SideState_Idle();
+        }
+
+        public static SideState_ValidationInProgress ValidationInProgress(QrCodeInfo info)
+        {
+            return new SideState_ValidationInProgress(info);
+        }
+
+        public static SideState_PassageAuthorized PassageAuthroized(QrCodeInfo info)
+        {
+            return new SideState_PassageAuthorized(info);
+        }
+
+        public static SideState_ProhibitedTemp ProhibitedTemp()
+        {
+            return new SideState_ProhibitedTemp();
+        }
+    };
+    public record SideState_Unknown : SideState;
+    public record SideState_Idle : SideState;
+    public record SideState_ValidationInProgress(QrCodeInfo QrCodeInfo) : SideState;
+    public record SideState_PassageAuthorized(QrCodeInfo QrCodeInfo) : SideState;
+    public record SideState_ProhibitedTemp : SideState;
+    
+    BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle());
     public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();
     Task tsk;
     public InServiceMgr(
@@ -77,7 +95,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                 (string ReaderMnemonic, QrCodeInfo QrCodeInfo) detectionResult;
                 try
                 {
-                    stateSub.OnNext(State.Idle);
+                    stateSub.OnNext(State.Idle());
                     detectionResult = await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
                 }
                 catch (OperationCanceledException)
@@ -86,9 +104,9 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                 }
 
                 if (detectionResult.ReaderMnemonic == IQrReaderMgr.Entry)
-                    stateSub.OnNext(State.ValidationAtEntryInProgress);
+                    stateSub.OnNext(State.ValidationAtEntryInProgress(detectionResult.QrCodeInfo));
                 else if (detectionResult.ReaderMnemonic == IQrReaderMgr.Exit)
-                    stateSub.OnNext(State.ValidationAtExitInProgress);
+                    stateSub.OnNext(State.ValidationAtExitInProgress(detectionResult.QrCodeInfo));
 
                 QrCodeValidationResult validationResult = validationMgr.Validate(detectionResult.QrCodeInfo);
                 if (validationResult != null)
@@ -99,13 +117,13 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                     {
                         if (detectionResult.ReaderMnemonic == IQrReaderMgr.Entry)
                         {
-                            stateSub.OnNext(State.PassageAuthroizedAtEntry);
+                            stateSub.OnNext(State.PassageAuthroizedAtEntry(detectionResult.QrCodeInfo));
                             // TODO: ask passageController to Authorise
                             await Task.Delay(5000); // to simulate the delay in passage
                         }
                         else if (detectionResult.ReaderMnemonic == IQrReaderMgr.Exit)
                         {
-                            stateSub.OnNext(State.PassageAuthroizedAtExit);
+                            stateSub.OnNext(State.PassageAuthroizedAtExit(detectionResult.QrCodeInfo));
                             // TODO: ask passageController to Authorise
                             await Task.Delay(5000); // to simulate the delay in passage
                         }

@@ -1,6 +1,5 @@
 ﻿using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Qr;
-using LanguageExt;
 
 namespace EtGate.Domain.Services.Qr
 {
@@ -35,33 +34,42 @@ namespace EtGate.Domain.Services.Qr
             {
                 using var internalCts = new CancellationTokenSource();
 
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(inServiceCycleToken, internalCts.Token);                
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(inServiceCycleToken, internalCts.Token);
 
-                var entryTask = DetectAsync(IQrReaderMgr.Entry, qrEntry, linkedCts.Token);
-                var exitTask = DetectAsync(IQrReaderMgr.Exit, qrExit, linkedCts.Token);
-
-                var completedTask = await Task.WhenAny(entryTask, exitTask);
-
-                // Cancel the other detection
-                internalCts.Cancel();
-
-                // Await both tasks to ensure they finish (even if cancelled)
-                var results = await Task.WhenAll(entryTask, exitTask);
-
-                // Extract the result of the successfully completed task (if any)
-                var detectionResult = results.FirstOrDefault(r => r.QrCodeInfo != null); // the default value is (null, null)
-
-                if (detectionResult.QrCodeInfo == null)
+                
+                if (qrs == IQrReaderMgr.Both)
                 {
-                    throw new OperationCanceledException("Polling was stopped without detecting any QR code.");
-                }
+                    var entryTask = DetectAsync(IQrReaderMgr.Entry, qrEntry, linkedCts.Token);
+                    var exitTask = DetectAsync(IQrReaderMgr.Exit, qrExit, linkedCts.Token);
 
-                return detectionResult;
+                    var completedTask = await Task.WhenAny(entryTask, exitTask);
+
+                    // Cancel the other detection
+                    internalCts.Cancel();
+
+                    // Await both tasks to ensure they finish (even if cancelled)
+                    var results = await Task.WhenAll(entryTask, exitTask);
+
+                    // Extract the result of the successfully completed task (if any)
+                    var detectionResult = results.FirstOrDefault(r => r.QrCodeInfo != null); // the default value is (null, null)
+
+                    if (detectionResult.QrCodeInfo == null)
+                    {
+                        throw new OperationCanceledException("Polling was stopped without detecting any QR code.");
+                    }
+
+                    return detectionResult;
+                }
+                else if (qrs == IQrReaderMgr.Entry)
+                    return await DetectAsync(IQrReaderMgr.Entry, qrEntry, inServiceCycleToken);
+                else if (qrs == IQrReaderMgr.Exit)
+                    return await DetectAsync(IQrReaderMgr.Exit, qrExit, inServiceCycleToken);
             }
             catch (OperationCanceledException) when (inServiceCycleToken.IsCancellationRequested)
             {                
                 throw new OperationCanceledException("In-service cycle was cancelled.", inServiceCycleToken);
             }
+            throw new Exception();
         }
 
         async Task<(string ReaderMnemonic, QrCodeInfo? QrCodeInfo)> DetectAsync(

@@ -10,7 +10,7 @@ public class CompoundStateToImageConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is CompoundState state)
+        if (value is SideState state)
         {
             // Construct the image file path based on the EnumFruit value
             var fileName = $"{state}.png";
