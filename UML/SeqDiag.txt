@@ -1,7 +1,10 @@
+@startuml
 actor Passenger
 participant GateMgr
-participant TT
-participant "Health Check Sub-Entity" as HealthCheck
+box "Ticketing Terminal (TT)"
+  participant TT
+  participant "Health Check Sub-Entity" as HealthCheck
+end box
 participant "Validation Service" as ValidationService
 
 
@@ -35,3 +38,4 @@ par Periodic Health Check
 end
 
 deactivate TT
+@enduml
