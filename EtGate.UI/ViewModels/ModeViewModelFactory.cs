@@ -1,19 +1,20 @@
 ﻿using Domain.Services.InService;
+using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain;
 using EtGate.Domain.Peripherals.Qr;
-using GateApp;
 using System;
 
 namespace EtGate.UI.ViewModels
 {
     public class ModeViewModelFactory : IModeViewModelFactory
     {
-        private readonly IModeCommandService modeService;
+        private readonly IModeManager modeService;
         private readonly INavigationService maintenanceNavigationService;
         private readonly DeviceStatusSubscriber<QrReaderStatus> qr;
 
-        public ModeViewModelFactory(IModeCommandService modeService, INavigationService maintenanceNavigationService,
+        public ModeViewModelFactory(IModeManager modeService, 
+            INavigationService maintenanceNavigationService,
             DeviceStatusSubscriber<QrReaderStatus> qr = null)
         {
             this.modeService = modeService;

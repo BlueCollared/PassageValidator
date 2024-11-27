@@ -17,6 +17,7 @@ namespace EtGate.Domain.Tests
         DeviceStatusSubscriberTest<OfflineValidationSystemStatus> offline = new();
         DeviceStatusSubscriberTest<OnlineValidationSystemStatus> online = new();
         DeviceStatusSubscriberTest<GateHwStatus> gate = new();
+        DeviceStatusSubscriberTest<ActiveFunctionalities> activeFns = new();
         TestScheduler testScheduler = new TestScheduler();
 
         ModeManager modeManager;
@@ -30,7 +31,7 @@ namespace EtGate.Domain.Tests
             offlineValidMgr = new OfflineValidationSystem(new Mock<IDeviceStatusPublisher<OfflineValidationSystemStatus>>().Object);
             validationMgr = new ValidationMgr(onlineValidMgr, online, offlineValidMgr, offline);
             qrMgr = new Mock<IQrReaderMgr>().Object;
-            var modeMgrFactoryMock = new InServiceMgr(validationMgr, qrMgr);
+            var modeMgrFactoryMock = new InServiceMgr(validationMgr, qrMgr, activeFns);
             //modeMgrMock = new Mock<ISubModeMgr>();
 
             // Set up the mock to return the modeMgrMock when Create is called with any Mode value

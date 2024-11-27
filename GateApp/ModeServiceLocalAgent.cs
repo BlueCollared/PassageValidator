@@ -1,47 +1,47 @@
-﻿using Domain.Services.Modes;
-using EtGate.Domain;
+﻿//using Domain.Services.Modes;
+//using EtGate.Domain;
 
-namespace GateApp
-{
-    // TODO: put events/alarms etc.
-    public class ModeServiceLocalAgent : IModeCommandService
-    {
-        private readonly ModeManager modeMgr;
-        private readonly IContextRepository contextRepo;        
+//namespace GateApp
+//{
+//    // TODO: put events/alarms etc.
+//    public class ModeServiceLocalAgent : IModeCommandService
+//    {
+//        private readonly IModeManager modeMgr;
+//        private readonly IContextRepository contextRepo;        
 
-        public ModeServiceLocalAgent(ModeManager modeMgr, IContextRepository contextRepo)
-        {
-            this.modeMgr = modeMgr;
-            this.contextRepo = contextRepo;
-        }
+//        public ModeServiceLocalAgent(ModeManager modeMgr, IContextRepository contextRepo)
+//        {
+//            this.modeMgr = modeMgr;
+//            this.contextRepo = contextRepo;
+//        }
 
-        public Mode CurMode => modeMgr.CurMode;
+//        public Mode CurMode => modeMgr.CurMode;
 
-        public async Task SwitchToMaintenance()
-        {
-            if (modeMgr.CurMode == Mode.Maintenance)
-                return;
+//        public async Task SwitchToMaintenance()
+//        {
+//            if (modeMgr.CurMode == Mode.Maintenance)
+//                return;
 
-            await modeMgr.SwitchToMaintenance();            
-        }
+//            await modeMgr.SwitchToMaintenance();            
+//        }
 
-        public async Task SwitchOutMaintenance()
-        {
-            if (modeMgr.CurMode != Mode.Maintenance)
-                return;            
+//        public async Task SwitchOutMaintenance()
+//        {
+//            if (modeMgr.CurMode != Mode.Maintenance)
+//                return;            
  
-            await modeMgr.SwitchOutMaintenance();
-        }
+//            await modeMgr.SwitchOutMaintenance();
+//        }
 
-        public void ChangeMode(OpMode mode, TimeSpan timeout)
-        {
-            if (modeMgr.ModeDemanded == mode)
-                return ;
+//        public void ChangeMode(OpMode mode, TimeSpan timeout)
+//        {
+//            if (modeMgr.ModeDemanded == mode)
+//                return ;
 
-            modeMgr.ModeDemanded = mode;
-            contextRepo.SaveMode(mode);
+//            modeMgr.ModeDemanded = mode;
+//            contextRepo.SaveMode(mode);
             
-            //return false;
-        }
-    }
-}
+//            //return false;
+//        }
+//    }
+//}

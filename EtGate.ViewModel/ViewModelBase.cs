@@ -1,4 +1,5 @@
-﻿using GateApp;
+﻿using Domain.Services.Modes;
+using GateApp;
 using ReactiveUI;
 using System.Windows.Input;
 
@@ -25,9 +26,9 @@ namespace EtGate.UI.ViewModels
 
     public class ModeViewModel : ViewModelBase
     {
-        private readonly IModeCommandService modeService;
+        private readonly IModeManager modeService;
 
-        public ModeViewModel(IModeCommandService modeService)
+        public ModeViewModel(IModeManager modeService)
         {
             this.modeService = modeService;
         }

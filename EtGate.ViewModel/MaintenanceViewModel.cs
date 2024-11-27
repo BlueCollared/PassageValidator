@@ -1,5 +1,5 @@
-﻿using EtGate.UI.ViewModels.Maintenance;
-using GateApp;
+﻿using Domain.Services.Modes;
+using EtGate.UI.ViewModels.Maintenance;
 
 namespace EtGate.UI.ViewModels;
 
@@ -7,7 +7,7 @@ public class MaintenanceViewModel : ModeViewModel
 {
     private readonly INavigationService _navigationService;
 
-    public MaintenanceViewModel(IModeCommandService modeService, INavigationService navigationService) : base(modeService)
+    public MaintenanceViewModel(IModeManager modeService, INavigationService navigationService) : base(modeService)
     {
         _navigationService = navigationService;        
     }   

@@ -1,11 +1,11 @@
 ﻿using Domain.Services.InService;
 using Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain;
 using EtGate.UI.ViewModels;
 using GateApp;
 using Moq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using Xunit;
 using static Domain.Services.InService.InServiceMgr;
 
@@ -18,9 +18,9 @@ namespace EtGate.UI.ViewModel.Tests
         public RightViewModelsCreated()
         {
             // Arrange
-            var mockModeService = new Mock<IModeCommandService>();
-            var mockModeQueryService = new Mock<IModeQueryService>();
-            mockModeQueryService.Setup(service => service.EqptModeObservable).Returns(subjMode);
+            var mockModeService = new Mock<IModeManager>();
+            //var mockModeQueryService = new Mock<IModeQueryService>();
+            //mockModeQueryService.Setup(service => service.EqptModeObservable).Returns(subjMode);
 
             var InServiceMgrStub = new Mock<IInServiceMgr>();
             InServiceMgrStub.Setup(x => x.StateObservable).Returns(
@@ -35,53 +35,54 @@ namespace EtGate.UI.ViewModel.Tests
 
             //vm = new MainWindowViewModel(mockModeService.Object, new MockInServiceMgrFactory(), new Mock<INavigationService>().Object);
             vm = new MainWindowViewModel(new ModeViewModelFactory(mockModeService.Object,
-                new Mock<INavigationService>().Object), mockModeQueryService.Object, true, true);
+                new Mock<INavigationService>().Object), subjMode, true, true);
         }
 
         MainWindowViewModel vm;
-        Subject<(Mode, ISubModeMgr)> subjMode = new();
+        //Subject<(Mode, ISubModeMgr)> subjMode = new();
+        DeviceStatusSubscriberTest<(Mode, ISubModeMgr)> subjMode = new();
 
         [Fact]
         public void AppBootingPhase()
         {
             Assert.Null(vm.CurrentModeViewModel);
 
-            subjMode.OnNext(DoNothingModeMgr.Create(Mode.AppBooting));
+            subjMode.Publish(DoNothingModeMgr.Create(Mode.AppBooting));
             Assert.IsType<AppBootingViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOO()
         {
-            subjMode.OnNext(DoNothingModeMgr.Create(Mode.OOO));
+            subjMode.Publish(DoNothingModeMgr.Create(Mode.OOO));
             Assert.IsType<OOOViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Emergency()
         {
-            subjMode.OnNext(DoNothingModeMgr.Create(Mode.Emergency));
+            subjMode.Publish(DoNothingModeMgr.Create(Mode.Emergency));
             Assert.IsType<EmergencyViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void OOS()
         {
-            subjMode.OnNext(DoNothingModeMgr.Create(Mode.OOS));
+            subjMode.Publish(DoNothingModeMgr.Create(Mode.OOS));
             Assert.IsType<OOSViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void Maintenance()
         {
-            subjMode.OnNext(DoNothingModeMgr.Create(Mode.Maintenance));
+            subjMode.Publish(DoNothingModeMgr.Create(Mode.Maintenance));
             Assert.IsType<MaintenanceViewModel>(vm.CurrentModeViewModel);
         }
 
         [Fact]
         public void InService()
         {
-            subjMode.OnNext((Mode.InService, new DummyIInServiceMgr()));
+            subjMode.Publish((Mode.InService, new DummyIInServiceMgr()));
             Assert.IsType<InServiceViewModel>(vm.CurrentModeViewModel);
         }
     }

@@ -38,7 +38,7 @@ namespace EtGate.Domain.Tests
                     return modeMgrMock.Object;
                 });
 
-            modeManager = new ModeManager(qr, offline, online, gate, (new Mock<IDeviceStatusPublisher<Mode>>()).Object, modeMgrFactoryMock.Object, testScheduler);
+            modeManager = new ModeManager(qr, offline, online, gate, modePub:null, activeFuncsPub:null, modeMgrFactoryMock.Object, testScheduler);
         }
 
         [Fact]

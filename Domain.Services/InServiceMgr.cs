@@ -1,4 +1,5 @@
-﻿using EtGate.Domain;
+﻿using Equipment.Core.Message;
+using EtGate.Domain;
 using EtGate.Domain.Passage.PassageEvts;
 using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services.Qr;
@@ -12,8 +13,9 @@ namespace Domain.Services.InService;
 public record Authorization(int nAuthorizations);
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
-    private readonly ValidationMgr validationMgr;    
+    private readonly IValidate validationMgr;    
     private readonly IQrReaderMgr qrMgr;
+    private readonly DeviceStatusSubscriber<ActiveFunctionalities> activeFunctions;
     private Queue<Authorization> authorizations = new();
 
     PassageState state = PassageState.Unknown;    
@@ -76,15 +78,18 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle());
     public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();
     Task tsk;
+    
     public InServiceMgr(
-        ValidationMgr validationMgr,
+        IValidate validationMgr,
         //IGateInServiceController passage,            
-        IQrReaderMgr qrMgr
+        IQrReaderMgr qrMgr,
+        DeviceStatusSubscriber<ActiveFunctionalities> activeFunctions
         )
     {
         this.validationMgr = validationMgr;
-        //this.passage = passage;            
+        //this.passage = passage;
         this.qrMgr = qrMgr;
+        this.activeFunctions = activeFunctions;
 
         //passageStatusSubscription = passage.PassageStatusObservable
         //    .ObserveOn(SynchronizationContext.Current)
@@ -96,7 +101,14 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
                 try
                 {
                     stateSub.OnNext(State.Idle());
-                    detectionResult = await qrMgr.StartDetecting(IQrReaderMgr.Entry, cts.Token);
+
+                    string pollMode = IQrReaderMgr.Both;
+                    if (activeFunctions.curStatus.entry && !activeFunctions.curStatus.exit)
+                        pollMode = IQrReaderMgr.Entry;
+                    else if (!activeFunctions.curStatus.entry && activeFunctions.curStatus.exit)
+                        pollMode = IQrReaderMgr.Exit;
+
+                    detectionResult = await qrMgr.StartDetecting(pollMode, cts.Token);
                 }
                 catch (OperationCanceledException)
                 {

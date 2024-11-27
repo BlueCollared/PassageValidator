@@ -1,4 +1,5 @@
 ﻿using Domain.Services.InService;
+using Domain.Services.Modes;
 using GateApp;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -31,7 +32,7 @@ namespace EtGate.UI.ViewModels
         IDisposable subscription;
 
         public InServiceViewModel(            
-            bool isEntry, IModeCommandService modeService, IInServiceMgr inServiceMgr) : base(modeService)
+            bool isEntry, IModeManager modeService, IInServiceMgr inServiceMgr) : base(modeService)
         {            
             _isEntry = isEntry;
 

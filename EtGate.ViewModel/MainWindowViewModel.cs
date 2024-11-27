@@ -1,5 +1,5 @@
 ﻿using Domain.Services.InService;
-using Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -15,26 +15,26 @@ public class MainWindowViewModel : ViewModelBase
     private readonly bool bPrimary;
 
     public MainWindowViewModel(IModeViewModelFactory modeViewModelFactory,
-        IModeQueryService modeService,
+        DeviceStatusSubscriber<(Mode, ISubModeMgr)> modeService,
         bool bEntry,
         bool bPrimary)
     {        
         this.modeViewModelFactory = modeViewModelFactory;
         this.bEntry = bEntry;
         this.bPrimary = bPrimary;
-        modeService.EqptModeObservable.Subscribe(x => ModeChanged(x.Item1, x.Item2));
+        modeService.Messages.Subscribe(x => ModeChanged(x.Item1, x.Item2));
     }
 
-    private void ModeChanged(Mode x, ISubModeMgr subModeMgr)
+    private void ModeChanged(Mode mode, ISubModeMgr subModeMgr)
     {
-        if (curMode == x)
+        if (curMode == mode)
             return;
         if (CurrentModeViewModel is IDisposable y)
             y.Dispose();
-        CurrentModeViewModel = modeViewModelFactory.Create(x, subModeMgr, bPrimary, bEntry);
+        CurrentModeViewModel = modeViewModelFactory.Create(mode, subModeMgr, bPrimary, bEntry);
         if (CurrentModeViewModel is MaintenanceViewModel r)
             r.Init();
-        curMode = x;
+        curMode = mode;
     }
 
     private ModeViewModel _currentModeViewModel;

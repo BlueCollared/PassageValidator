@@ -1,4 +1,5 @@
-﻿using Equipment.Core.Message;
+﻿using Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Qr;
 using GateApp;
 using ReactiveUI;
@@ -8,7 +9,7 @@ namespace EtGate.UI.ViewModels
 {
     public class AppBootingViewModel : ModeViewModel, IDisposable
     {
-        public AppBootingViewModel(IModeCommandService modeService,
+        public AppBootingViewModel(IModeManager modeService,
             DeviceStatusSubscriber<QrReaderStatus> qr) : base(modeService)
         {
             //_qrRdrStatus = qr.Messages.ToProperty(this, x => x.QrRdrStatus, scheduler: RxApp.MainThreadScheduler);

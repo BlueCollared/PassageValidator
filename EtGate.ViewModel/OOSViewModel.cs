@@ -1,10 +1,10 @@
-﻿using GateApp;
+﻿using Domain.Services.Modes;
 
 namespace EtGate.UI.ViewModels;
 
 public class OOSViewModel : ModeViewModel
 {
-    public OOSViewModel(IModeCommandService modeService) : base(modeService)
+    public OOSViewModel(IModeManager modeService) : base(modeService)
     {
 
     }

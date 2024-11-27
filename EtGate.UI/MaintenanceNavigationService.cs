@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
+using Domain.Services.Modes;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
-using GateApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ public class MaintenanceNavigationService : INavigationService
     public MaintenanceNavigationService(        
         Func<Type, MaintainenaceViewModelBase> viewModelFactory,         
          INavigationEventManager navigationEventManager,
-        IModeCommandService modeService
+        IModeManager modeService
         )
     {
         this.viewModelFactory = viewModelFactory;
@@ -92,5 +92,5 @@ public class MaintenanceNavigationService : INavigationService
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
     private readonly INavigationEventManager _navigationEventManager;    
 
-    private readonly IModeCommandService modeService;    
+    private readonly IModeManager modeService;    
 }

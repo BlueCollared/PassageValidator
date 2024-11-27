@@ -12,9 +12,19 @@ using System.Reactive.Subjects;
 
 namespace Domain.Services.Modes;
 
-public class ModeManager : IModeQueryService
+public interface IModeManager
+{
+    Mode CurMode { get; }
+    OpMode ModeDemanded { get; set; }
+
+    Task SwitchOutMaintenance();
+    Task SwitchToMaintenance();
+}
+public class ModeManager : IModeManager
 {
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
+    private readonly IDeviceStatusPublisher<(Mode, ISubModeMgr)> modePub;
+    private readonly IDeviceStatusPublisher<ActiveFunctionalities> activeFuncs;
     private readonly ISubModeMgrFactory modeMgrFactory;
     IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
 
@@ -27,13 +37,9 @@ public class ModeManager : IModeQueryService
     IObservable<EquipmentStatus> equipmentStatusStream;        
     
     private OpMode opModeDemanded;
-    public ISubModeMgr curModeMgr => EqptModeSubject.Value.Item2;    
+    public ISubModeMgr curModeMgr;// => EqptModeSubject.Value.Item2;    
 
-    private readonly BehaviorSubject<(Mode, ISubModeMgr)> EqptModeSubject;
-    public IObservable<(Mode, ISubModeMgr)> EqptModeObservable => EqptModeSubject
-        .DistinctUntilChanged()
-        .AsObservable();
-    public Mode CurMode => EqptModeSubject.Value.Item1;
+    public Mode CurMode { get; set; }
     Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
 
     //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
@@ -54,7 +60,8 @@ public class ModeManager : IModeQueryService
                            DeviceStatusSubscriber<OfflineValidationSystemStatus> offline,
                            DeviceStatusSubscriber<OnlineValidationSystemStatus> online,
                            DeviceStatusSubscriber<GateHwStatus> gate,
-                           IDeviceStatusPublisher<Mode> modePub,
+                           IDeviceStatusPublisher<(Mode, ISubModeMgr)> modePub,
+                           IDeviceStatusPublisher<ActiveFunctionalities> activeFuncsPub,
                            ISubModeMgrFactory modeMgrFactory,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
@@ -65,9 +72,15 @@ public class ModeManager : IModeQueryService
 
         modeRequested = modeAskedSubject.AsObservable().Replay(1);
         modeRequested.Connect();
-        modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file
+        modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file       
         
-        EqptModeSubject = new BehaviorSubject<(Mode, ISubModeMgr)>((Mode.AppBooting, modeMgrFactory.Create(Mode.AppBooting)));
+        this.modePub = modePub;
+        
+        CurMode = Mode.AppBooting;
+        curModeMgr = modeMgrFactory.Create(Mode.AppBooting);
+        modePub?.Publish((CurMode, curModeMgr));
+
+        this.activeFuncs = activeFuncsPub;
         this.modeMgrFactory = modeMgrFactory;
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
@@ -111,8 +124,10 @@ public class ModeManager : IModeQueryService
         modeEffectuatedStream.ForEachAsync(async x => {
             await curModeMgr.Stop(bImmediate: CurMode == Mode.Emergency);
             curModeMgr.Dispose();
-            
-            EqptModeSubject.OnNext((x, modeMgrFactory.Create(x)));
+
+            CurMode = x;
+            curModeMgr = modeMgrFactory.Create(x);
+            modePub?.Publish((x, curModeMgr));
         });
 
         qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));

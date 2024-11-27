@@ -16,4 +16,10 @@
         OOS,
         Emergency
     }
+
+    public class ActiveFunctionalities
+    {
+        public bool entry;
+        public bool exit;        
+    }
 }

@@ -2,6 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Domain.Services.InService;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using Equipment.Core;
@@ -81,7 +82,7 @@ public partial class App : Avalonia.Application
             .WithParameter(new NamedParameter(bEntry, false))
             .Named<MainWindowViewModel>(SecondaryExit);
 
-        builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();
+        //builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
@@ -103,7 +104,7 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
-        builder.RegisterType<ModeMgrFactory>().As<ISubModeMgrFactory>().SingleInstance();
+        builder.RegisterType<SubModeMgrFactory>().As<ISubModeMgrFactory>().SingleInstance();
 
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterType<NavigationEventManager>().As<INavigationEventManager>().SingleInstance();
@@ -122,18 +123,20 @@ public partial class App : Avalonia.Application
 
         builder.Register(
             c =>
-            {                
+            {
                 return new ModeManager(
-                    c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
-                    c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
-                    c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
-                    c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
-                    c.Resolve<IDeviceStatusPublisher<Domain.Mode>>(),
-                    c.Resolve<ISubModeMgrFactory>(),
-                    new EventLoopScheduler()
+                    qr: c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
+                    offline: c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
+                    online: c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
+                    gate: c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
+                    modePub: c.Resolve<IDeviceStatusPublisher<(Mode, ISubModeMgr)>>(),
+                    activeFuncsPub: c.Resolve<IDeviceStatusPublisher<ActiveFunctionalities>>(),
+                    modeMgrFactory: c.Resolve<ISubModeMgrFactory>(),
+                    scheduler: new EventLoopScheduler(),
+                    timeToCompleteAppBoot_InSeconds:30
                     );
             })
-            .As<IModeQueryService>()
+            .As<IModeManager>()
             .SingleInstance()
             .AsSelf();
 
