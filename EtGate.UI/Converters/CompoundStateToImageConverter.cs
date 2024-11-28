@@ -1,8 +1,8 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
+using Domain.Services.InService;
 using System;
 using System.Globalization;
-using static Domain.Services.InService.InServiceMgr;
 
 namespace EtGate.UI.Converters;
 

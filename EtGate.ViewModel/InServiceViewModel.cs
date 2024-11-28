@@ -1,6 +1,5 @@
 ﻿using Domain.Services.InService;
 using Domain.Services.Modes;
-using GateApp;
 using ReactiveUI;
 using System.Reactive.Linq;
 using static Domain.Services.InService.InServiceMgr;

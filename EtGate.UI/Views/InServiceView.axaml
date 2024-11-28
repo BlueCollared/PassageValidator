@@ -3,13 +3,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:conv="using:EtGate.UI.Converters"
+			 xmlns:vm="using:Domain.Services.InService"
+			 xmlns:vm2="using:EtGate.UI.ViewModels"
+			 x:DataType="vm2:InServiceViewModel"
+			 xmlns:vu="using:EtGate.UI.Views.InService"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="EtGate.UI.Views.InServiceView">
-    <UserControl.Resources>
-            <conv:CompoundStateToImageConverter x:Key="CompoundStateToImageConverter" />
-    </UserControl.Resources>
 
-<Grid>
-        <!--<Image Source="{Binding CurState, Converter={StaticResource CompoundStateToImageConverter}}" />-->
-    </Grid>
+	<UserControl.DataTemplates>
+		<DataTemplate DataType="{x:Type vm:SideState_Fraud}">
+			<vu:Fraud/>
+		</DataTemplate>
+	</UserControl.DataTemplates>
+	
+	<Grid>
+	<ContentControl x:Name="host"
+					Content="{Binding CurState}"
+					/>
+	</Grid>
 </UserControl>

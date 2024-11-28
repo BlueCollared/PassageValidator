@@ -11,6 +11,60 @@ using System.Reactive.Subjects;
 namespace Domain.Services.InService;
 
 public record Authorization(int nAuthorizations);
+
+public record SideState
+{
+    public static SideState_Idle Idle()
+    {
+        return new SideState_Idle();
+    }
+
+    public static SideState_RejectPassage RejectPassage()
+    {
+        return new SideState_RejectPassage();
+    }
+
+    public static SideState_ValidationInProgress ValidationInProgress(QrCodeInfo info)
+    {
+        return new SideState_ValidationInProgress(info);
+    }
+
+    public static SideState_PassageAuthorized PassageAuthroized(QrCodeInfo info)
+    {
+        return new SideState_PassageAuthorized(info);
+    }
+
+    public static SideState_ProhibitedTemp ProhibitedTemp()
+    {
+        return new SideState_ProhibitedTemp();
+    }
+
+    public static SideState_Prohibited Prohibited()
+    {
+        return new SideState_Prohibited();
+    }
+
+    public static SideState_Intrusion Intrusion()
+    {
+        return new SideState_Intrusion();
+    }
+
+    public static SideState_Fraud Fraud()
+    {
+        return new SideState_Fraud();
+    }
+};
+
+public record SideState_Unknown : SideState;
+public record SideState_Idle : SideState;
+public record SideState_RejectPassage : SideState;
+public record SideState_Fraud : SideState;
+public record SideState_Intrusion : SideState;
+public record SideState_ValidationInProgress(QrCodeInfo QrCodeInfo) : SideState;
+public record SideState_PassageAuthorized(QrCodeInfo QrCodeInfo) : SideState;
+public record SideState_ProhibitedTemp : SideState;
+public record SideState_Prohibited : SideState; // Forbidden/Interdit
+
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
     private readonly IValidate validationMgr;    
@@ -48,33 +102,6 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         SomeAuthorization_s_Queued_ThatHaventBeginTransit
     }
 
-    public record SideState
-    {
-        public static SideState_Idle Idle() { 
-            return new SideState_Idle();
-        }
-
-        public static SideState_ValidationInProgress ValidationInProgress(QrCodeInfo info)
-        {
-            return new SideState_ValidationInProgress(info);
-        }
-
-        public static SideState_PassageAuthorized PassageAuthroized(QrCodeInfo info)
-        {
-            return new SideState_PassageAuthorized(info);
-        }
-
-        public static SideState_ProhibitedTemp ProhibitedTemp()
-        {
-            return new SideState_ProhibitedTemp();
-        }
-    };
-    public record SideState_Unknown : SideState;
-    public record SideState_Idle : SideState;
-    public record SideState_ValidationInProgress(QrCodeInfo QrCodeInfo) : SideState;
-    public record SideState_PassageAuthorized(QrCodeInfo QrCodeInfo) : SideState;
-    public record SideState_ProhibitedTemp : SideState;
-    
     BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle());
     public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();
     Task tsk;
