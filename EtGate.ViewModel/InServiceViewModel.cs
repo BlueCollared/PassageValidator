@@ -52,14 +52,14 @@ namespace EtGate.UI.ViewModels
             switch(state)
             {
                 case Idle idle:
-                    return SideState.Idle();
+                    return SideState.Idle_Polling();
                 case ValidationAtEntryInProgress x:
                     return SideState.ValidationInProgress(x.info);
                 case PassageAuthroizedAtEntry x:
                     return SideState.PassageAuthroized(x.info);
                 case ValidationAtExitInProgress:
                 case PassageAuthroizedAtExit:
-                    return SideState.ProhibitedTemp();                
+                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();                
             }
             throw new NotImplementedException();            
         }
@@ -69,10 +69,10 @@ namespace EtGate.UI.ViewModels
             switch (state)
             {
                 case Idle idle:
-                    return SideState.Idle();
+                    return SideState.Idle_Polling();
                 case ValidationAtEntryInProgress:
                 case PassageAuthroizedAtEntry:
-                    return SideState.ProhibitedTemp();                
+                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();                
                 case ValidationAtExitInProgress x:
                     return SideState.ValidationInProgress(x.info);
                 case PassageAuthroizedAtExit x:

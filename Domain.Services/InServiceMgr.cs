@@ -14,9 +14,14 @@ public record Authorization(int nAuthorizations);
 
 public record SideState
 {
-    public static SideState_Idle Idle()
+    public static SideState_Idle_Polling Idle_Polling()
     {
-        return new SideState_Idle();
+        return new SideState_Idle_Polling();
+    }
+
+    public static SideState_Idle_Free Idle_Free()
+    {
+        return new SideState_Idle_Free();
     }
 
     public static SideState_RejectPassage RejectPassage()
@@ -34,9 +39,9 @@ public record SideState
         return new SideState_PassageAuthorized(info);
     }
 
-    public static SideState_ProhibitedTemp ProhibitedTemp()
+    public static SideState_Prohibited_BecausePassageInProgressFromOtherSide ProhibitedBecausePassageInProgressFromOtherSide()
     {
-        return new SideState_ProhibitedTemp();
+        return new SideState_Prohibited_BecausePassageInProgressFromOtherSide();
     }
 
     public static SideState_Prohibited Prohibited()
@@ -56,13 +61,14 @@ public record SideState
 };
 
 public record SideState_Unknown : SideState;
-public record SideState_Idle : SideState;
+public record SideState_Idle_Polling : SideState;
+public record SideState_Idle_Free : SideState;
 public record SideState_RejectPassage : SideState;
 public record SideState_Fraud : SideState;
 public record SideState_Intrusion : SideState;
 public record SideState_ValidationInProgress(QrCodeInfo QrCodeInfo) : SideState;
 public record SideState_PassageAuthorized(QrCodeInfo QrCodeInfo) : SideState;
-public record SideState_ProhibitedTemp : SideState;
+public record SideState_Prohibited_BecausePassageInProgressFromOtherSide : SideState;
 public record SideState_Prohibited : SideState; // Forbidden/Interdit
 
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
