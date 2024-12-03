@@ -11,15 +11,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Domain.Services.Modes;
-
-public interface IModeManager
-{
-    Mode CurMode { get; }
-    OpMode ModeDemanded { get; set; }
-
-    Task SwitchOutMaintenance();
-    Task SwitchToMaintenance();
-}
 public class ModeManager : IModeManager
 {
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
