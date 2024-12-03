@@ -1,5 +1,6 @@
 using Domain.Services.InService;
 using Domain.Services.Modes;
+using Equipment.Core;
 using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
@@ -10,21 +11,33 @@ using Shouldly;
 
 namespace EtGate.Domain.Tests
 {
-    public class ModeManagerTests
+    public class ModeEvaluatorTests
     {
         readonly TimeSpan timeToCompleteAppBoot = TimeSpan.FromSeconds(30);
         TestScheduler testScheduler = new TestScheduler();
         
-        ModeManager modeManager;
+        ModeEvaluator modeManager;
         Mock<ISubModeMgr> modeMgrMock;
-        //Mock<IMessageSubscriber<QrReaderStatus>> mockQr = new();
-        DeviceStatusSubscriberTest<QrReaderStatus> qr = new();
-        DeviceStatusSubscriberTest<OfflineValidationSystemStatus> offline = new();
-        DeviceStatusSubscriberTest<OnlineValidationSystemStatus> online = new();
-        DeviceStatusSubscriberTest<GateHwStatus> gate = new();
 
-        public ModeManagerTests()
+        PeripheralStatuses ps = PeripheralStatuses.ForTests();
+        DeviceStatusSubscriberTest<QrReaderStatus> qr;
+        DeviceStatusSubscriberTest<OfflineValidationSystemStatus> offline;
+        DeviceStatusSubscriberTest<OnlineValidationSystemStatus> online;
+        DeviceStatusSubscriberTest<GateHwStatus> gate;
+
+        DeviceStatusBus<(Mode, bool)> modePub = new();
+        Mode CurMode;
+
+        public ModeEvaluatorTests()
         {
+            qr = (DeviceStatusSubscriberTest<QrReaderStatus>)ps.qr;
+            offline = (DeviceStatusSubscriberTest<OfflineValidationSystemStatus>)ps.offline;
+            online = (DeviceStatusSubscriberTest<OnlineValidationSystemStatus>)ps.online;
+            gate = (DeviceStatusSubscriberTest<GateHwStatus>)ps.gate;
+
+            modePub.Messages.Subscribe(x => {
+                CurMode = x.Item1;
+            });
             var modeMgrFactoryMock = new Mock<ISubModeMgrFactory>();
             //modeMgrMock = new Mock<ISubModeMgr>();
 
@@ -38,35 +51,35 @@ namespace EtGate.Domain.Tests
                     return modeMgrMock.Object;
                 });
 
-            modeManager = new ModeManager(qr, offline, online, gate, modePub:null, activeFuncsPub:null, modeMgrFactoryMock.Object, testScheduler);
+            modeManager = new ModeEvaluator(ps, modePub, null, testScheduler);
         }
 
         [Fact]
         public void AppBootingPhase()
         {
             // Assert
-            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, CurMode);
 
             qr.Publish(QrReaderStatus.Disconnected);
-            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, CurMode);
 
             offline.Publish(OfflineValidationSystemStatus.Obsolete);
-            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, CurMode);
 
             online.Publish(OnlineValidationSystemStatus.Disconnected);
-            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, CurMode);
 
             gate.Publish(GateHwStatus.Disconnected);
-            Assert.NotEqual(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.NotEqual(global::EtGate.Domain.Mode.AppBooting, CurMode);
         }
 
         [Fact]
         public void AppBootingPhase_Timeout()
         {
             // Act
-            testScheduler.AdvanceBy(TimeSpan.FromSeconds(ModeManager.DEFAULT_TimeToCompleteBoot_InSeconds).Ticks);
+            testScheduler.AdvanceBy(TimeSpan.FromSeconds(ModeEvaluator.DEFAULT_TimeToCompleteBoot_InSeconds).Ticks);
 
-            Assert.NotEqual(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.NotEqual(global::EtGate.Domain.Mode.AppBooting, CurMode);
         }
 
         [Fact]
@@ -78,7 +91,7 @@ namespace EtGate.Domain.Tests
 
             // Assert
             Assert.Equal(global::EtGate.Domain.Mode.OOO,
-                modeManager.CurMode
+                CurMode
                 );
 
             // Act            
@@ -86,7 +99,7 @@ namespace EtGate.Domain.Tests
 
             // Assert
             Assert.Equal(global::EtGate.Domain.Mode.InService,
-                modeManager.CurMode
+                CurMode
                 );
         }
 
@@ -99,12 +112,12 @@ namespace EtGate.Domain.Tests
             online.Publish(OnlineValidationSystemStatus.Disconnected);
             
             Assert.Equal(global::EtGate.Domain.Mode.OOO,
-                modeManager.CurMode
+                CurMode
                 );
 
             offline.Publish(OfflineValidationSystemStatus.AllGood);
             Assert.Equal(global::EtGate.Domain.Mode.InService,
-                modeManager.CurMode
+                CurMode
                 );
         }
 
@@ -117,7 +130,7 @@ namespace EtGate.Domain.Tests
 
             // Assert
             Assert.Equal(global::EtGate.Domain.Mode.OOO,
-                modeManager.CurMode
+                CurMode
                 );
 
             // Act            
@@ -125,7 +138,7 @@ namespace EtGate.Domain.Tests
 
             // Assert
             Assert.Equal(global::EtGate.Domain.Mode.InService,
-                modeManager.CurMode
+                CurMode
                 );
         }
 
@@ -133,18 +146,18 @@ namespace EtGate.Domain.Tests
         public void AllWorking_ModeInservice()
         {
             // Assert
-            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.AppBooting, CurMode);
 
             qr.Publish(QrReaderStatus.AllGood);
-            modeManager.CurMode.ShouldBe(global::EtGate.Domain.Mode.AppBooting);
+            CurMode.ShouldBe(global::EtGate.Domain.Mode.AppBooting);
 
             offline.Publish(OfflineValidationSystemStatus.AllGood);
-            modeManager.CurMode.ShouldBe(global::EtGate.Domain.Mode.AppBooting);
+            CurMode.ShouldBe(global::EtGate.Domain.Mode.AppBooting);
 
             online.Publish(OnlineValidationSystemStatus.Disconnected);
 
             gate.Publish(GateHwStatus.AllGood);
-            modeManager.CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
+            CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
         }
 
         [Fact]
@@ -155,7 +168,7 @@ namespace EtGate.Domain.Tests
             var modeMgrMockBak = modeMgrMock;
 
             offline.Publish(OfflineValidationSystemStatus.Obsolete);
-            Assert.Equal(global::EtGate.Domain.Mode.OOO, modeManager.CurMode);
+            Assert.Equal(global::EtGate.Domain.Mode.OOO, CurMode);
             //
             // 
             modeMgrMockBak.Verify(m => m.Dispose(), Times.Once);            
@@ -166,12 +179,14 @@ namespace EtGate.Domain.Tests
         {
             AllWorking_ModeInservice();
 
-            var subModeMgr = modeManager.curModeMgr;
-            offline.Publish(OfflineValidationSystemStatus.Obsolete);
-            modeManager.CurMode.ShouldBe(global::EtGate.Domain.Mode.OOO);
-            offline.Publish(OfflineValidationSystemStatus.AllGood);
-            modeManager.CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
-            modeManager.curModeMgr.ShouldNotBeSameAs(subModeMgr);
+            throw new NotImplementedException();
+
+            //var subModeMgr = CurModeMgr;
+            //offline.Publish(OfflineValidationSystemStatus.Obsolete);
+            //CurMode.ShouldBe(global::EtGate.Domain.Mode.OOO);
+            //offline.Publish(OfflineValidationSystemStatus.AllGood);
+            //CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
+            //CurModeMgr.ShouldNotBeSameAs(subModeMgr);
 
         }
     }

@@ -1,5 +1,4 @@
-﻿using Domain.Services.InService;
-using Equipment.Core.Message;
+﻿using Equipment.Core.Message;
 using EtGate.Domain;
 using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
@@ -11,13 +10,13 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Domain.Services.Modes;
-public class ModeManager : IModeManager
+public class ModeEvaluator : IModeManager
 {
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
-    private readonly IDeviceStatusPublisher<(Mode, ISubModeMgr)> modePub;
+    private readonly IDeviceStatusPublisher<(Mode, bool)> modePub;
     private readonly IDeviceStatusPublisher<ActiveFunctionalities> activeFuncs;
-    private readonly ISubModeMgrFactory modeMgrFactory;
-    IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
+    
+    //IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
 
     Subject<bool> maintAskedSubject = new();
     IConnectableObservable<bool> maintenanceAsked;
@@ -25,12 +24,10 @@ public class ModeManager : IModeManager
     Subject<OpMode> modeAskedSubject = new();
     IConnectableObservable<OpMode> modeRequested;       
 
-    IObservable<EquipmentStatus> equipmentStatusStream;        
+    IObservable<EquipmentStatus> equipmentStatusStream;
     
-    private OpMode opModeDemanded;
-    public ISubModeMgr curModeMgr;// => EqptModeSubject.Value.Item2;    
-
-    public Mode CurMode { get; set; }
+    private OpMode opModeDemanded;    
+    
     Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
 
     //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
@@ -46,17 +43,18 @@ public class ModeManager : IModeManager
             .Merge(stream)
             .DistinctUntilChanged();
     }
-    
-    public ModeManager(DeviceStatusSubscriber<QrReaderStatus> qr,
-                           DeviceStatusSubscriber<OfflineValidationSystemStatus> offline,
-                           DeviceStatusSubscriber<OnlineValidationSystemStatus> online,
-                           DeviceStatusSubscriber<GateHwStatus> gate,
-                           IDeviceStatusPublisher<(Mode, ISubModeMgr)> modePub,
-                           IDeviceStatusPublisher<ActiveFunctionalities> activeFuncsPub,
-                           ISubModeMgrFactory modeMgrFactory,
+
+    public ModeEvaluator(PeripheralStatuses ps,
+                           IDeviceStatusPublisher<(Mode, bool)> modePub,
+                           IDeviceStatusPublisher<ActiveFunctionalities> activeFuncsPub,                           
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
-    {
+    {        
+        var qr = ps.qr;
+        var offline = ps.offline;
+        var online = ps.online;
+        var gate = ps.gate;
+
         maintenanceAsked = maintAskedSubject.AsObservable().Replay(1);
         maintenanceAsked.Connect();
         maintAskedSubject.OnNext(false);
@@ -67,12 +65,9 @@ public class ModeManager : IModeManager
         
         this.modePub = modePub;
         
-        CurMode = Mode.AppBooting;
-        curModeMgr = modeMgrFactory.Create(Mode.AppBooting);
-        modePub?.Publish((CurMode, curModeMgr));
+        modePub?.Publish((Mode.AppBooting, true));
 
-        this.activeFuncs = activeFuncsPub;
-        this.modeMgrFactory = modeMgrFactory;
+        this.activeFuncs = activeFuncsPub;        
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
         
@@ -90,9 +85,8 @@ public class ModeManager : IModeManager
             bMaintAsked: maint,
             modeAsked:mod
             ));
-
-        modeEffectuatedStream = equipmentStatusStream
-            .Select((EquipmentStatus e) =>
+        
+        var fnModeCal = (EquipmentStatus e) =>
             {
                 if (e.bMaintAsked)
                     return Mode.Maintenance;
@@ -109,25 +103,20 @@ public class ModeManager : IModeManager
                     default:
                         throw new NotImplementedException();
                 }
-            }
-            ).DistinctUntilChanged();
-
-        modeEffectuatedStream.ForEachAsync(async x => {
-            await curModeMgr.Stop(bImmediate: CurMode == Mode.Emergency);
-            curModeMgr.Dispose();
-
-            CurMode = x;
-            curModeMgr = modeMgrFactory.Create(x);
-            modePub?.Publish((x, curModeMgr));
+            };
+        equipmentStatusStream.Subscribe(x=>
+        {
+            var newMode = fnModeCal(x);
+            modePub?.Publish((newMode, newMode == Mode.Maintenance || newMode == Mode.Emergency));
         });
-
+        
         qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
         gate.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
         offline.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
 
         equipmentStatusStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} equipmentStatusStream {equipmentStatusStream}"));
 
-        modeEffectuatedStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} modeEffectuatedStream {x}"));
+        //modeEffectuatedStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} modeEffectuatedStream {x}"));
     }
 
     IDisposable eqptStatus;
@@ -144,16 +133,13 @@ public class ModeManager : IModeManager
     public async Task SwitchToMaintenance()
     {
         forceTimeoutSubject.OnNext(Unit.Default);
-
-        await curModeMgr.Stop(bImmediate:false);
-        curModeMgr.Dispose();
-
-        maintAskedSubject.OnNext(true);            
+        maintAskedSubject.OnNext(true);
+        await Task.CompletedTask; // TODO: correct it
     }
 
     public Task SwitchOutMaintenance()
     {
         maintAskedSubject.OnNext(false);
-        return Task.CompletedTask;
+        return Task.CompletedTask; // TODO: correct it
     }
 }

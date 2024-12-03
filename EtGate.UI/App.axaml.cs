@@ -2,18 +2,16 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Domain.Services.InService;
 using Domain.Services.Modes;
 using DummyQrReaderDeviceController;
 using Equipment.Core;
 using Equipment.Core.Message;
 using EtGate.Devices.IER;
 using EtGate.Domain;
-using EtGate.Domain.Peripherals.Passage;
-using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Gate.Functions;
+using EtGate.Domain.Services.Modes;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -120,29 +118,19 @@ public partial class App : Avalonia.Application
        .As(typeof(DeviceStatusSubscriber<>))
        .SingleInstance();
 
-
-        builder.Register(
-            c =>
-            {
-                return new ModeManager(
-                    qr: c.Resolve<DeviceStatusSubscriber<QrReaderStatus>>(), 
-                    offline: c.Resolve<DeviceStatusSubscriber<OfflineValidationSystemStatus>>(),
-                    online: c.Resolve<DeviceStatusSubscriber<OnlineValidationSystemStatus>>(),
-                    gate: c.Resolve<DeviceStatusSubscriber<GateHwStatus>>(),
-                    modePub: c.Resolve<IDeviceStatusPublisher<(Mode, ISubModeMgr)>>(),
-                    activeFuncsPub: c.Resolve<IDeviceStatusPublisher<ActiveFunctionalities>>(),
-                    modeMgrFactory: c.Resolve<ISubModeMgrFactory>(),
-                    scheduler: new EventLoopScheduler(),
-                    timeToCompleteAppBoot_InSeconds:30
-                    );
-            })
+        builder.RegisterType<ModeFacade>()
+            .WithParameter("scheduler", new EventLoopScheduler())
+            .WithParameter("timeToCompleteAppBoot_InSeconds", 30)
             .As<IModeManager>()
             .SingleInstance()
             .AsSelf();
 
-        Domain.Mode m;
-
         builder.RegisterType<MockPassageManager>().As<IGateInServiceController>();
+
+        builder.RegisterType<PeripheralStatuses>()
+            .AsSelf()
+            .SingleInstance()
+            .PropertiesAutowired();
 
         Container = builder.Build();
 

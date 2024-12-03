@@ -1,5 +1,4 @@
 ﻿using Domain.Services.Modes;
-using GateApp;
 using ReactiveUI;
 using System.Windows.Input;
 

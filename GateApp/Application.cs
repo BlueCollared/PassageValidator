@@ -6,7 +6,7 @@ namespace GateApp
 {
     public class Application
     {
-        ModeManager modeManager;
+        ModeEvaluator modeManager;
         QrReaderMgr qrRdrMgr;
 //        DomainEvtMgr domainEvtMgr;
 

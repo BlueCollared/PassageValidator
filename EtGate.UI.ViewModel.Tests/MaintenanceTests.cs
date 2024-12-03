@@ -6,9 +6,8 @@ using EtGate.Domain;
 using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
-using EtGate.Domain.Services.Gate;
+using EtGate.Domain.Services.Modes;
 using EtGate.Domain.Services.Qr;
-using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
@@ -24,28 +23,17 @@ public class MaintenanceTests
 {
     MainWindowViewModel mainVM;
     MaintenanceNavigationService nav;
-    IModeManager mockModeService;
+    ModeFacade mockModeService;
     Dummy dummy = new();
 
-    DeviceStatusSubscriberTest<QrReaderStatus> qr = new();
-    DeviceStatusSubscriberTest<OfflineValidationSystemStatus> offline = new();
-    DeviceStatusSubscriberTest<OnlineValidationSystemStatus> online = new();
-    DeviceStatusSubscriberTest<GateHwStatus> gate = new();
     DeviceStatusBus<(Mode, ISubModeMgr)> modePub = new();
+    //DeviceStatusSubscriberTest<(Mode, bool)> modeSub = new();
     public MaintenanceTests()
-    {        
-        mockModeService = new ModeManager(
-            qr,
-            offline,
-            online,
-            gate,
-            modePub, null,            
-            new SubModeMgrFactory(
-                new Mock<IQrReaderMgr>().Object, 
-                new ValidationMgr(null, new DeviceStatusSubscriberTest<OnlineValidationSystemStatus>(), null, new DeviceStatusSubscriberTest<OfflineValidationSystemStatus>()),
-                new Mock<IGateInServiceController>().Object,
-                new DeviceStatusSubscriberTest<ActiveFunctionalities>()
-            ),
+    {
+        mockModeService = new ModeFacade(PeripheralStatuses.ForTests(),
+            new Mock<ISubModeMgrFactory>().Object,
+            modePub,
+            new Mock<IDeviceStatusPublisher<ActiveFunctionalities>>().Object,
             new EventLoopScheduler()
             );
         nav = new MaintenanceNavigationService(CreateVM, new NavigationEventManager(), mockModeService);

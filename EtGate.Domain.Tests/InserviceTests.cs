@@ -20,7 +20,7 @@ namespace EtGate.Domain.Tests
         DeviceStatusSubscriberTest<ActiveFunctionalities> activeFns = new();
         TestScheduler testScheduler = new TestScheduler();
 
-        ModeManager modeManager;
+        ModeEvaluator modeManager;
         Mock<ISubModeMgr> modeMgrSub;
         private readonly ValidationMgr validationMgr;
         private readonly IQrReaderMgr qrMgr;

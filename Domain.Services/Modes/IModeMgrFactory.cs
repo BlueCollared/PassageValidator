@@ -7,11 +7,6 @@ using Equipment.Core.Message;
 
 namespace Domain.Services.Modes;
 
-public interface ISubModeMgrFactory
-{
-    ISubModeMgr Create(Mode mode);
-}
-
 public class SubModeMgrFactory : ISubModeMgrFactory
 {
     private readonly IQrReaderMgr qrReaderMgr;

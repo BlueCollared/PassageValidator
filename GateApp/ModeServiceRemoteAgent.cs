@@ -6,10 +6,10 @@ namespace EtGate.GateApp
 {
     internal class ModeServiceRemoteAgent
     {
-        private readonly ModeManager modeMgr;
+        private readonly ModeEvaluator modeMgr;
         private readonly IContextRepository contextRepo;
 
-        public ModeServiceRemoteAgent(ModeManager modeMgr, IContextRepository contextRepo)
+        public ModeServiceRemoteAgent(ModeEvaluator modeMgr, IContextRepository contextRepo)
         {
             this.modeMgr = modeMgr;
             this.contextRepo = contextRepo;
