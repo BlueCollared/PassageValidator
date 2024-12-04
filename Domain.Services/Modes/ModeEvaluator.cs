@@ -26,7 +26,7 @@ public class ModeEvaluator : IModeManager
 
     IObservable<EquipmentStatus> equipmentStatusStream;
     
-    private OpMode opModeDemanded;    
+    private OpMode opModeDemanded;
     
     Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
 

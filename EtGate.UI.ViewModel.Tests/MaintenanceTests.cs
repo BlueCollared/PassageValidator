@@ -3,12 +3,10 @@ using Domain.Services.Modes;
 using Equipment.Core;
 using Equipment.Core.Message;
 using EtGate.Domain;
-using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
 using EtGate.Domain.Services;
 using EtGate.Domain.Services.Modes;
 using EtGate.Domain.Services.Qr;
-using EtGate.Domain.ValidationSystem;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using Moq;
@@ -30,7 +28,7 @@ public class MaintenanceTests
     //DeviceStatusSubscriberTest<(Mode, bool)> modeSub = new();
     public MaintenanceTests()
     {
-        mockModeService = new ModeFacade(PeripheralStatuses.ForTests(),
+        mockModeService = new ModeFacade(PeripheralStatuses_Test.ForTests(),
             new Mock<ISubModeMgrFactory>().Object,
             modePub,
             new Mock<IDeviceStatusPublisher<ActiveFunctionalities>>().Object,

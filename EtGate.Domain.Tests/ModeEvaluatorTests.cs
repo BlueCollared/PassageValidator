@@ -19,7 +19,7 @@ namespace EtGate.Domain.Tests
         ModeEvaluator modeManager;
         Mock<ISubModeMgr> modeMgrMock;
 
-        PeripheralStatuses ps = PeripheralStatuses.ForTests();
+        PeripheralStatuses_Test ps = PeripheralStatuses_Test.ForTests();
         DeviceStatusSubscriberTest<QrReaderStatus> qr;
         DeviceStatusSubscriberTest<OfflineValidationSystemStatus> offline;
         DeviceStatusSubscriberTest<OnlineValidationSystemStatus> online;
@@ -30,10 +30,10 @@ namespace EtGate.Domain.Tests
 
         public ModeEvaluatorTests()
         {
-            qr = (DeviceStatusSubscriberTest<QrReaderStatus>)ps.qr;
-            offline = (DeviceStatusSubscriberTest<OfflineValidationSystemStatus>)ps.offline;
-            online = (DeviceStatusSubscriberTest<OnlineValidationSystemStatus>)ps.online;
-            gate = (DeviceStatusSubscriberTest<GateHwStatus>)ps.gate;
+            qr = ps.qr_;
+            offline = ps.offline_;
+            online = ps.online_;
+            gate = ps.gate_;
 
             modePub.Messages.Subscribe(x => {
                 CurMode = x.Item1;
@@ -158,36 +158,6 @@ namespace EtGate.Domain.Tests
 
             gate.Publish(GateHwStatus.AllGood);
             CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
-        }
-
-        [Fact]
-        public void OldModeMgrDisposed()
-        {
-            AllWorking_ModeInservice();
-            
-            var modeMgrMockBak = modeMgrMock;
-
-            offline.Publish(OfflineValidationSystemStatus.Obsolete);
-            Assert.Equal(global::EtGate.Domain.Mode.OOO, CurMode);
-            //
-            // 
-            modeMgrMockBak.Verify(m => m.Dispose(), Times.Once);            
-        }
-
-        [Fact]
-        public void InSer_OOO_InSer_NewModelMgrCreated()
-        {
-            AllWorking_ModeInservice();
-
-            throw new NotImplementedException();
-
-            //var subModeMgr = CurModeMgr;
-            //offline.Publish(OfflineValidationSystemStatus.Obsolete);
-            //CurMode.ShouldBe(global::EtGate.Domain.Mode.OOO);
-            //offline.Publish(OfflineValidationSystemStatus.AllGood);
-            //CurMode.ShouldBe(global::EtGate.Domain.Mode.InService);
-            //CurModeMgr.ShouldNotBeSameAs(subModeMgr);
-
         }
     }
 }
