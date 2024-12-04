@@ -2,6 +2,7 @@
 using EtGate.Domain;
 using EtGate.Domain.Passage.PassageEvts;
 using EtGate.Domain.Peripherals.Qr;
+using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using OneOf;
@@ -114,7 +115,7 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     
     public InServiceMgr(
         IValidate validationMgr,
-        //IGateInServiceController passage,            
+        IGateInServiceController passage,            
         IQrReaderMgr qrMgr,
         DeviceStatusSubscriber<ActiveFunctionalities> activeFunctions
         )

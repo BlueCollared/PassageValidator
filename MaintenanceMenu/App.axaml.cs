@@ -6,12 +6,12 @@ namespace MaintenanceMenu
 {
     public partial class App : Application
     {
-        public void Initialize()
+        public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
         }
 
-        public void OnFrameworkInitializationCompleted()
+        public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)            
                 desktop.MainWindow = new MainWindow();

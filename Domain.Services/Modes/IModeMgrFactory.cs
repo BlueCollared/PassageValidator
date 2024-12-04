@@ -31,7 +31,7 @@ public class SubModeMgrFactory : ISubModeMgrFactory
         {
             case Mode.InService:
                 return new InServiceMgr(validationMgr, 
-                    //passageMgr, 
+                    passageMgr, 
                     qrReaderMgr,
                     actFnSubs);
             default:

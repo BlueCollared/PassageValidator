@@ -3,6 +3,7 @@ using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Passage;
 using EtGate.Domain.Peripherals.Qr;
+using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
 using EtGate.Domain.ValidationSystem;
@@ -20,6 +21,8 @@ namespace EtGate.Domain.Tests
         DeviceStatusSubscriberTest<ActiveFunctionalities> activeFns = new();
         TestScheduler testScheduler = new TestScheduler();
 
+        IGateInServiceController gateInServiceController;
+
         ModeEvaluator modeManager;
         Mock<ISubModeMgr> modeMgrSub;
         private readonly ValidationMgr validationMgr;
@@ -29,9 +32,10 @@ namespace EtGate.Domain.Tests
         {
             onlineValidMgr = new OnlineValidationSystem(new Mock<IDeviceStatusPublisher<OnlineValidationSystemStatus>>().Object);
             offlineValidMgr = new OfflineValidationSystem(new Mock<IDeviceStatusPublisher<OfflineValidationSystemStatus>>().Object);
+            gateInServiceController = new Mock<IGateInServiceController>().Object;
             validationMgr = new ValidationMgr(onlineValidMgr, online, offlineValidMgr, offline);
             qrMgr = new Mock<IQrReaderMgr>().Object;
-            var modeMgrFactoryMock = new InServiceMgr(validationMgr, qrMgr, activeFns);
+            var modeMgrFactoryMock = new InServiceMgr(validationMgr, gateInServiceController, qrMgr, activeFns);
             //modeMgrMock = new Mock<ISubModeMgr>();
 
             // Set up the mock to return the modeMgrMock when Create is called with any Mode value
