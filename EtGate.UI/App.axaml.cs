@@ -37,35 +37,10 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
-        builder.RegisterType<MainWindowViewModel>()
-            .WithParameter(new NamedParameter(bPrimary, true))
-            .WithParameter(new NamedParameter(bEntry, true))
-            .Named<MainWindowViewModel>(PrimaryEntry);
-
-        builder.RegisterType<MainWindowViewModel>()
-            .WithParameter(new NamedParameter(bPrimary, false))
-            .WithParameter(new NamedParameter(bEntry, true))
-            .Named<MainWindowViewModel>(SecondaryEntry);
-
-        builder.RegisterType<MainWindowViewModel>()
-            .WithParameter(new NamedParameter(bPrimary, true))
-            .WithParameter(new NamedParameter(bEntry, false))
-            .Named<MainWindowViewModel>(PrimaryExit);
-
-        builder.RegisterType<MainWindowViewModel>()
-            .WithParameter(new NamedParameter(bPrimary, false))
-            .WithParameter(new NamedParameter(bEntry, false))
-            .Named<MainWindowViewModel>(SecondaryExit);
-
         //builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();
-        
-        AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
-        builder.Register<Func<Type, MaintainenaceViewModelBase>>(context =>
-        {
-            var componentContext = context.Resolve<IComponentContext>();
-            return viewModelType => (MaintainenaceViewModelBase)componentContext.Resolve(viewModelType);
-        });
+        
+
         
         builder.RegisterType<MaintenanceNavigationService>()
            .As<INavigationService>()
