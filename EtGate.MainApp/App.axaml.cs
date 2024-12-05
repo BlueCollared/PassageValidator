@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using EtGate.DependencyInjection;
+using EtGate.UI;
 using EtGate.UI.ViewModels;
 using EtGate.UI.Views;
 
@@ -35,7 +36,10 @@ namespace EtGate.MainApp
             builder.RegisterModule(new GateModule(GateDepNature.Real));
             builder.RegisterModule(new QrModule(QrDepNature.Real));
             builder.RegisterModule(new ValidationModule(ValidationDepNature.Real));
+            builder.RegisterModule(new ModeModule());
             builder.RegisterModule(new TemporaryModule());
+
+            DepBuilder.Do(builder);
 
             Container = builder.Build();
 

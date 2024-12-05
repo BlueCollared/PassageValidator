@@ -1,8 +1,7 @@
 ﻿using EtGate.Domain;
 using GateApp;
-using System;
 
-namespace EtGate.UI;
+namespace EtGate.DependencyInjection;
 
 public class MockContextRepository : IContextRepository
 {

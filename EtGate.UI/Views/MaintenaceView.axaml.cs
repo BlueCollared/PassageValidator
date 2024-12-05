@@ -1,4 +1,3 @@
-using Autofac;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using EtGate.UI.ViewModels;
@@ -10,7 +9,7 @@ public partial class MaintenanceView : UserControl
     private readonly INavigationService _navigationService;
     private readonly IViewFactory _viewLocator;
 
-    public MaintenanceView() : this(App.Container?.Resolve<INavigationEventManager>(), App.Container?.Resolve<IViewFactory>())
+    public MaintenanceView() //: this(App.Container?.Resolve<INavigationEventManager>(), App.Container?.Resolve<IViewFactory>())
     {}
     
     public MaintenanceView(INavigationEventManager? navigationEventManager, IViewFactory? viewLocator)
