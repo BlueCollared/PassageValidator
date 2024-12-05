@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Domain.Services.Modes;
+﻿using Domain.Services.Modes;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using System;
@@ -19,9 +18,7 @@ public class MaintenanceNavigationService : INavigationService
         this.viewModelFactory = viewModelFactory;
         _navigationEventManager = navigationEventManager;
         this.modeService = modeService;
-    }
-
-    public ContentControl host { get; set; }
+    }   
 
     public MaintainenaceViewModelBase CurrentViewModel => _viewModelStack.Any() ? _viewModelStack.Peek() : null;    
 
