@@ -1,15 +1,13 @@
 ﻿using Autofac;
 using Domain.Services.Modes;
-using Equipment.Core.Message;
 using Equipment.Core;
-using EtGate.UI.ViewModels.Maintenance;
-using EtGate.UI.ViewModels;
-using System.Reactive.Concurrency;
-using System;
-using EtGate.Domain.Services.Gate;
-using EtGate.Domain.Services.Modes;
+using Equipment.Core.Message;
 using EtGate.Domain.Services;
-using GateApp;
+using EtGate.Domain.Services.Modes;
+using EtGate.UI.ViewModels;
+using EtGate.UI.ViewModels.Maintenance;
+using System;
+using System.Reactive.Concurrency;
 
 namespace EtGate.UI;
 public static class DepBuilder
