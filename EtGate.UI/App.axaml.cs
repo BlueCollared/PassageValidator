@@ -1,9 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using EtGate.UI.ViewModels;
-using EtGate.UI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reactive.Concurrency;
@@ -37,9 +35,7 @@ public partial class App : Avalonia.Application
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
-        //builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();
-
-        
+        //builder.RegisterType<ModeServiceLocalAgent>().As<IModeCommandService>().SingleInstance();       
 
         
         builder.RegisterType<MaintenanceNavigationService>()
