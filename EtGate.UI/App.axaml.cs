@@ -51,24 +51,5 @@ public partial class App : Avalonia.Application
         
         builder.RegisterType<NavigationEventManager>().As<INavigationEventManager>().SingleInstance();
         builder.RegisterType<MaintenanceViewFactory>().As<IViewFactory>().SingleInstance();
-
-
-        Container = builder.Build();
-
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = Container.ResolveNamed<MainWindowViewModel>(PrimaryEntry)
-            };
-
-            var secondaryWindow = new SecondaryWindow
-            {
-                DataContext = Container.ResolveNamed<MainWindowViewModel>(SecondaryExit)
-            };
-            secondaryWindow.Show();
-        }
-
-        base.OnFrameworkInitializationCompleted();
     }
 }
