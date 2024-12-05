@@ -6,14 +6,18 @@ using EtGate.Domain.Services;
 using EtGate.Domain.Services.Modes;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
+using EtGate.UI.Views;
 using System;
 using System.Reactive.Concurrency;
 
 namespace EtGate.UI;
 public static class DepBuilder
 {
+    // a back-door entry to the DI container, so that it can be used as service locator; but reseve it only only for exceptional scenarios
+    public static IContainer Container { get; set; }
+
     public static void Do(ContainerBuilder builder)
-    {       
+    {        
         const string PrimaryEntry = nameof(PrimaryEntry);
         const string PrimaryExit = nameof(PrimaryExit);
         const string SecondaryExit = nameof(SecondaryExit);
@@ -58,7 +62,7 @@ public static class DepBuilder
            .WithParameter(
                (pi, ctx) => pi.ParameterType == typeof(Func<Type, MaintainenaceViewModelBase>),
                (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
-           );
+           ).SingleInstance();
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 

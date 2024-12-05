@@ -41,7 +41,7 @@ namespace EtGate.MainApp
 
             DepBuilder.Do(builder);
 
-            Container = builder.Build();
+            DepBuilder.Container = Container = builder.Build();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

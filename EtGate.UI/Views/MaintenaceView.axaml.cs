@@ -1,3 +1,4 @@
+using Autofac;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using EtGate.UI.ViewModels;
@@ -9,7 +10,7 @@ public partial class MaintenanceView : UserControl
     private readonly INavigationService _navigationService;
     private readonly IViewFactory _viewLocator;
 
-    public MaintenanceView() //: this(App.Container?.Resolve<INavigationEventManager>(), App.Container?.Resolve<IViewFactory>())
+    public MaintenanceView() : this(DepBuilder.Container?.Resolve<INavigationEventManager>(), DepBuilder.Container?.Resolve<IViewFactory>())
     {}
     
     public MaintenanceView(INavigationEventManager? navigationEventManager, IViewFactory? viewLocator)
@@ -35,3 +36,9 @@ public partial class MaintenanceView : UserControl
         hostControl.Content = view;
     }
 }
+
+//public static class App
+//{
+//    // a back-door entry to the DI container. To be used as service locator but only in exceptional scenarios
+//    public static IContainer Container { get; set; }
+//}
