@@ -98,7 +98,7 @@ public partial class App : Avalonia.Application
            .WithParameter(
                (pi, ctx) => pi.ParameterType == typeof(Func<Type, MaintainenaceViewModelBase>),
                (pi, ctx) => ctx.Resolve<Func<Type, MaintainenaceViewModelBase>>()
-           );
+           ).SingleInstance();
 
         builder.RegisterType<ModeViewModelFactory>().As<IModeViewModelFactory>().SingleInstance();
 
