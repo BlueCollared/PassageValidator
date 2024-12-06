@@ -10,7 +10,7 @@ public partial class MaintenanceView : UserControl
     private readonly INavigationService _navigationService;
     private readonly IViewFactory _viewLocator;
 
-    public MaintenanceView() : this(App.Container?.Resolve<INavigationEventManager>(), App.Container?.Resolve<IViewFactory>())
+    public MaintenanceView() : this(DepBuilder.Container?.Resolve<INavigationEventManager>(), DepBuilder.Container?.Resolve<IViewFactory>())
     {}
     
     public MaintenanceView(INavigationEventManager? navigationEventManager, IViewFactory? viewLocator)

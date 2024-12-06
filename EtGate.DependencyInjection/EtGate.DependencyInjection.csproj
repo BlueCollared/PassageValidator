@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
+    <ProjectReference Include="..\DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj" />
+    <ProjectReference Include="..\EtGate.ViewModel\EtGate.UI.ViewModels.csproj" />
+    <ProjectReference Include="..\IER2\EtGate.IER.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Equipment.Core">
+      <HintPath>..\Domain.Services\Equipment.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Horizon.XmlRpc.Client">
+      <HintPath>..\..\ThirdPartyLib\XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Client.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

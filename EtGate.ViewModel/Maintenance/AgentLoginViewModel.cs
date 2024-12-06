@@ -15,7 +15,7 @@ public class AgentLoginViewModel : MaintainenaceViewModelBase
     {
         this.loginService = loginService;
         this.navService = navService;
-        LoginCommand = ReactiveCommand.Create(Login);
+        LoginCommand = ReactiveCommand.Create(Login, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     public ICommand LoginCommand { get; private set; }    
