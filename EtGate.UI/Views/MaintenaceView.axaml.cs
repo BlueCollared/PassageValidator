@@ -36,9 +36,3 @@ public partial class MaintenanceView : UserControl
         hostControl.Content = view;
     }
 }
-
-//public static class App
-//{
-//    // a back-door entry to the DI container. To be used as service locator but only in exceptional scenarios
-//    public static IContainer Container { get; set; }
-//}
