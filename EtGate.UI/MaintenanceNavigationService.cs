@@ -20,7 +20,7 @@ public class MaintenanceNavigationService : INavigationService
         this.modeService = modeService;
     }   
 
-    public MaintainenaceViewModelBase CurrentViewModel ;//=> _viewModelStack.Any() ? _viewModelStack.Peek() : null;    
+    public MaintainenaceViewModelBase CurrentViewModel { get; private set; }
 
     public void NavigateTo<TViewModel>() where TViewModel : MaintainenaceViewModelBase
     {
@@ -52,16 +52,16 @@ public class MaintenanceNavigationService : INavigationService
 
         var vmTop = _viewModelStack.Peek();
 
-        if (vmTop.GetType() == typeof(AgentLoginViewModel)
-            || vmTop.GetType().IsSubclassOf(typeof(AgentLoginViewModel)))
+        if (vmTop == typeof(AgentLoginViewModel)
+            || vmTop.IsSubclassOf(typeof(AgentLoginViewModel)))
         {
             _viewModelStack.Clear();
             modeService.SwitchOutMaintenance();
         }
         else
         {
-            MaintainenaceViewModelBase viewModel = CallEstablishVM(vmTop, viewModelFactory);
-            _navigationEventManager.RaiseNavigated(viewModel);            
+            CurrentViewModel = CallEstablishVM(vmTop, viewModelFactory);
+            _navigationEventManager.RaiseNavigated(CurrentViewModel);            
         }
     }
 
@@ -84,7 +84,7 @@ public class MaintenanceNavigationService : INavigationService
         return viewModelFactory(viewModelType);        
     }
 
-    public Stack<Type> ViewModelStack => new Stack<Type>(_viewModelStack);
+    public Stack<Type> ViewModelStackCopy => new Stack<Type>(_viewModelStack);
 
     private readonly Stack<Type> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;

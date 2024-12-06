@@ -6,8 +6,9 @@
 			 xmlns:vm="using:EtGate.UI.ViewModels.Maintenance"
 			 x:DataType="vm:AgentLoginViewModel"
              x:Class="EtGate.UI.Views.Maintenance.AgentLoginView">
-	<Grid>
+	<StackPanel>
 		<TextBlock>Agent Login</TextBlock>
 		<Button Content="Validate" Command="{Binding LoginCommand}" />
-	</Grid>
+		<Button Content="Go Back" Command="{Binding GoBackCommand}"/>
+	</StackPanel>
 </UserControl>

@@ -10,6 +10,7 @@
 		<TextBlock Text="Qr status"/>
 		<TextBlock Text="{Binding bQrWorking}"/>
 		<Button Content="Flap Maintenance" Command="{Binding FlapMaintenanceSelectedCommand}"/>
+		<Button Content="Go Back" Command="{Binding GoBackCommand}"/>
 		</StackPanel>
 	
 </UserControl>
