@@ -20,16 +20,16 @@ public class MaintenanceNavigationService : INavigationService
         this.modeService = modeService;
     }   
 
-    public MaintainenaceViewModelBase CurrentViewModel => _viewModelStack.Any() ? _viewModelStack.Peek() : null;    
+    public MaintainenaceViewModelBase CurrentViewModel ;//=> _viewModelStack.Any() ? _viewModelStack.Peek() : null;    
 
     public void NavigateTo<TViewModel>() where TViewModel : MaintainenaceViewModelBase
     {
-        CurrentViewModel?.Dispose();        
+        CurrentViewModel?.Dispose();
 
-        TViewModel viewModel = EstablishVM<TViewModel>(viewModelFactory);
-
-        _viewModelStack.Push(viewModel);
-        _navigationEventManager.RaiseNavigated(viewModel);
+        CurrentViewModel = EstablishVM<TViewModel>(viewModelFactory);
+        
+        _viewModelStack.Push(CurrentViewModel.GetType());
+        _navigationEventManager.RaiseNavigated(CurrentViewModel);
     }
 
     public void GoBack()
@@ -40,8 +40,9 @@ public class MaintenanceNavigationService : INavigationService
             return;
         }
 
-        var vmTop = _viewModelStack.Pop();
-        vmTop.Dispose();
+        var _ = _viewModelStack.Pop();
+        CurrentViewModel?.Dispose();
+        CurrentViewModel = null;
 
         if (!_viewModelStack.Any())
         {
@@ -49,7 +50,7 @@ public class MaintenanceNavigationService : INavigationService
             return;
         }
 
-        vmTop = _viewModelStack.Pop();
+        var vmTop = _viewModelStack.Peek();
 
         if (vmTop.GetType() == typeof(AgentLoginViewModel)
             || vmTop.GetType().IsSubclassOf(typeof(AgentLoginViewModel)))
@@ -59,8 +60,8 @@ public class MaintenanceNavigationService : INavigationService
         }
         else
         {
-            MaintainenaceViewModelBase viewModel = CallEstablishVM(vmTop, viewModelFactory);            
-            _viewModelStack.Push(viewModel);
+            MaintainenaceViewModelBase viewModel = CallEstablishVM(vmTop, viewModelFactory);
+            _navigationEventManager.RaiseNavigated(viewModel);            
         }
     }
 
@@ -75,17 +76,17 @@ public class MaintenanceNavigationService : INavigationService
     }
 
     private static MaintainenaceViewModelBase 
-        CallEstablishVM(MaintainenaceViewModelBase x, 
+        CallEstablishVM(Type viewModelType, 
         Func<Type, MaintainenaceViewModelBase> viewModelFactory        
         )
     {
-        Type viewModelType = x.GetType();
+        //Type viewModelType = x.GetType();
         return viewModelFactory(viewModelType);        
     }
 
-    public Stack<MaintainenaceViewModelBase> ViewModelStack => new Stack<MaintainenaceViewModelBase>(_viewModelStack);
+    public Stack<Type> ViewModelStack => new Stack<Type>(_viewModelStack);
 
-    private readonly Stack<MaintainenaceViewModelBase> _viewModelStack = new();
+    private readonly Stack<Type> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
     private readonly INavigationEventManager _navigationEventManager;    
 
