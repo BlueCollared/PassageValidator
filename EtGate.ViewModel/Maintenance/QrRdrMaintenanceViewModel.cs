@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-namespace EtGate.UI.ViewModels.Maintenance
+﻿namespace EtGate.UI.ViewModels.Maintenance
 {
     public class QrRdrMaintenanceViewModel : MaintainenaceViewModelBase
     {
@@ -10,7 +8,7 @@ namespace EtGate.UI.ViewModels.Maintenance
 
         public override void Dispose()
         {
-            
+
         }
     }
 }

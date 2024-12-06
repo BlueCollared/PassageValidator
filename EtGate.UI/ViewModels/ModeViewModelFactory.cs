@@ -13,7 +13,7 @@ namespace EtGate.UI.ViewModels
         private readonly INavigationService maintenanceNavigationService;
         private readonly DeviceStatusSubscriber<QrReaderStatus> qr;
 
-        public ModeViewModelFactory(IModeManager modeService, 
+        public ModeViewModelFactory(IModeManager modeService,
             INavigationService maintenanceNavigationService,
             DeviceStatusSubscriber<QrReaderStatus> qr = null)
         {
@@ -34,6 +34,6 @@ namespace EtGate.UI.ViewModels
                 Mode.Maintenance => bPrimary ? new MaintenanceViewModel(modeService, maintenanceNavigationService) : new MaintenanceViewModelPassive(modeService),
                 _ => throw new ArgumentException("Unknown mode")
             };
-        }        
+        }
     }
 }

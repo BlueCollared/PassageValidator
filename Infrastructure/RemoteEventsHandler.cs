@@ -10,10 +10,10 @@ namespace Infrastructure
         private readonly IModeManager modeService;
 
         public MainAppServer(
-            IModeManager modeService            
+            IModeManager modeService
             )
         {
-            this.modeService = modeService;            
+            this.modeService = modeService;
         }
 
         public void StartNamedPipeListener()
@@ -64,7 +64,7 @@ namespace Infrastructure
         }
 
         private ChangeModeResponse ProcessChangeMode(ChangeMode reqA)
-        {            
+        {
             //modeService.ChangeMode(reqA.mode, TimeSpan.FromSeconds(20));
 
             throw new NotImplementedException();

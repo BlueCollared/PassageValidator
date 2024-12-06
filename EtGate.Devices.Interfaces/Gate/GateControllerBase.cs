@@ -6,7 +6,7 @@ namespace EtGate.Devices.Interfaces.Gate;
 
 abstract public class GateControllerBase : //StatusStreamBase<GateHwStatus>, 
     IGateController, IGateInServiceController, IGateModeController, IDeviceDate
-{    
+{
     // migrate it to the test class where it is needed. Real implmentation is not even using it
     //readonly protected ReplaySubject<EventInNominalMode> EventsInNominalModeSubject = new();
 
@@ -20,5 +20,5 @@ abstract public class GateControllerBase : //StatusStreamBase<GateHwStatus>,
     public abstract bool Reboot(bool bHardboot);
     public abstract bool Authorize(int nAuthorizations, bool bEntry);
     public abstract bool SetDate(DateTimeOffset dt);
-    public abstract Option<DateTimeOffset> GetDate();    
+    public abstract Option<DateTimeOffset> GetDate();
 }

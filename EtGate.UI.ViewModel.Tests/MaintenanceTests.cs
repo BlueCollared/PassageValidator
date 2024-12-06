@@ -35,7 +35,7 @@ public class MaintenanceTests
             new EventLoopScheduler()
             );
         nav = new MaintenanceNavigationService(CreateVM, new NavigationEventManager(), mockModeService);
-        mainVM = new MainWindowViewModel(new ModeViewModelFactory(mockModeService, nav), 
+        mainVM = new MainWindowViewModel(new ModeViewModelFactory(mockModeService, nav),
             modePub, true, true);
     }
 
@@ -51,7 +51,7 @@ public class MaintenanceTests
     {
         mockModeService.SwitchToMaintenance();
         mainVM.CurrentModeViewModel.ShouldBeOfType<MaintenanceViewModel>();
-        
+
         //((MaintenanceViewModel) mainVM.CurrentModeViewModel).Init();
         nav.CurrentViewModel.ShouldBeOfType<AgentLoginViewModel>();
         nav.CurrentViewModel.IsDisposed.ShouldBeFalse();
@@ -162,6 +162,6 @@ public class MaintenanceTests
             throw new NotImplementedException();
     }
 
-    
+
     Subject<Mode> subj = new();
 }

@@ -38,7 +38,7 @@ public class PeripheralStatuses_Test : PeripheralStatuses
     public static PeripheralStatuses_Test AllGood()
     {
         PeripheralStatuses_Test s = ForTests();
-        
+
         s.offline_.Publish(OfflineValidationSystemStatus.AllGood);
         s.online_.Publish(OnlineValidationSystemStatus.Disconnected);
         s.gate_.Publish(GateHwStatus.AllGood);

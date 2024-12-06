@@ -8,16 +8,16 @@ public record Intrusion(
 public record Fraud(
     bool bEntry);
 
-public record OpenDoor(    
+public record OpenDoor(
     bool bEntry // This value is bounced back, so that the client doesn't has to do any processing. may think of removing it
     );
 
-public record PassengerSteppedBack(    
+public record PassengerSteppedBack(
     bool bEntry // This value is bounced back, so that the client doesn't has to do any processing. may think of removing it    
     );
 
-public record PassageTimeout(    
-    bool bEntry    
+public record PassageTimeout(
+    bool bEntry
     );
 
 public record PassageDone(

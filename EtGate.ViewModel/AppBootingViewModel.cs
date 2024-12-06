@@ -1,7 +1,6 @@
 ﻿using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain.Peripherals.Qr;
-using GateApp;
 using ReactiveUI;
 using System.Reactive.Linq;
 
@@ -30,7 +29,7 @@ namespace EtGate.UI.ViewModels
         //public string QrRdrStatus => _qrRdrStatus.Value;
         public void Dispose()
         {
-            
+
         }
     }
 }

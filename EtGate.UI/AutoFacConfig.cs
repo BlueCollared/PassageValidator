@@ -14,12 +14,12 @@ public static class AutoFacConfig
 
         var viewModelTypes = assembly.GetTypes()
                                      .Where(t => t.IsSubclassOf(viewModelType) && !t.IsAbstract)
-                                     .Where (t => t != typeof(MainWindowViewModel))
+                                     .Where(t => t != typeof(MainWindowViewModel))
                                      .ToList();
 
-        foreach (var vmType in viewModelTypes)        
+        foreach (var vmType in viewModelTypes)
             builder.RegisterType(vmType)
                    .InstancePerDependency()
-                   .OnRelease(viewModel => (viewModel as IDisposable)?.Dispose());        
+                   .OnRelease(viewModel => (viewModel as IDisposable)?.Dispose());
     }
 }

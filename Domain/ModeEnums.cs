@@ -20,6 +20,6 @@
     public class ActiveFunctionalities
     {
         public bool entry;
-        public bool exit;        
+        public bool exit;
     }
 }

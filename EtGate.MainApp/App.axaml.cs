@@ -27,12 +27,13 @@ namespace EtGate.MainApp
 
         public
             //static 
-            Autofac.IContainer? Container { get; private set; }
+            Autofac.IContainer? Container
+        { get; private set; }
 
         public override void OnFrameworkInitializationCompleted()
         {
             var builder = new ContainerBuilder();
-            
+
             builder.RegisterModule(new GateModule(GateDepNature.Real));
             builder.RegisterModule(new QrModule(QrDepNature.Real));
             builder.RegisterModule(new ValidationModule(ValidationDepNature.Real));

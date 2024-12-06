@@ -9,18 +9,18 @@ using System.Windows.Input;
 namespace EtGate.UI.ViewModels.Maintenance
 {
     public class MaintenanceMenuViewModel : MaintainenaceViewModelBase
-    {        
+    {
         private readonly IQrReaderMgr qrReaderMgr;
 
         public bool bQrWorking { get; set; }
 
         public MaintenanceMenuViewModel(INavigationService navService, IQrReaderMgr qrReaderMgr, DeviceStatusSubscriber<QrReaderStatus> entryQr) : base(navService)
-        {            
+        {
             this.qrReaderMgr = qrReaderMgr;
             entryQr.Messages.Subscribe(onNext:
                 x => { QrRdrStatusChanged(x); });
 
-            FlapMaintenanceSelectedCommand = ReactiveCommand.Create(()=>navService.NavigateTo<FlapMaintenanceViewModel>());
+            FlapMaintenanceSelectedCommand = ReactiveCommand.Create(() => navService.NavigateTo<FlapMaintenanceViewModel>());
         }
 
         private void QrRdrStatusChanged(QrReaderStatus x)
@@ -34,6 +34,6 @@ namespace EtGate.UI.ViewModels.Maintenance
             IsDisposed = true;
         }
 
-        public ICommand FlapMaintenanceSelectedCommand { get; private set; }        
+        public ICommand FlapMaintenanceSelectedCommand { get; private set; }
     }
 }

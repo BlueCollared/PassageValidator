@@ -13,7 +13,7 @@ using System.Reactive.Subjects;
 namespace EtGate.Domain.Tests
 {
     internal class System
-    {        
+    {
         public ValidationMgr validation;
         public QrReaderMgr qr;
         public GateMgr gate;
@@ -27,12 +27,12 @@ namespace EtGate.Domain.Tests
 
     internal class MockSytemBuilder
     {
-        public QrReaderStatus qrStatus = QrReaderStatus.AllGood;        
+        public QrReaderStatus qrStatus = QrReaderStatus.AllGood;
 
         public System Build()
         {
             System r = new();
-            
+
             // Qr
             var mockQrReaderStatus = new Mock<DeviceStatusSubscriber<QrReaderStatus>>();
             var dummyQr = new Mock<IQrReaderController>();
@@ -45,8 +45,8 @@ namespace EtGate.Domain.Tests
             var mockGateStatus = new Mock<IMessageSubscriber<GateHwStatus>>();
             mockGateStatus.Setup(m => m.Messages).Returns(r.subjGateStatus);
 
-            var dummyGate = new Mock<IDeviceDate>();            
-            r.gate = new GateMgr(dummyGate.Object, new DeviceStatusBus<GateHwStatus>(), new GateMgr.Config());            
+            var dummyGate = new Mock<IDeviceDate>();
+            r.gate = new GateMgr(dummyGate.Object, new DeviceStatusBus<GateHwStatus>(), new GateMgr.Config());
 
             // Valiation
             var mockOfflineStatus = new Mock<DeviceStatusBus<OfflineValidationSystemStatus>>();
@@ -54,7 +54,7 @@ namespace EtGate.Domain.Tests
             OfflineValidationSystem offline = new(mockOfflineStatus.Object);
 
             var mockOnlineStatus = new Mock<DeviceStatusBus<OnlineValidationSystemStatus>>();
-            mockOnlineStatus.Setup(m => m.Messages).Returns(r.subjOnlineStatus);            
+            mockOnlineStatus.Setup(m => m.Messages).Returns(r.subjOnlineStatus);
             OnlineValidationSystem online = new(mockOnlineStatus.Object);
 
             r.validation = new ValidationMgr(online, mockOnlineStatus.Object, offline, mockOfflineStatus.Object);

@@ -20,13 +20,14 @@ namespace EtGate.Domain.Services.Modes
             this.modeSub = modeSub;
             //curModeMgr = modeMgrFactory.Create(Mode.AppBooting);
 
-            modeSub.Messages.ForEachAsync(async x => {
+            modeSub.Messages.ForEachAsync(async x =>
+            {
                 Mode mode = x.Item1;
                 bool bImmediate = x.Item2;
 
                 await (curModeMgr?.Stop(bImmediate) ?? Task.CompletedTask);
                 curModeMgr?.Dispose();
-                
+
                 curModeMgr = modeMgrFactory.Create(mode);
                 modeEffectuatedPub?.Publish((mode, curModeMgr));
             });

@@ -9,7 +9,7 @@ namespace EtGate.UI.ViewModels
     public class InServiceViewModel : ModeViewModel, IDisposable
     {
         //private readonly IInServiceMgr _inServiceMgr;
-        
+
         private readonly bool _isEntry;
 
         //private readonly ObservableAsPropertyHelper<string> _notificationMessage;
@@ -21,7 +21,7 @@ namespace EtGate.UI.ViewModels
         //    private set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
         //}
         SideState state;
-        
+
         public SideState CurState
         {
             get => state;
@@ -30,9 +30,9 @@ namespace EtGate.UI.ViewModels
 
         IDisposable subscription;
 
-        public InServiceViewModel(            
+        public InServiceViewModel(
             bool isEntry, IModeManager modeService, IInServiceMgr inServiceMgr) : base(modeService)
-        {            
+        {
             _isEntry = isEntry;
 
             if (_isEntry)
@@ -49,7 +49,7 @@ namespace EtGate.UI.ViewModels
 
         private static SideState ConvertForEntry(State state)
         {
-            switch(state)
+            switch (state)
             {
                 case Idle idle:
                     return SideState.Idle_Polling();
@@ -59,9 +59,9 @@ namespace EtGate.UI.ViewModels
                     return SideState.PassageAuthroized(x.info);
                 case ValidationAtExitInProgress:
                 case PassageAuthroizedAtExit:
-                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();                
+                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();
             }
-            throw new NotImplementedException();            
+            throw new NotImplementedException();
         }
 
         private static SideState ConvertForExit(State state)
@@ -72,7 +72,7 @@ namespace EtGate.UI.ViewModels
                     return SideState.Idle_Polling();
                 case ValidationAtEntryInProgress:
                 case PassageAuthroizedAtEntry:
-                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();                
+                    return SideState.ProhibitedBecausePassageInProgressFromOtherSide();
                 case ValidationAtExitInProgress x:
                     return SideState.ValidationInProgress(x.info);
                 case PassageAuthroizedAtExit x:

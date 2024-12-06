@@ -17,7 +17,7 @@ namespace EtGate.QrReader.Proxy
     {
         public bool x { get; set; }
     }
-    
+
     public class StartReq
     { }
 

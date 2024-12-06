@@ -12,7 +12,7 @@ public class GateMgr
         public ClockSynchronizer.Config ClockSynchronizerConfig { get; set; } = new();
     }
 
-    public IDeviceDate deviceDate { get; private set;}
+    public IDeviceDate deviceDate { get; private set; }
     private readonly DeviceStatusSubscriber<GateHwStatus> statusStream;
 
     public IObservable<GateHwStatus> StatusStream => statusStream.Messages;
@@ -31,22 +31,23 @@ public class GateMgr
         this.statusStream = statusStream ?? throw new ArgumentNullException(nameof(statusStream));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
 
-        ClockSynchronizerFactory = () => {
+        ClockSynchronizerFactory = () =>
+        {
             return new ClockSynchronizer(deviceDate
-                , ()=>DateTimeOffset.Now
-                , (ClockSynchronizer.DateChanged d)=>{}
+                , () => DateTimeOffset.Now
+                , (ClockSynchronizer.DateChanged d) => { }
                 , this.config.ClockSynchronizerConfig);
         };
 
-            statusStream.Messages
-            .Select(x => x.bConnected)
-            .DistinctUntilChanged()
-            .Subscribe(bConnected =>
-            {
-                if (!bConnected)
-                    session?.Dispose();
-                else
-                    session = new GateConnectedSession(ClockSynchronizerFactory);                    
-            });
+        statusStream.Messages
+        .Select(x => x.bConnected)
+        .DistinctUntilChanged()
+        .Subscribe(bConnected =>
+        {
+            if (!bConnected)
+                session?.Dispose();
+            else
+                session = new GateConnectedSession(ClockSynchronizerFactory);
+        });
     }
 }

@@ -36,7 +36,7 @@ namespace Domain.Services.Modes
 
     public record EquipmentStatus(
         QrReaderStatus QrEntry,// = ModuleStatus.Unknown,        
-        //ValidationSystemStatus ValidationAPI,//; = ModuleStatus.Unknown,        
+                               //ValidationSystemStatus ValidationAPI,//; = ModuleStatus.Unknown,        
         OfflineValidationSystemStatus offline,
         OnlineValidationSystemStatus online,
         GateHwStatus gateStatus,

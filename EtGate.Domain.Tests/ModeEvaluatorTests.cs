@@ -15,7 +15,7 @@ namespace EtGate.Domain.Tests
     {
         readonly TimeSpan timeToCompleteAppBoot = TimeSpan.FromSeconds(30);
         TestScheduler testScheduler = new TestScheduler();
-        
+
         ModeEvaluator modeManager;
         Mock<ISubModeMgr> modeMgrMock;
 
@@ -35,7 +35,8 @@ namespace EtGate.Domain.Tests
             online = ps.online_;
             gate = ps.gate_;
 
-            modePub.Messages.Subscribe(x => {
+            modePub.Messages.Subscribe(x =>
+            {
                 CurMode = x.Item1;
             });
             var modeMgrFactoryMock = new Mock<ISubModeMgrFactory>();
@@ -46,7 +47,8 @@ namespace EtGate.Domain.Tests
 
             modeMgrFactoryMock
                 .Setup(f => f.Create(It.IsAny<global::EtGate.Domain.Mode>()))
-                .Returns(() => {
+                .Returns(() =>
+                {
                     modeMgrMock = new Mock<ISubModeMgr>();
                     return modeMgrMock.Object;
                 });
@@ -110,7 +112,7 @@ namespace EtGate.Domain.Tests
 
             offline.Publish(OfflineValidationSystemStatus.Obsolete);
             online.Publish(OnlineValidationSystemStatus.Disconnected);
-            
+
             Assert.Equal(global::EtGate.Domain.Mode.OOO,
                 CurMode
                 );

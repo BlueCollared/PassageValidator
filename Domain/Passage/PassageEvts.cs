@@ -1,6 +1,6 @@
 ﻿namespace EtGate.Domain.Passage.PassageEvts;
 
-public record SubTicket (int ticketId, int seqNumInThisTicket);
+public record SubTicket(int ticketId, int seqNumInThisTicket);
 
 public record Intrusion(
     bool bEntry,

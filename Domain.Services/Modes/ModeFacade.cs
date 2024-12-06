@@ -11,7 +11,7 @@ public class ModeFacade : IModeManager
     ModeEvaluator evaluator;
     ModeEffectuator effectuator;
 
-    Mode CurMode {get;  set;} // TODO: remove it. nobody is using it
+    Mode CurMode { get; set; } // TODO: remove it. nobody is using it
 
     public OpMode ModeDemanded { get => evaluator.ModeDemanded; set => evaluator.ModeDemanded = value; }
 
@@ -23,11 +23,11 @@ public class ModeFacade : IModeManager
 
     public async Task SwitchToMaintenance()
     {
-        await evaluator.SwitchToMaintenance();            
+        await evaluator.SwitchToMaintenance();
     }
 
     DeviceStatusBus<(Mode, bool)> busInternal = new();
-    
+
     public ModeFacade(
         PeripheralStatuses peripheralStatuses,
         ISubModeMgrFactory subModeMgrFactory,

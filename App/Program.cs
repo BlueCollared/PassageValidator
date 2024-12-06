@@ -20,7 +20,7 @@ namespace App
 
             //ModeManager modeManager = new ModeManager(qrRdrMgr, validationMgr, new PassageMgr());
             //PassageMgr passageMgr = new PassageMgr();
-            
+
             qrRdr.Start();
 
             //domainEvtMgr = new DomainEvtMgr(new DomainEvtDbPersister(), qrRdrMgr);

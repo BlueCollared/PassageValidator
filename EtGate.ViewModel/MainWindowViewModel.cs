@@ -9,7 +9,7 @@ namespace EtGate.UI.ViewModels;
 // `bEntry` and `bPrimary` are smells. But to avoid them, means making 4 new classes. I don't know better way.
 public class MainWindowViewModel : ViewModelBase
 {
-    
+
     private readonly IModeViewModelFactory modeViewModelFactory;
     private readonly bool bEntry;
     private readonly bool bPrimary;
@@ -18,7 +18,7 @@ public class MainWindowViewModel : ViewModelBase
         DeviceStatusSubscriber<(Mode, ISubModeMgr)> modeService,
         bool bEntry,
         bool bPrimary)
-    {        
+    {
         this.modeViewModelFactory = modeViewModelFactory;
         this.bEntry = bEntry;
         this.bPrimary = bPrimary;
@@ -51,5 +51,5 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private Mode? curMode = null;    
+    private Mode? curMode = null;
 }

@@ -8,7 +8,8 @@ namespace EtGate.UI.ViewModels
     {
     }
 
-    public abstract class MaintainenaceViewModelBase : ViewModelBase, IDisposable {
+    public abstract class MaintainenaceViewModelBase : ViewModelBase, IDisposable
+    {
         private readonly INavigationService navigationService;
 
         public ICommand GoBackCommand { get; protected set; }
@@ -19,7 +20,7 @@ namespace EtGate.UI.ViewModels
             GoBackCommand = ReactiveCommand.Create(() => navigationService.GoBack());
         }
 
-        public bool IsDisposed { get; protected set;}= false;
+        public bool IsDisposed { get; protected set; } = false;
         public abstract void Dispose();
     }
 

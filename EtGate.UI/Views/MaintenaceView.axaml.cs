@@ -11,8 +11,8 @@ public partial class MaintenanceView : UserControl
     private readonly IViewFactory _viewLocator;
 
     public MaintenanceView() : this(DepBuilder.Container?.Resolve<INavigationEventManager>(), DepBuilder.Container?.Resolve<IViewFactory>())
-    {}
-    
+    { }
+
     public MaintenanceView(INavigationEventManager? navigationEventManager, IViewFactory? viewLocator)
     {
         InitializeComponent();

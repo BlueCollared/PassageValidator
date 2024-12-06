@@ -6,7 +6,6 @@ using EtGate.Domain.Services;
 using EtGate.Domain.Services.Modes;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
-using EtGate.UI.Views;
 using System;
 using System.Reactive.Concurrency;
 
@@ -17,7 +16,7 @@ public static class DepBuilder
     public static IContainer Container { get; set; }
 
     public static void Do(ContainerBuilder builder)
-    {        
+    {
         const string PrimaryEntry = nameof(PrimaryEntry);
         const string PrimaryExit = nameof(PrimaryExit);
         const string SecondaryExit = nameof(SecondaryExit);
@@ -44,8 +43,8 @@ public static class DepBuilder
         builder.RegisterType<MainWindowViewModel>()
             .WithParameter(new NamedParameter(bPrimary, false))
             .WithParameter(new NamedParameter(bEntry, false))
-            .Named<MainWindowViewModel>(SecondaryExit);        
-        
+            .Named<MainWindowViewModel>(SecondaryExit);
+
         AutoFacConfig.RegisterViewModels_ExceptRootVM(builder);
 
         builder.Register<Func<Type, MaintainenaceViewModelBase>>(context =>
@@ -87,7 +86,7 @@ public static class DepBuilder
             .WithParameter("timeToCompleteAppBoot_InSeconds", 30)
             .As<IModeManager>()
             .SingleInstance()
-            .AsSelf();        
+            .AsSelf();
 
         builder.RegisterType<PeripheralStatuses>()
             .AsSelf()

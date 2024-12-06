@@ -15,7 +15,7 @@ namespace EtGate.Domain.Services.Validation
         }
 
         //public IObservable<OnlineValidationSystemStatus> StatusStream
-          //  => statusMgr.mes
+        //  => statusMgr.mes
 
         //public bool IsWorking => statusMgr.IsWorking;
 

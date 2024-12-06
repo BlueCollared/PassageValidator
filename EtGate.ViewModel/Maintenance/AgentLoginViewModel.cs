@@ -18,7 +18,7 @@ public class AgentLoginViewModel : MaintainenaceViewModelBase
         LoginCommand = ReactiveCommand.Create(Login, outputScheduler: RxApp.MainThreadScheduler);
     }
 
-    public ICommand LoginCommand { get; private set; }    
+    public ICommand LoginCommand { get; private set; }
 
     public override void Dispose()
     {

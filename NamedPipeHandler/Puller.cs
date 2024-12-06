@@ -6,12 +6,12 @@ namespace NamedPipeLibrary
     public class Puller
     {
         private readonly string _pipeName;
-        public delegate void HandleNotification(object notification);        
+        public delegate void HandleNotification(object notification);
 
         private readonly HandleNotification _notificationHandler;
         private readonly List<Type> notificationTypes;
 
-        public Puller(string pipeName, HandleNotification notificationHandler, 
+        public Puller(string pipeName, HandleNotification notificationHandler,
             List<Type> notificationTypes
             )
         {
@@ -29,7 +29,7 @@ namespace NamedPipeLibrary
                     await pipeServer.WaitForConnectionAsync();
 
                     using (var reader = new StreamReader(pipeServer))
-                    {                        
+                    {
                         //var msgWhole = await reader.ReadToEndAsync();
                         var msgWhole = reader.ReadToEnd();
                         var wrapper = JsonSerializer.Deserialize<MessageWrapper>(msgWhole);
@@ -44,10 +44,10 @@ namespace NamedPipeLibrary
                                 _notificationHandler(message);
                                 break;
                             }
-                        }                        
-                    }                    
+                        }
+                    }
                 }
             }
         }
-    }    
+    }
 }

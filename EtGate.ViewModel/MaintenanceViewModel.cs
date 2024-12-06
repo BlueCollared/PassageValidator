@@ -9,11 +9,11 @@ public class MaintenanceViewModel : ModeViewModel
 
     public MaintenanceViewModel(IModeManager modeService, INavigationService navigationService) : base(modeService)
     {
-        _navigationService = navigationService;        
-    }   
+        _navigationService = navigationService;
+    }
 
     public void Init()
-    {        
+    {
         _navigationService.NavigateTo<AgentLoginViewModel>();
     }
 }

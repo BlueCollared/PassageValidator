@@ -1,9 +1,7 @@
-﻿using Equipment.Core;
-
-namespace EtGate.Domain.ValidationSystem
+﻿namespace EtGate.Domain.ValidationSystem
 {
-    public record OnlineValidationSystemStatus (bool bConnected) //: ModuleStatus
-    {        
+    public record OnlineValidationSystemStatus(bool bConnected) //: ModuleStatus
+    {
         public bool IsAvailable => bConnected;
 
         public static OnlineValidationSystemStatus Disconnected => new OnlineValidationSystemStatus(bConnected: false);

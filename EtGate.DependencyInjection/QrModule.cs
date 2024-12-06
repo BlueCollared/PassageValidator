@@ -23,7 +23,7 @@ public class QrModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         // TODO: correct this switch staement
-        switch(dep)
+        switch (dep)
         {
             case QrDepNature.Real:
                 builder.RegisterType<DummyQrReaderDeviceController.DummyQrReaderDeviceController>()

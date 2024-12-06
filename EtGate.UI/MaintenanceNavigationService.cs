@@ -9,8 +9,8 @@ namespace EtGate.UI;
 
 public class MaintenanceNavigationService : INavigationService
 {
-    public MaintenanceNavigationService(        
-        Func<Type, MaintainenaceViewModelBase> viewModelFactory,         
+    public MaintenanceNavigationService(
+        Func<Type, MaintainenaceViewModelBase> viewModelFactory,
          INavigationEventManager navigationEventManager,
         IModeManager modeService
         )
@@ -18,7 +18,7 @@ public class MaintenanceNavigationService : INavigationService
         this.viewModelFactory = viewModelFactory;
         _navigationEventManager = navigationEventManager;
         this.modeService = modeService;
-    }   
+    }
 
     public MaintainenaceViewModelBase CurrentViewModel { get; private set; }
 
@@ -27,7 +27,7 @@ public class MaintenanceNavigationService : INavigationService
         CurrentViewModel?.Dispose();
 
         CurrentViewModel = EstablishVM<TViewModel>(viewModelFactory);
-        
+
         _viewModelStack.Push(CurrentViewModel.GetType());
         _navigationEventManager.RaiseNavigated(CurrentViewModel);
     }
@@ -61,34 +61,34 @@ public class MaintenanceNavigationService : INavigationService
         else
         {
             CurrentViewModel = CallEstablishVM(vmTop, viewModelFactory);
-            _navigationEventManager.RaiseNavigated(CurrentViewModel);            
+            _navigationEventManager.RaiseNavigated(CurrentViewModel);
         }
     }
 
-    private static TViewModel EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory) 
+    private static TViewModel EstablishVM<TViewModel>(Func<Type, MaintainenaceViewModelBase> viewModelFactory)
         where TViewModel : MaintainenaceViewModelBase
     {
-        Type viewModelType = typeof(TViewModel);        
+        Type viewModelType = typeof(TViewModel);
         MaintainenaceViewModelBase viewModelBase = viewModelFactory(viewModelType);
         TViewModel viewModel = (TViewModel)viewModelBase;
-        
+
         return viewModel;
     }
 
-    private static MaintainenaceViewModelBase 
-        CallEstablishVM(Type viewModelType, 
-        Func<Type, MaintainenaceViewModelBase> viewModelFactory        
+    private static MaintainenaceViewModelBase
+        CallEstablishVM(Type viewModelType,
+        Func<Type, MaintainenaceViewModelBase> viewModelFactory
         )
     {
         //Type viewModelType = x.GetType();
-        return viewModelFactory(viewModelType);        
+        return viewModelFactory(viewModelType);
     }
 
     public Stack<Type> ViewModelStackCopy => new Stack<Type>(_viewModelStack);
 
     private readonly Stack<Type> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
-    private readonly INavigationEventManager _navigationEventManager;    
+    private readonly INavigationEventManager _navigationEventManager;
 
-    private readonly IModeManager modeService;    
+    private readonly IModeManager modeService;
 }

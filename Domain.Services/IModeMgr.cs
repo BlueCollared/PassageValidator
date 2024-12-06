@@ -3,7 +3,7 @@
 namespace Domain.Services.InService
 {
     public interface ISubModeMgr : IDisposable
-    {        
+    {
         public abstract Task Stop(bool bImmediate);
     }
 

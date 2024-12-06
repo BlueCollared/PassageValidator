@@ -1,6 +1,4 @@
-﻿using Equipment.Core;
-
-//using IFS2.Equipment.DriverInterface;
+﻿//using IFS2.Equipment.DriverInterface;
 using LanguageExt;
 
 namespace EtGate.Domain.Peripherals.Passage;
@@ -47,17 +45,17 @@ public record GateHwStatus_(
     bool bSystemPoweredByUPS
 )
 {
-    public static GateHwStatus_ AllGood => new GateHwStatus_(GatePhysicalState.NOMINAL, bEmergencyButton: false, bEntryLockOpen:false, 
-        bSystemPoweredByUPS:false // TODO: this is not entirely good. It is possible that the system is powered by UPS but a passage is in transit. We need to make sure that this passage completes
+    public static GateHwStatus_ AllGood => new GateHwStatus_(GatePhysicalState.NOMINAL, bEmergencyButton: false, bEntryLockOpen: false,
+        bSystemPoweredByUPS: false // TODO: this is not entirely good. It is possible that the system is powered by UPS but a passage is in transit. We need to make sure that this passage completes
         );
 }
-    // TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
+// TODO: since one of eDoorsStatesMachine is POWER_DOWN, it is possible that we might have to remove `bConnected`
 public record GateHwStatus(bool bConnected, Option<GateHwStatus_> status = default) //: ModuleStatus
 {
-    public static GateHwStatus Disconnected => new GateHwStatus(bConnected: false, status : default);
+    public static GateHwStatus Disconnected => new GateHwStatus(bConnected: false, status: default);
     public static GateHwStatus AllGood => new GateHwStatus(bConnected: true, status: GateHwStatus_.AllGood);
 
-    public bool IsAvailable =>this == AllGood;
+    public bool IsAvailable => this == AllGood;
 
     public static GateHwStatus DisConnected => new GateHwStatus(bConnected: false);
 

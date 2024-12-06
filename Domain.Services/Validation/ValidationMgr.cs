@@ -20,7 +20,7 @@ namespace EtGate.Domain.Services.Validation
             IValidate online,
             DeviceStatusSubscriber<OnlineValidationSystemStatus> onlineDeviceStatus,
             IValidate offline,
-            DeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus            
+            DeviceStatusSubscriber<OfflineValidationSystemStatus> offlineDeviceStatus
             )
         {
             this.offline = offline;
@@ -30,7 +30,8 @@ namespace EtGate.Domain.Services.Validation
             StatusStream.Subscribe(x =>
             {
                 status = x;
-                Debug.WriteLine($"Validation {x}"); }
+                Debug.WriteLine($"Validation {x}");
+            }
             );
         }
 

@@ -17,10 +17,10 @@ namespace EtGate.Domain.Services.Validation
         }
 
         //public IObservable<OfflineValidationSystemStatus> StatusStream
-          //  => statusMgr.statusObservable;
+        //  => statusMgr.statusObservable;
 
         //public bool IsWorking => statusMgr.IsWorking;
-        
+
         //private readonly IDeviceStatus<OfflineValidationSystemStatus> statusMgr;
 
         public QrCodeValidationResult Validate(QrCodeInfo qrCode)

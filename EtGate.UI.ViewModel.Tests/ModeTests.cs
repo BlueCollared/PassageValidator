@@ -3,7 +3,6 @@ using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain;
 using EtGate.UI.ViewModels;
-using GateApp;
 using Moq;
 using System.Reactive.Linq;
 using Xunit;

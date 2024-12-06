@@ -11,7 +11,7 @@ public class Ier_To_DomainAdapter
     {
         this.worker = worker;
     }
-    
+
     public bool Reboot()
     {
         return worker.Reboot().IsRight;
@@ -48,7 +48,7 @@ public class Ier_To_DomainAdapter
     }
 
     public bool SetNormalMode(GateOperationConfig cfg)
-    {        
+    {
         Option<SideOperatingMode> entry = cfg.mode switch
         {
             GateOperatingMode.EntryOnly_EntryFree => SideOperatingMode.Free,

@@ -1,5 +1,4 @@
-﻿using EtGate.Devices.Interfaces.Qr;
-using EtGate.QrReader;
+﻿using EtGate.QrReader;
 
 namespace QrReader
 {

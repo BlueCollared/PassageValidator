@@ -17,7 +17,7 @@ namespace NamedPipeLibrary
             {
                 pipeClient.Connect();
                 string serialized = JsonSerializer.Serialize(message);
-                
+
                 using (var writer = new StreamWriter(pipeClient))
                 {
                     MessageWrapper wrapper = new MessageWrapper { TypeName = message.GetType().AssemblyQualifiedName, JsonPayload = serialized };

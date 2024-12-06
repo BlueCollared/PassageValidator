@@ -14,7 +14,7 @@ public class ModeModule : Module
             .WithParameter("timeToCompleteAppBoot_InSeconds", 30)
             .As<IModeManager>()
             .SingleInstance()
-            .AsSelf();        
+            .AsSelf();
 
         builder.RegisterType<SubModeMgrFactory>().As<ISubModeMgrFactory>().SingleInstance();
     }

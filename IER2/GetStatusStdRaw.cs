@@ -17,7 +17,7 @@ public enum SideOperatingMode
 {
     Closed,
     Controlled,
-    Free,    
+    Free,
 }
 
 public enum DoorsMode
@@ -108,7 +108,7 @@ public struct GetStatusStdRawComplete
     public bool safety_zone_B;
     public int doorCurrentMovementOfObstacle;
     public bool door_unexpected_motion;
-    }
+}
 
 
 public struct IerErrors

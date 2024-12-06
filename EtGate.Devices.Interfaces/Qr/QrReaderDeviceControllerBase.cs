@@ -14,7 +14,7 @@
 //        }
 ////        readonly protected Subject<QrCodeInfo> qrCodeInfoSubject = new();
 //  //      public IObservable<QrCodeInfo> qrCodeInfoObservable => qrCodeInfoSubject.AsObservable();
-        
+
 //        //readonly protected ReplaySubject<QrReaderStaticData> qrCodeStatic = new();
 //        protected readonly IMessagePublisher<QrCodeInfo> qrCodeInfo;
 //        protected readonly IMessagePublisher<QrReaderStaticData> qrCodeStaticData;

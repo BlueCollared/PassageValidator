@@ -12,23 +12,38 @@ namespace EtGate.IER
         public string operatingModeEntrySide;
         public string operatingModeExitSide;
         private int _nInfractions;
-        public int nInfractions { get=>_nInfractions; set { _nInfractions = value; 
+        public int nInfractions
+        {
+            get => _nInfractions; set
+            {
+                _nInfractions = value;
                 infractions = new string[_nInfractions];
-            } }
+            }
+        }
         public string[] infractions;
 
         private int _nTimeouts;
-        public int nTimeouts { get=>_nTimeouts; set { _nTimeouts = value; 
+        public int nTimeouts
+        {
+            get => _nTimeouts; set
+            {
+                _nTimeouts = value;
                 timeouts = new string[_nTimeouts];
-            } }
-        public string[] timeouts;        
+            }
+        }
+        public string[] timeouts;
 
         private int _nErrors;
         public DictionaryXmlString[] errors;
 
-        public int nErrors { get=>_nErrors; set { _nErrors = value; 
+        public int nErrors
+        {
+            get => _nErrors; set
+            {
+                _nErrors = value;
                 errors = new DictionaryXmlString[_nErrors];
-            } }
+            }
+        }
 
         public string OperatorId;
         public int nPassengersFromEntracePerpetual;

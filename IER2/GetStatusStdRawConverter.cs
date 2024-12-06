@@ -88,7 +88,7 @@ public static class GetStatusStdRawConverter
     //    else
     //        return global::Domain.Peripherals.Passage.DoorsMode.Other;
     //}
-    
+
     //static readonly Dictionary<SideOperatingMode, global::Domain.Peripherals.Passage.SideOperatingMode> sideOperatingModeMap = new()
     //{
     //    { SideOperatingMode.Closed, global::Domain.Peripherals.Passage.SideOperatingMode.Closed },

@@ -19,7 +19,7 @@
     }
 
 
-    
+
 
     public class cPLCStateMachine
     {
@@ -28,12 +28,12 @@
         public cPLCStateMachine()
         {
             //doorsStates = eDoorsStatesMachine.NONE;
-          //  doorNominalModes = eDoorNominalModes.NONE;
+            //  doorNominalModes = eDoorNominalModes.NONE;
 
         }
     }
 
-    
 
-    
+
+
 }

@@ -95,7 +95,7 @@ public class IERXmlRpc : IIerXmlRpc
         {
             return worker.ApplyUpdate();
         }
-        catch (WebException )
+        catch (WebException)
         {
             MarkDisconnected();
         }
@@ -149,7 +149,7 @@ public class IERXmlRpc : IIerXmlRpc
                 return IERApiError.UnexpectedAnswer;
             }
         };
-                
+
         return MakeCall(() => worker.GetDate())
             .Log(logger)
             .Bind(dateExtract);
@@ -157,8 +157,9 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Option<object[]> GetMotorSpeed()
     {
-        try {
-        return worker.GetMotorSpeed();
+        try
+        {
+            return worker.GetMotorSpeed();
         }
         catch (WebException)
         {
@@ -188,11 +189,11 @@ public class IERXmlRpc : IIerXmlRpc
         {
             return act();
         }
-        catch(WebException exp)
+        catch (WebException exp)
         {
             return IERApiError.DeviceInaccessible;
         }
-        catch(Exception exp)
+        catch (Exception exp)
         {
             return IERApiError.UnexpectedException;
         }
@@ -212,7 +213,7 @@ public class IERXmlRpc : IIerXmlRpc
             conf.TimeAllowedToExitSafetyZone,
             conf.TimeAllowedToCrossLaneAfterAuthorisation,
         ];
-        
+
         return MakeCall(() => worker.GetSetTempo(param))
             .Bind(CheckNumberOfIpParams)
             .Bind(x => InputOutOfRange(x, param.Length))
@@ -276,7 +277,7 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Either<IERApiError, Success> Reboot()
     {
-        return MakeCall(() => worker.SendReboot())            
+        return MakeCall(() => worker.SendReboot())
             .Bind(CheckZeroethParam_Minus1)
             .Bind(CheckZeroethParam_1_MeansSuccess);
     }
@@ -306,7 +307,7 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Either<IERApiError, Success> SetBuzzerFraud(int volume, int note)
     {
-        int[] param = new int[] { volume, note};
+        int[] param = new int[] { volume, note };
         return MakeCall(() => worker.SetBuzzerFraud(param))
             .Bind(TristateChecker);
     }
@@ -319,8 +320,9 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Option<object[]> SetBuzzerMode(int[] param)
     {
-        try { 
-        return worker.SetBuzzerMode(param);
+        try
+        {
+            return worker.SetBuzzerMode(param);
         }
         catch (WebException)
         {
@@ -331,8 +333,9 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Option<object[]> SetCredentials(string[] param)
     {
-        try { 
-        return worker.SetCredentials(param);
+        try
+        {
+            return worker.SetCredentials(param);
         }
         catch (WebException)
         {
@@ -354,13 +357,13 @@ public class IERXmlRpc : IIerXmlRpc
 
         return MakeCall(() => worker.SetDate(dtparams))
             .Bind(CheckNumberOfIpParams)
-            .Bind(CheckZeroethParam_Minus1)            
+            .Bind(CheckZeroethParam_Minus1)
             .Bind(CheckZeroethParam_1_MeansSuccess);
     }
 
     public Either<IERApiError, Success> SetEmergency(bool bEnabled)
     {
-        int[] param = { bEnabled? 1: 0 };
+        int[] param = { bEnabled ? 1 : 0 };
         return MakeCall(() => worker.SetEmergency(param))
             .Bind(TristateChecker);
     }
@@ -370,20 +373,20 @@ public class IERXmlRpc : IIerXmlRpc
         int[] param = { bEnabled ? 1 : 0 };
         return MakeCall(() => worker.SetEmergency(param))
             .Bind(TristateChecker);
-    }    
+    }
 
     private Domain.Services.ILogger logger;
 
     public Either<IERApiError, Success> SetMode(Option<DoorsMode> doorsMode, Option<SideOperatingMode> entry, Option<SideOperatingMode> exit)
     {
-        
+
         string[] param = { "", "", "" };
         doorsMode.IfSome(x => { param[0] = diDoorsMode[x]; });
         entry.IfSome(x => { param[1] = diSideOperatingMode[x]; });
         exit.IfSome(x => { param[2] = diSideOperatingMode[x]; });
 
         return MakeCall(() => worker.SetMode(param))
-            .Bind(TristateChecker);        
+            .Bind(TristateChecker);
     }
 
     public Either<IERApiError, Success> SetMotorSpeed(MotorSpeed conf)
@@ -403,8 +406,9 @@ public class IERXmlRpc : IIerXmlRpc
 
     public Option<object[]> SetOutputClient(int[] param)
     {
-        try { 
-        return worker.SetOutputClient(param);
+        try
+        {
+            return worker.SetOutputClient(param);
         }
         catch (WebException)
         {
@@ -414,7 +418,7 @@ public class IERXmlRpc : IIerXmlRpc
     }
 
     public Either<IERApiError, GetStatusStdRaw> GetStatusStd()
-    {        
+    {
         return MakeCall(() => worker.GetStatusStd())
             .Bind(result =>
             IERRHelper.ProcessGetStatusStd(result)
@@ -435,13 +439,13 @@ public class IERXmlRpc : IIerXmlRpc
             }
         };
         return MakeCall(() => worker.GetStatus())
-            .Bind(statusExtract);            
+            .Bind(statusExtract);
     }
 }
 
 static class Helper
 {
-    public static IERApiResult Log (this IERApiResult either, Domain.Services.ILogger logger, [CallerMemberName] string caller = null)
+    public static IERApiResult Log(this IERApiResult either, Domain.Services.ILogger logger, [CallerMemberName] string caller = null)
     {
         either.Match(
             Right: r =>
@@ -450,7 +454,7 @@ static class Helper
             },
             Left: l =>
             {
-                Console.WriteLine($"Left: {l}");                
+                Console.WriteLine($"Left: {l}");
             });
         return either;
     }

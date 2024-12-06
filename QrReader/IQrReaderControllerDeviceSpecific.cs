@@ -1,9 +1,7 @@
-﻿using Peripherals;
-
-namespace EtGate.Devices.Interfaces.Qr
+﻿namespace EtGate.Devices.Interfaces.Qr
 {
     interface IQrReaderControllerDeviceSpecific
     {
-        void Reboot();        
+        void Reboot();
     }
 }

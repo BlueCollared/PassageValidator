@@ -108,7 +108,7 @@ public record DoorModeConf
     bool ForceDoorinFreeSide
     );
 public enum eDoorNominalModes //Normal case
-{        
+{
     OPEN_DOOR, //Doors are opened
     CLOSE_DOOR, //Doors are closed
     FRAUD, //A Fraud has occured
@@ -281,7 +281,7 @@ internal static class IERRHelper
         {eInfraction.LANG_INTRUSION_B, IntrusionType.LANG_INTRUSION_B},
         {eInfraction.LANG_INTRUSION_A, IntrusionType.LANG_INTRUSION_A},
         {eInfraction.LANG_PREALARM_B, IntrusionType.LANG_PREALARM_B},
-        {eInfraction.LANG_PREALARM_A, IntrusionType.LANG_PREALARM_A},        
+        {eInfraction.LANG_PREALARM_A, IntrusionType.LANG_PREALARM_A},
     };
 
     static public Either<List<string>, GetStatusStdRaw> ProcessGetStatusStd(object ip)

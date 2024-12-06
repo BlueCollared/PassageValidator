@@ -42,10 +42,10 @@ public partial class CIERRpcHelper
         //We will wait a little before applying change.
         //Question to see : Have we applied passwork
         return xmlRpcRaw.ApplyUpdate().Match(
-            Some: _ => true, 
+            Some: _ => true,
             None: () => false
             );
-        }
+    }
 
 
     public class ForFailure
@@ -139,19 +139,19 @@ public partial class CIERRpcHelper
         };
 
         return xmlRpcRaw.GetCounter().Map(countersExtract);
-    }    
+    }
 
     public Option<object[]> SetCredentials(string[] param)
     {
         return xmlRpcRaw.SetCredentials(param);
-    }    
+    }
 
     public Option<object[]> GetCurrentPassage()
     {
         throw new NotImplementedException(); // TODO: not done in SGP
         //return xmlRpcRaw.GetCurrentPassage();
     }
-    
+
     // TODO: use case of this function would be different than SGP
     public bool SetOutputClient(int[] param)
     {
@@ -159,8 +159,8 @@ public partial class CIERRpcHelper
                 Some: o => firstElementIsOne(o),
                 None: () => false
                 );
-    }    
-    
+    }
+
     public Option<object[]> GetMotorSpeed()
     {
         throw new NotImplementedException(); // TODO: not done in SGP
@@ -173,5 +173,5 @@ public partial class CIERRpcHelper
                 Some: o => firstElementIsOne(o),
                 None: () => false
                 );
-    }    
+    }
 }

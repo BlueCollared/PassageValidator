@@ -4,7 +4,7 @@ namespace Domain.Services.InService
 {
     public interface IInServiceMgr : IDisposable, ISubModeMgr
     {
-        IObservable<State> StateObservable { get; }        
+        IObservable<State> StateObservable { get; }
         Task HaltFurtherValidations();
     }
 }

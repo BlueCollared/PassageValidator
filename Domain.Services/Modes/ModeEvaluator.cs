@@ -15,19 +15,19 @@ public class ModeEvaluator : IModeManager
     public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
     private readonly IDeviceStatusPublisher<(Mode, bool)> modePub;
     private readonly IDeviceStatusPublisher<ActiveFunctionalities> activeFuncs;
-    
+
     //IObservable<Mode> modeEffectuatedStream; // both may be different. e.g. in maintenace mode, we eject the qr reader, then OOO would be put in modeCalculatedStream, but modeEffectuatedStream would not be disturbed        
 
     Subject<bool> maintAskedSubject = new();
     IConnectableObservable<bool> maintenanceAsked;
 
     Subject<OpMode> modeAskedSubject = new();
-    IConnectableObservable<OpMode> modeRequested;       
+    IConnectableObservable<OpMode> modeRequested;
 
     IObservable<EquipmentStatus> equipmentStatusStream;
-    
+
     private OpMode opModeDemanded;
-    
+
     Subject<Unit> forceTimeoutSubject = new Subject<Unit>();
 
     //defValue will be emitted if no element is pushed within maxTimeToWaitBeforeUsingDefValue of start
@@ -46,10 +46,10 @@ public class ModeEvaluator : IModeManager
 
     public ModeEvaluator(PeripheralStatuses ps,
                            IDeviceStatusPublisher<(Mode, bool)> modePub,
-                           IDeviceStatusPublisher<ActiveFunctionalities> activeFuncsPub,                           
+                           IDeviceStatusPublisher<ActiveFunctionalities> activeFuncsPub,
                            IScheduler scheduler,
                            int timeToCompleteAppBoot_InSeconds = DEFAULT_TimeToCompleteBoot_InSeconds)
-    {        
+    {
         var qr = ps.qr;
         var offline = ps.offline;
         var online = ps.online;
@@ -62,17 +62,17 @@ public class ModeEvaluator : IModeManager
         modeRequested = modeAskedSubject.AsObservable().Replay(1);
         modeRequested.Connect();
         modeAskedSubject.OnNext(OpMode.InService); // TODO: correct it. It should be injected into the constructor,  the client should take it from a context file       
-        
+
         this.modePub = modePub;
-        
+
         modePub?.Publish((Mode.AppBooting, true));
 
-        this.activeFuncs = activeFuncsPub;        
+        this.activeFuncs = activeFuncsPub;
 
         var maxTimeToWaitBeforeFallbacking = TimeSpan.FromSeconds(timeToCompleteAppBoot_InSeconds);
-        
-        var qr_ =  ProcessedIObservable(qr.Messages, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
-        
+
+        var qr_ = ProcessedIObservable(qr.Messages, QrReaderStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
+
         var offline_ = ProcessedIObservable(offline.Messages, OfflineValidationSystemStatus.Obsolete, maxTimeToWaitBeforeFallbacking, scheduler);
 
         var online_ = ProcessedIObservable(online.Messages, OnlineValidationSystemStatus.Disconnected, maxTimeToWaitBeforeFallbacking, scheduler);
@@ -83,9 +83,9 @@ public class ModeEvaluator : IModeManager
         Observable.CombineLatest(qr_, offline_, online_, gate_, maintenanceAsked, modeRequested, (qr, offline, online, gate, maint, mod) => new EquipmentStatus(
             qr, offline, online, gate,
             bMaintAsked: maint,
-            modeAsked:mod
+            modeAsked: mod
             ));
-        
+
         var fnModeCal = (EquipmentStatus e) =>
             {
                 if (e.bMaintAsked)
@@ -104,12 +104,12 @@ public class ModeEvaluator : IModeManager
                         throw new NotImplementedException();
                 }
             };
-        equipmentStatusStream.Subscribe(x=>
+        equipmentStatusStream.Subscribe(x =>
         {
             var newMode = fnModeCal(x);
             modePub?.Publish((newMode, newMode == Mode.Maintenance || newMode == Mode.Emergency));
         });
-        
+
         qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
         gate.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
         offline.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
@@ -126,7 +126,7 @@ public class ModeEvaluator : IModeManager
         get { return opModeDemanded; }
         set
         {
-            modeAskedSubject.OnNext(value);                
+            modeAskedSubject.OnNext(value);
         }
     }
 

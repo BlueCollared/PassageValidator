@@ -20,7 +20,7 @@ public partial class SecondaryWindow : Window
         if (screens.Count < 2)
             return;
         var secondaryScreen = screens[1];
-        if (secondaryScreen != null)        
+        if (secondaryScreen != null)
             Position = secondaryScreen.WorkingArea.TopLeft;
     }
 

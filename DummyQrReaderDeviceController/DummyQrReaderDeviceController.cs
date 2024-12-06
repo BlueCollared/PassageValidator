@@ -20,7 +20,7 @@ public class DummyQrReaderDeviceController : IQrReaderController
         tskStatusDetection = Task.Run(() =>
         {
             Worker();
-        });            
+        });
     }
 
     public bool Start()
@@ -30,7 +30,7 @@ public class DummyQrReaderDeviceController : IQrReaderController
     }
 
     public async Task<QrCodeInfo?> StartDetecting(CancellationToken cancellationToken)
-    {        
+    {
         try
         {
             await Task.Delay(5000, cancellationToken);
@@ -62,6 +62,6 @@ public class DummyQrReaderDeviceController : IQrReaderController
 
     public void Stop()
     {
-        bStop = true;            
+        bStop = true;
     }
 }

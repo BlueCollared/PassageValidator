@@ -15,7 +15,7 @@ namespace EtGate.UI.Views
             InitializeComponent();
             this.KeyDown += OnKeyDown;
             if (!Design.IsDesignMode)
-                PositionWindowOnPrimaryScreen();            
+                PositionWindowOnPrimaryScreen();
         }
 
         public LoginService loginService { private get; set; }

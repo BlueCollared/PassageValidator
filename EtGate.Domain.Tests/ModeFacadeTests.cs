@@ -24,11 +24,12 @@ public class ModeFacadeTests
     {
         modeMgrFactoryMock
                 .Setup(f => f.Create(It.IsAny<global::EtGate.Domain.Mode>()))
-                .Returns(() => {
+                .Returns(() =>
+                {
                     modeMgrMock = new Mock<ISubModeMgr>();
                     return modeMgrMock.Object;
                 });
-        
+
     }
 
     [Fact]
@@ -40,7 +41,7 @@ public class ModeFacadeTests
         var bak = modeMgrMock;
         //p.SimulateStateChange();
         scheduler.AdvanceBy(TimeSpan.FromSeconds(timeOut).Ticks);
-        
+
         bak.Verify(m => m.Dispose(), Times.Once);
     }
 

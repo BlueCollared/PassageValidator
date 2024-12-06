@@ -36,7 +36,7 @@ public class IerController : IGateController, IGateInServiceController, IGateMod
                 r => new GateHwStatus(true, r.To_GateHwStatus()),
                 l => new GateHwStatus(l != IERApiError.DeviceInaccessible) // TODO: still to treat errors other than DeviceInaccessible
                 ));
-    
+
     public IObservable<EventInNominalMode> InServiceEventsObservable
         => comp.Where(x => x.IsRight)
         .Select<Either<IERApiError, GetStatusStdRawComplete>, GetStatusStdRawComplete>(a => a.Value())
@@ -65,7 +65,7 @@ public class IerController : IGateController, IGateInServiceController, IGateMod
     {
         if (!bIsConnected)
             return Option<DateTimeOffset>.None;
-        return ier.GetDate().Map(x=>new DateTimeOffset(x)); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
+        return ier.GetDate().Map(x => new DateTimeOffset(x)); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
     }
 
     public bool Reboot(bool bHardboot)
@@ -84,7 +84,7 @@ public class IerController : IGateController, IGateInServiceController, IGateMod
         if (!bIsConnected)
             return false;
         return ier.SetDate(dt.DateTime); // TODO: see if we can keep `DateTimeOffset` acrosss the code instead of making this conversion
-    }    
+    }
 
     public bool SetEmergency()
     {
@@ -104,7 +104,7 @@ public class IerController : IGateController, IGateInServiceController, IGateMod
     {
         if (!bIsConnected)
             return false;
-        return ier.SetNormalMode(config);        
+        return ier.SetNormalMode(config);
     }
 
     public bool SetOOS()

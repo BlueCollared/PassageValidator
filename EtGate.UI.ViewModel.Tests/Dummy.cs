@@ -8,7 +8,7 @@ namespace EtGate.UI.ViewModel.Tests
         public IViewFactory Dummy_IViewFactory { get; private set; }
         public ContentControl Dummy_ContentControl { get; private set; } = new Mock<ContentControl>().Object;
         public Dummy()
-        {            
+        {
             Dummy_IViewFactory = IViewFactory();
         }
 

@@ -17,7 +17,7 @@ namespace DummyQrReaderDeviceController
 
         public override void Stop()
         {
-            
+
         }
 
         public override QrCodeValidationResult Validate(QrCodeInfo qrCode)

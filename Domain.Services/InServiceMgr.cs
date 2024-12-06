@@ -74,12 +74,12 @@ public record SideState_Prohibited : SideState; // Forbidden/Interdit
 
 public class InServiceMgr : ISubModeMgr, IInServiceMgr
 {
-    private readonly IValidate validationMgr;    
+    private readonly IValidate validationMgr;
     private readonly IQrReaderMgr qrMgr;
     private readonly DeviceStatusSubscriber<ActiveFunctionalities> activeFunctions;
     private Queue<Authorization> authorizations = new();
 
-    PassageState state = PassageState.Unknown;    
+    PassageState state = PassageState.Unknown;
 
     private bool IsDisposed;
 
@@ -92,8 +92,8 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         public static State PassageAuthroizedAtExit(QrCodeInfo info) { return new PassageAuthroizedAtExit(info); }
     };
 
-    public record Idle: State;
-    public record ValidationAtEntryInProgress (QrCodeInfo info): State;
+    public record Idle : State;
+    public record ValidationAtEntryInProgress(QrCodeInfo info) : State;
     public record ValidationAtExitInProgress(QrCodeInfo info) : State;
     public record PassageAuthroizedAtEntry(QrCodeInfo info) : State;
     public record PassageAuthroizedAtExit(QrCodeInfo info) : State;
@@ -112,10 +112,10 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
     BehaviorSubject<State> stateSub = new BehaviorSubject<State>(State.Idle());
     public IObservable<State> StateObservable => stateSub.AsObservable();//Observable.Empty<State>();
     Task tsk;
-    
+
     public InServiceMgr(
         IValidate validationMgr,
-        IGateInServiceController passage,            
+        IGateInServiceController passage,
         IQrReaderMgr qrMgr,
         DeviceStatusSubscriber<ActiveFunctionalities> activeFunctions
         )
@@ -128,7 +128,8 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         //passageStatusSubscription = passage.PassageStatusObservable
         //    .ObserveOn(SynchronizationContext.Current)
         //    .Subscribe(x => PassageEvt(x));
-        tsk = Task.Run(async() => {
+        tsk = Task.Run(async () =>
+        {
             while (true)
             {
                 (string ReaderMnemonic, QrCodeInfo QrCodeInfo) detectionResult;
@@ -193,28 +194,28 @@ public class InServiceMgr : ISubModeMgr, IInServiceMgr
         {
             case PassageState.Unknown:
                 {
-                    state = PassageState.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;
                     break;
                 }
             case PassageState.Idle:
                 {
-                    state = PassageState.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;
                     break;
                 }
             case PassageState.IntrusionAtEntryWhenIdle:
                 {
-                    state = PassageState.IntrusionAtEntryWhenIdle;                        
+                    state = PassageState.IntrusionAtEntryWhenIdle;
                     break;
                 }
             case PassageState.IntrusionDuringAuthorizedPassage:
                 {
-                    state = PassageState.IntrusionDuringAuthorizedPassage;                        
+                    state = PassageState.IntrusionDuringAuthorizedPassage;
                     break;
                 }
             case PassageState.SomeAuthorization_s_Queued_ThatHaventBeginTransit:
             case PassageState.PassengerInTransit_NoMorePendingAuthorizations:
                 {
-                    state = PassageState.IntrusionDuringAuthorizedPassage;                        
+                    state = PassageState.IntrusionDuringAuthorizedPassage;
                     break;
                 }
         }

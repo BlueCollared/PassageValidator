@@ -1,9 +1,9 @@
 ﻿using Domain.Services.InService;
+using Equipment.Core.Message;
 using EtGate.Domain;
 using EtGate.Domain.Services.Gate;
 using EtGate.Domain.Services.Qr;
 using EtGate.Domain.Services.Validation;
-using Equipment.Core.Message;
 
 namespace Domain.Services.Modes;
 
@@ -14,8 +14,8 @@ public class SubModeMgrFactory : ISubModeMgrFactory
     private readonly IGateInServiceController passageMgr;
     private readonly DeviceStatusSubscriber<ActiveFunctionalities> actFnSubs;
 
-    public SubModeMgrFactory(IQrReaderMgr qrReaderMgr, 
-        ValidationMgr validationMgr, 
+    public SubModeMgrFactory(IQrReaderMgr qrReaderMgr,
+        ValidationMgr validationMgr,
         IGateInServiceController passageMgr,
         DeviceStatusSubscriber<ActiveFunctionalities> actFnSubs)
     {
@@ -30,12 +30,12 @@ public class SubModeMgrFactory : ISubModeMgrFactory
         switch (mode)
         {
             case Mode.InService:
-                return new InServiceMgr(validationMgr, 
-                    passageMgr, 
+                return new InServiceMgr(validationMgr,
+                    passageMgr,
                     qrReaderMgr,
                     actFnSubs);
             default:
-                return new DoNothingModeMgr(mode);                    
+                return new DoNothingModeMgr(mode);
         }
     }
 }
