@@ -1,4 +1,5 @@
-﻿using Equipment.Core.Message;
+﻿using Equipment.Core;
+using Equipment.Core.Message;
 using EtGate.Domain.Events;
 using System.Reactive.Linq;
 
@@ -10,7 +11,7 @@ public class SessionManager
     
     public SessionManager(IMessageSubscriber<AgentLoggedIn> evtAgentLoggedIn)
     {
-        //MyTimer timer;
+        MyTimer timer;
         this.evtAgentLoggedIn = evtAgentLoggedIn;
         this.evtAgentLoggedIn.Messages.Subscribe(x => {
             //Observable.Timer(TimeSpan.FromSeconds(10)).Subscribe(
