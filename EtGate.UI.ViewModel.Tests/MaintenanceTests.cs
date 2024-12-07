@@ -149,7 +149,7 @@ public class MaintenanceTests
             .Setup(service => service.Logout())
             .Verifiable();
         if (typ == typeof(AgentLoginViewModel))
-            return new AgentLoginViewModel(loginService.Object, nav);
+            return new AgentLoginViewModel(loginService.Object, nav, evtAgentLoggedIn:null);
         else if (typ == typeof(MaintenanceMenuViewModel))
             return new MaintenanceMenuViewModel(
                 nav,
