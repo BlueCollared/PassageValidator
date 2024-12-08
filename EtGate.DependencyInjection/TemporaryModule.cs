@@ -12,5 +12,8 @@ public class TemporaryModule : Module
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterInstance(DefaultScheduler.Instance).As<IScheduler>();
+        builder.RegisterType<SessionManager>()
+            .As<ISessionManager>()
+            .SingleInstance();        
     }
 }

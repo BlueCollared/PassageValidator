@@ -1,4 +1,4 @@
-﻿using Domain.Services.Modes;
+﻿using EtGate.Domain.Services;
 using EtGate.UI.ViewModels;
 using EtGate.UI.ViewModels.Maintenance;
 using System;
@@ -12,12 +12,14 @@ public class MaintenanceNavigationService : INavigationService
     public MaintenanceNavigationService(
         Func<Type, MaintainenaceViewModelBase> viewModelFactory,
          INavigationEventManager navigationEventManager,
-        IModeManager modeService
+        //IModeManager modeService
+        ISessionManager sessionManager
         )
     {
         this.viewModelFactory = viewModelFactory;
         _navigationEventManager = navigationEventManager;
-        this.modeService = modeService;
+        this.sessionManager = sessionManager;
+        //this.modeService = modeService;
     }
 
     public MaintainenaceViewModelBase CurrentViewModel { get; private set; }
@@ -36,7 +38,8 @@ public class MaintenanceNavigationService : INavigationService
     {
         if (!_viewModelStack.Any())
         {
-            modeService.SwitchOutMaintenance();
+//            modeService.SwitchOutMaintenance();
+sessionManager.AgentLoggedOut();
             return;
         }
 
@@ -46,7 +49,8 @@ public class MaintenanceNavigationService : INavigationService
 
         if (!_viewModelStack.Any())
         {
-            modeService.SwitchOutMaintenance();
+            sessionManager.AgentLoggedOut();
+            //modeService.SwitchOutMaintenance();
             return;
         }
 
@@ -56,7 +60,8 @@ public class MaintenanceNavigationService : INavigationService
             || vmTop.IsSubclassOf(typeof(AgentLoginViewModel)))
         {
             _viewModelStack.Clear();
-            modeService.SwitchOutMaintenance();
+            sessionManager.AgentLoggedOut();
+            //modeService.SwitchOutMaintenance();
         }
         else
         {
@@ -89,6 +94,6 @@ public class MaintenanceNavigationService : INavigationService
     private readonly Stack<Type> _viewModelStack = new();
     private readonly Func<Type, MaintainenaceViewModelBase> viewModelFactory;
     private readonly INavigationEventManager _navigationEventManager;
-
-    private readonly IModeManager modeService;
+    private readonly ISessionManager sessionManager;
+    //private readonly IModeManager modeService;    
 }
