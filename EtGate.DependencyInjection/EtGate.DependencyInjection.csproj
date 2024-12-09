@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain.Services\EtGate.Domain.Services.csproj" />
     <ProjectReference Include="..\DummyQrReaderDeviceController\DummyQrReaderDeviceController.csproj" />
+    <ProjectReference Include="..\EtGate.AlarmMgr\EtGate.AlarmMgr.csproj" />
     <ProjectReference Include="..\EtGate.ViewModel\EtGate.UI.ViewModels.csproj" />
     <ProjectReference Include="..\IER2\EtGate.IER.csproj" />
   </ItemGroup>

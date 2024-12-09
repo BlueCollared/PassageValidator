@@ -88,7 +88,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossCutting", "CrossCuttin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtGate.DependencyInjection", "EtGate.DependencyInjection\EtGate.DependencyInjection.csproj", "{179615A4-7ACD-44B8-B907-CB70271745FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.MainApp", "EtGate.MainApp\EtGate.MainApp.csproj", "{4EC79369-49F3-4D48-B663-E52004CFF128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtGate.MainApp", "EtGate.MainApp\EtGate.MainApp.csproj", "{4EC79369-49F3-4D48-B663-E52004CFF128}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtGate.AlarmMgr", "EtGate.AlarmMgr\EtGate.AlarmMgr.csproj", "{8CC2D61C-221A-424C-8008-3328D87D18FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -200,6 +202,10 @@ Global
 		{4EC79369-49F3-4D48-B663-E52004CFF128}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EC79369-49F3-4D48-B663-E52004CFF128}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EC79369-49F3-4D48-B663-E52004CFF128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC2D61C-221A-424C-8008-3328D87D18FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC2D61C-221A-424C-8008-3328D87D18FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC2D61C-221A-424C-8008-3328D87D18FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC2D61C-221A-424C-8008-3328D87D18FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -241,6 +247,7 @@ Global
 		{FE208C4E-CED2-4EAE-910B-7AEC6377371E} = {04AF3EF2-656A-4474-9416-3EB70A2163F9}
 		{179615A4-7ACD-44B8-B907-CB70271745FE} = {04AF3EF2-656A-4474-9416-3EB70A2163F9}
 		{4EC79369-49F3-4D48-B663-E52004CFF128} = {579A98DB-89F3-4CEC-ACBE-6F0910CF6EDF}
+		{8CC2D61C-221A-424C-8008-3328D87D18FA} = {A9CC10FE-C9DB-471C-B472-3864FDA27CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7A86E62-3E6F-4D18-A6E7-49FB96533ADC}

@@ -9,6 +9,8 @@ public class TemporaryModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
+        builder.RegisterType<EtGate.AlarmMgr.AlarmMgr>().SingleInstance().AsSelf()
+            .AutoActivate();
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterInstance(DefaultScheduler.Instance).As<IScheduler>();
