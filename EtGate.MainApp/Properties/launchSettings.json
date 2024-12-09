@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EtGate.MainApp": {
+      "commandName": "Project",
+      "commandLineArgs": "Production.json"
+    }
+  }
+}

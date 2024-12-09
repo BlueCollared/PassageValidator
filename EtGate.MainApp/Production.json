@@ -1,0 +1,8 @@
+{
+  "gate": 0,
+  "qr": 0,
+  "validation": 0,
+  "OtherConf": {
+    "bRealAlarmMgr": true
+  }
+}

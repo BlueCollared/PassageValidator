@@ -23,4 +23,16 @@
     <ProjectReference Include="..\EtGate.DependencyInjection\EtGate.DependencyInjection.csproj" />
     <ProjectReference Include="..\EtGate.UI\EtGate.UI.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Equipment.Core">
+			<HintPath>$(EquipmentCommon_Outputs)\$(Configuration)\net8.0\Equipment.Core.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Production.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

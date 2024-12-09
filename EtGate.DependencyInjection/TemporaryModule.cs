@@ -7,10 +7,18 @@ namespace EtGate.DependencyInjection;
 
 public class TemporaryModule : Module
 {
+    private readonly bool bRealAlarmMgr;
+
+    public TemporaryModule(OtherConf conf)
+    {
+        this.bRealAlarmMgr = conf.bRealAlarmMgr;
+    }
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<EtGate.AlarmMgr.AlarmMgr>().SingleInstance().AsSelf()
-            .AutoActivate();
+        if (bRealAlarmMgr)
+            builder.RegisterType<EtGate.AlarmMgr.AlarmMgr>().SingleInstance().AsSelf()
+                .AutoActivate();
+        
         builder.RegisterType<MockContextRepository>().As<IContextRepository>().SingleInstance();
         builder.RegisterType<LoginService>().As<ILoginService>().SingleInstance();
         builder.RegisterInstance(DefaultScheduler.Instance).As<IScheduler>();
@@ -18,4 +26,9 @@ public class TemporaryModule : Module
             .As<ISessionManager>()
             .SingleInstance();        
     }
+}
+
+public class OtherConf
+{
+    public bool bRealAlarmMgr { get; set; }
 }
