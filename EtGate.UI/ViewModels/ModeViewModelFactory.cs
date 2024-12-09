@@ -2,7 +2,10 @@
 using Domain.Services.Modes;
 using Equipment.Core.Message;
 using EtGate.Domain;
+using EtGate.Domain.Events;
 using EtGate.Domain.Peripherals.Qr;
+using EtGate.Domain.Services;
+using EtGate.Domain.Services.Modes;
 using System;
 
 namespace EtGate.UI.ViewModels
@@ -11,14 +14,20 @@ namespace EtGate.UI.ViewModels
     {
         private readonly IModeManager modeService;
         private readonly INavigationService maintenanceNavigationService;
+        private readonly IMessageSubscriber<ShiftTimedOut> shiftTimedOut;
+        private readonly IMessagePublisher<ShiftTerminated> shiftTerminated;
         private readonly DeviceStatusSubscriber<QrReaderStatus> qr;
 
         public ModeViewModelFactory(IModeManager modeService,
             INavigationService maintenanceNavigationService,
+            IMessageSubscriber<ShiftTimedOut> shiftTimedOut,
+            IMessagePublisher<ShiftTerminated> shiftTerminated,
             DeviceStatusSubscriber<QrReaderStatus> qr = null)
         {
             this.modeService = modeService;
             this.maintenanceNavigationService = maintenanceNavigationService;
+            this.shiftTimedOut = shiftTimedOut;
+            this.shiftTerminated = shiftTerminated;
             this.qr = qr;
         }
 
@@ -31,7 +40,7 @@ namespace EtGate.UI.ViewModels
                 Mode.OOS => new OOSViewModel(modeService),
                 Mode.Emergency => new EmergencyViewModel(modeService),
                 Mode.OOO => new OOOViewModel(modeService),
-                Mode.Maintenance => bPrimary ? new MaintenanceViewModel(modeService, maintenanceNavigationService) : new MaintenanceViewModelPassive(modeService),
+                Mode.Maintenance => bPrimary ? new MaintenanceViewModel(modeService, maintenanceNavigationService, shiftTimedOut, shiftTerminated) : new MaintenanceViewModelPassive(modeService),
                 _ => throw new ArgumentException("Unknown mode")
             };
         }

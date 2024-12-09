@@ -1,11 +1,16 @@
 using Autofac;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using EtGate.UI.ViewModels;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using ReactiveUI;
+using System.Reactive.Disposables;
 
 namespace EtGate.UI.Views;
 
-public partial class MaintenanceView : UserControl
+public partial class MaintenanceView : ReactiveUserControl<MaintenanceViewModel>
 {
     private readonly INavigationService _navigationService;
     private readonly IViewFactory _viewLocator;
@@ -22,6 +27,20 @@ public partial class MaintenanceView : UserControl
 
         _viewLocator = viewLocator;
         navigationEventManager.Navigated += OnNavigated;
+
+        this.WhenActivated(disposables =>
+        {
+            // Handle the Interaction
+            ViewModel?.ShowShiftTimedOutDialog.RegisterHandler(async interaction =>
+            {
+                var result = await MessageBoxManager.GetMessageBoxStandard("Shift Timeout", interaction.Input,
+                        ButtonEnum.YesNo)
+                    .ShowAsPopupAsync(this);
+
+                // Pass the result back to the ViewModel
+                interaction.SetOutput(result == ButtonResult.Yes);
+            }).DisposeWith(disposables);
+        });
     }
 
     private void InitializeComponent()
