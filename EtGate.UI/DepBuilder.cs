@@ -87,10 +87,5 @@ public static class DepBuilder
             .As<IModeManager>()
             .SingleInstance()
             .AsSelf();
-
-        builder.RegisterType<PeripheralStatuses>()
-            .AsSelf()
-            .SingleInstance()
-            .PropertiesAutowired();
     }
 }

@@ -43,7 +43,7 @@ namespace EtGate.MainApp
             var args = desktop.Args;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             string configFileName = args[0];
-            string fullFileName = Path.Combine(Directory.GetCurrentDirectory(), configFileName);            
+            string fullFileName = Path.Combine(Directory.GetCurrentDirectory(), configFileName);
             string confJson = File.ReadAllText(fullFileName);
 
             var jsonOptions = new JsonSerializerOptions();
@@ -68,6 +68,9 @@ namespace EtGate.MainApp
                     DataContext = Container.ResolveNamed<MainWindowViewModel>(PrimaryEntry)
                 };
 
+                //var p = Container.Resolve<PeripheralStatuses>();
+                //var z = p.gate.curStatus;
+                //p.gate.Messages.Subscribe(y1 => { });
                 var secondaryWindow = new SecondaryWindow
                 {
                     DataContext = Container.ResolveNamed<MainWindowViewModel>(SecondaryExit)

@@ -31,6 +31,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="InService.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Production.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

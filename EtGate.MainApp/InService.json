@@ -4,6 +4,6 @@
   "validation": 0,
   "OtherConf": {
     "bRealAlarmMgr": true,
-	"bForceFulAllGood": false
+	"bForceFulAllGood": true
   }
 }

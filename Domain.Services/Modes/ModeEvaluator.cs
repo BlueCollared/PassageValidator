@@ -12,7 +12,7 @@ using System.Reactive.Subjects;
 namespace Domain.Services.Modes;
 public class ModeEvaluator : IModeManager
 {
-    public const int DEFAULT_TimeToCompleteBoot_InSeconds = 10;
+    public const int DEFAULT_TimeToCompleteBoot_InSeconds = 20;
     private readonly IDeviceStatusPublisher<(Mode, bool)> modePub;
     private readonly IDeviceStatusPublisher<ActiveFunctionalities> activeFuncs;
 
@@ -110,9 +110,10 @@ public class ModeEvaluator : IModeManager
             modePub?.Publish((newMode, newMode == Mode.Maintenance || newMode == Mode.Emergency));
         });
 
-        qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
-        gate.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
-        offline.Messages.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
+        //qr_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} qr {x}"));
+        //gate_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} gate {x}"));
+        //offline_.Subscribe(x => Debug.WriteLine($"{DateTime.Now} validation {x}"));
+        //offline.Messages.Subscribe(x => { });
 
         equipmentStatusStream.Subscribe(x => Debug.WriteLine($"{DateTime.Now} equipmentStatusStream {equipmentStatusStream}"));
 
