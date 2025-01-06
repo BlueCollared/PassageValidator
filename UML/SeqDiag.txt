@@ -3,35 +3,37 @@ actor Passenger
 participant MMI
 participant GateMgr
 box "Ticketing Terminal (TT)"
+  participant QrReader
   participant TT
   participant "Health Check Sub-Entity" as HealthCheck
 end box
-participant "Validation Service \nBroker" as ValidationServiceBroker
-
+participant "Validation Service \nBroker \n(Hitachi's)" as ValidationServiceBroker
+participant "Validation Service" as ValidationService
 
 GateMgr -> TT : EnableDetection (Enable/Disable)
 activate TT
 
 
-Passenger --> TT : Produce QR
+Passenger --> QrReader : Produce QR
+QrReader -> TT : MediaProduced
 TT -> ValidationServiceBroker : Validate(QR)
 activate ValidationServiceBroker
 ValidationServiceBroker->ValidationService
-ValidationServiceBroker<--ValidationService : AuthorizePassage | RejectPassage \n + QR Data
-ValidationServiceBroker --> TT : AuthorizePassage | RejectPassage \n + QR Data
+ValidationServiceBroker<--ValidationService : AuthorizePassage | RejectPassage \n + QR Details
+ValidationServiceBroker --> TT : AuthorizePassage | RejectPassage \n + QR Details
 deactivate ValidationServiceBroker
 
-TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Data
+TT --> GateMgr : AuthorizePassage | RejectPassage \n + QR Details
 GateMgr -> GateMgr: Offer Passage\non AuthorizePassage
 GateMgr -> MMI: Notify
 
 par Periodic Health Check    
-    TT -> HealthCheck : Start Health Monitor
+    ' TT -> HealthCheck : Start Health Monitor
     loop Periodic Check
-        HealthCheck -> ValidationService : CheckHealth()
-        activate ValidationService
-        ValidationService --> HealthCheck : Good | Bad
-        deactivate ValidationService
+        HealthCheck -> ValidationServiceBroker : CheckHealth()
+        ' activate ValidationService
+        ValidationServiceBroker --> HealthCheck : Good | Bad
+        ' deactivate ValidationService
 
         alt Health status changes
             HealthCheck --> TT : NotifyStatusChange(Good | Bad)
