@@ -4,7 +4,7 @@ participant MMI
 participant GateMgr
 box "Ticketing Terminal (TT)"
   participant QrReader
-  participant TT
+  participant "Validation Mgr" as TT
   participant "Health Check Sub-Entity" as HealthCheck
 end box
 participant "Validation Service \nBroker \n(Hitachi's)" as ValidationServiceBroker
