@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Horizon.XmlRpc.Client" Version="2.5.2" />
+    <PackageReference Include="Horizon.XmlRpc.Core" Version="2.5.2" />
     <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
@@ -20,15 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain\EtGate.Domain.csproj" />
     <ProjectReference Include="..\EtGate.Devices.Interfaces\EtGate.Devices.Interfaces.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Horizon.XmlRpc.Client">
-      <HintPath>$(EtGate_ThirdPartyLib)XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Horizon.XmlRpc.Core">
-      <HintPath>$(EtGate_ThirdPartyLib)XmlRpc-master\Horizon.XmlRpc.Client\bin\Debug\netstandard2.0\Horizon.XmlRpc.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
